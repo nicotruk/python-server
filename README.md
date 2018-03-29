@@ -1,4 +1,4 @@
-Para correr:
+# Python App Server:
 
 1. Generar entorno mediante virtualenv
 
