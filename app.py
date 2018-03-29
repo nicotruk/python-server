@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_restful import Api
+
 from model.user import User
 
 app = Flask("python_server")
@@ -16,11 +17,15 @@ mongo = PyMongo(app, config_prefix='MONGO')
 def hello_world():
     usersCount = mongo.db.users.count()
     print "Users count : {}".format(usersCount)
-    user = User("1", "nico", "truksinas")
 
-    mongo.db.users.insert(user.encode_user())
+    user = User("1", "nico", "truksinas")
     usersCount = mongo.db.users.count()
     print "Users count : {}".format(usersCount)
+
+    mongo.db.users.insert(user.encode_user())
+    userresponse = User.decode_user(mongo.db.users.find_one({"name": "nico"}))
+    print "Username: {}".format(userresponse.name)
+
     return "Hi, I'm root!"
 
 
