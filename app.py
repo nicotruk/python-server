@@ -1,32 +1,29 @@
 from flask import Flask
-from flask_pymongo import PyMongo
 from flask_restful import Api
 
-from model.user import User
+from model.mongodb import mongo
+from resources.user_resource import UserDetailResource
+from resources.user_resource import UserInsertionResource
+from resources.user_resource import UsersCountResource
+from resources.user_resource import UsersResource
 
 app = Flask("python_server")
 
 api = Api(app, prefix="/api/v1")
 
-# connect to another MongoDB database on the same host
+# connect to another MongoDB database
 app.config['MONGO_DBNAME'] = 'python_server'
-mongo = PyMongo(app, config_prefix='MONGO')
+mongo.init_app(app, config_prefix='MONGO')
+
+api.add_resource(UsersResource, '/users')
+api.add_resource(UsersCountResource, '/users/count')
+api.add_resource(UserDetailResource, '/users/<string:user_id>')
+api.add_resource(UserInsertionResource, '/users/insert')
 
 
 @app.route('/')
 def hello_world():
-    usersCount = mongo.db.users.count()
-    print "Users count : {}".format(usersCount)
-
-    user = User("1", "nico", "truksinas")
-    usersCount = mongo.db.users.count()
-    print "Users count : {}".format(usersCount)
-
-    mongo.db.users.insert(user.encode_user())
-    userresponse = User.decode_user(mongo.db.users.find_one({"name": "nico"}))
-    print "Username: {}".format(userresponse.name)
-
-    return "Hi, I'm root!"
+    return "Hi, I'm a Python Server!"
 
 
 if __name__ == '__main__':
