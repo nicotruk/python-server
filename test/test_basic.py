@@ -3,7 +3,6 @@ import unittest
 
 class BasicTestCase(unittest.TestCase):
 
-	def test_basic(self):
-		x = 3
-		y = 3
-    	self.assertEqual(x,y)
+	@given(st.integers(), st.integers())
+	def test_ints_are_commutative(x, y):
+    	assert x + y == y + x
