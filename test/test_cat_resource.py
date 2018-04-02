@@ -16,10 +16,10 @@ class CatResourceTestCase(unittest.TestCase):
   def test_post_cat(self):
   	service = CatResource()
   	cat = {
-      "name": "Trigger",
-      "color": "orange",
-      "owner": None,
-      "weight": "5kg"
+      "name": "Rocky",
+      "color": "blue",
+      "owner": "Gonzalo",
+      "weight": "3kg"
     }
-  	#service.post({})
+  	service.post(cat)
   	self.assertIn(cat, cats)
