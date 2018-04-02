@@ -22,7 +22,8 @@ class CatResourceTestCase(unittest.TestCase):
       "owner": "Gonzalo",
       "weight": "3kg"
     }
-  	result = app.post("/api/v1/cats",
+    test_app = app.test_client()
+  	result = test_app.post("/api/v1/cats",
                                   data=cat,
                                   content_type='application/json')
   	self.assertIn(cat, service.get())
