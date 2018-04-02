@@ -15,11 +15,11 @@ class CatResourceTestCase(unittest.TestCase):
 
   def test_post_cat(self):
   	service = CatResource()
-    cat = {
+  	cat = {
       "name": "Rocky",
       "color": "blue",
       "owner": "Gonzalo",
       "weight": "3kg"
     }
-    result = self.client.post("/api/v1/cats", data=cat, content_type='application/json')
-    self.assertIn(cat, service.get())
+  	#service.post()
+  	self.assertIn(cat, cats)
