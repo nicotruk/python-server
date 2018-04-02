@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/nicotruk/python-server/badge.svg?branch=Coverage)](https://coveralls.io/github/nicotruk/python-server?branch=Coverage)
+
 # Python App Server:
 
 1. Generar entorno mediante virtualenv
