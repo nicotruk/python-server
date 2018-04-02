@@ -3,4 +3,5 @@ omit =
   *test*
   *env*
   *__init__*
+  *cats*
 
