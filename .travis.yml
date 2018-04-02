@@ -3,7 +3,6 @@ python:
   - "2.7.13"
   - "3.6"
 install:
-  - export PYTHONPATH=../
   - pip install -r requirements-test.txt
 script: 
   - pytest --cov-config .coveragerc --cov=$(pwd)
