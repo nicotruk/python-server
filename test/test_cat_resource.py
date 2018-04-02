@@ -6,6 +6,7 @@ sys.path.insert(0, myPath + '/../')
 from resources.cat_resource import CatResource
 from cats import cats
 import unittest
+import requests
 
 class CatResourceTestCase(unittest.TestCase):
 
@@ -13,7 +14,7 @@ class CatResourceTestCase(unittest.TestCase):
     service = CatResource()
     self.assertEqual(service.get(), cats)
 
-  '''def test_post_cat(self):
+  def test_post_cat(self):
   	service = CatResource()
   	cat = {
       "name": "Rocky",
@@ -21,5 +22,5 @@ class CatResourceTestCase(unittest.TestCase):
       "owner": "Gonzalo",
       "weight": "3kg"
     }
-  	service.post(cat)
-  	self.assertIn(cat, cats)'''
+  	r = requests.post('http://127.0.0.1:5000/api/v1/cats', data = cat)
+  	self.assertIn(cat, cats)
