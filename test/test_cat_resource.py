@@ -16,15 +16,13 @@ class CatResourceTestCase(unittest.TestCase):
     self.assertEqual(service.get(), cats)
 
   def test_post_cat(self):
-    service = CatResource()
     cat = {
       "name": "Rocky",
       "color": "blue",
       "owner": "Gonzalo",
       "weight": "3kg"
     }
-    result = app.test_client().post("/api/v1/cats",
+    response = app.test_client().post("/api/v1/cats",
                                            data=cat,
                                            content_type='application/json')
-    getResponse = app.test_client().get("/api/v1/cats")
-    self.assertIn(cat, getResponse.data)
+    self.assertEqual(response.status_code, 200)
