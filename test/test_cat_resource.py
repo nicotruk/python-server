@@ -38,4 +38,4 @@ class CatResourceTestCase(unittest.TestCase):
                                            data=json.dumps(cat),
                                            content_type='application/json')
     getResponse = app.test_client().get("/api/v1/cats")
-    self.assertIn(cat, getResponse.data)
+    self.assertIn(json.dumps(cat), getResponse.data)
