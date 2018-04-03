@@ -7,6 +7,7 @@ from resources.cat_resource import CatResource
 from cats import cats
 from app import app
 import unittest
+import logging
 
 class CatResourceTestCase(unittest.TestCase):
 
@@ -26,5 +27,5 @@ class CatResourceTestCase(unittest.TestCase):
                                            data=cat,
                                            content_type='application/json')
     newCats = app.test_client().get("/api/v1/cats")
-    print newCats
+    logging.info(newCats)
     self.assertIn(cat, app.test_client().get("/api/v1/cats"))
