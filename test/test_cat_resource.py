@@ -7,7 +7,7 @@ from resources.cat_resource import CatResource
 from cats import cats
 from app import app
 import unittest
-import logging
+import json
 
 class CatResourceTestCase(unittest.TestCase):
 
@@ -23,6 +23,6 @@ class CatResourceTestCase(unittest.TestCase):
       "weight": "3kg"
     }
     response = app.test_client().post("/api/v1/cats",
-                                           data=cat,
+                                           data=json.dumps(cat),
                                            content_type='application/json')
     self.assertEqual(response.status_code, 200)
