@@ -6,6 +6,7 @@ from resources.user_resource import UserDetailResource
 from resources.user_resource import UserInsertionResource
 from resources.user_resource import UsersCountResource
 from resources.user_resource import UsersResource
+from resources.cat_resource import CatResource
 
 app = Flask("python_server")
 
@@ -19,7 +20,7 @@ api.add_resource(UsersResource, '/users')
 api.add_resource(UsersCountResource, '/users/count')
 api.add_resource(UserDetailResource, '/users/<string:user_id>')
 api.add_resource(UserInsertionResource, '/users/insert')
-
+api.add_resource(CatResource, '/cats')
 
 @app.route('/')
 def hello_world():
