@@ -1,5 +1,12 @@
-import unittest
+# Lo siguiente debe inicializarse en setup.py
+import os
+import sys
 
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
+
+########
+import unittest
 from mock import patch
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource

@@ -1,18 +1,16 @@
+# Lo siguiente debe inicializarse en setup.py
+import os
+import sys
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
+
+########
 from resources.cat_resource import CatResource
 from cats import cats
 from app import app
 import unittest
 import json
-
-# Lo siguiente debe inicializarse en setup.py
-import sys
-import os
-
-myPath = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, myPath + '/../')
-
-
-########
 
 
 class CatResourceTestCase(unittest.TestCase):
