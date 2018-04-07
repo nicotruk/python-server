@@ -19,7 +19,7 @@ class PingResourceTestCase(unittest.TestCase):
         service = PingResource()
         response = service.get()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, SUCCESS_MESSAGE)
+        self.assertEqual(response.data, SUCCESS_MESSAGE.encode('utf-8'))
 
     @patch('resources.ping_resource.requests.get')
     def test_ping_shared_server(self, mock_get):
@@ -30,4 +30,4 @@ class PingResourceTestCase(unittest.TestCase):
         response = service.get()
         # If the request is sent successfully, then I expect a response to be returned.
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, SUCCESS_MESSAGE)
+        self.assertEqual(response.data, SUCCESS_MESSAGE.encode('utf-8'))
