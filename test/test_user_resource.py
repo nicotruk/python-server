@@ -24,21 +24,46 @@ class UsersResourceTestCase(unittest.TestCase):
     response = app.test_client().post("/api/v1/users",
                                            data=json.dumps(user),
                                            content_type='application/json')
-    pprint.pprint(response)
-    self.assertEqual(response.status_code, 200)
+    userResponse = json.loads(response.data)
+    user["user_id"] = userResponse["user"]["user_id"]
+    self.assertEqual(user, userResponse["user"])
 
-    '''
-  def test_integration_create_cat(self):
-    cat = {
-      "name": "Rocky",
-      "color": "blue",
-      "owner": "Gonzalo",
-      "weight": "3kg"
+  def test_get_single_user_error_user_not_found(self):
+    response = app.test_client().get("/api/v1/users/1234")
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
+    
+  def test_integration_create_user(self):
+    user = {
+      "username": "asd",
+      "password": "1234",
+      "email": "asd@asd.com"
     }
-    response = app.test_client().post("/api/v1/cats",
-                                           data=json.dumps(cat),
+    response = app.test_client().post("/api/v1/users",
+                                           data=json.dumps(user),
                                            content_type='application/json')
-    getResponse = app.test_client().get("/api/v1/cats")
-    self.assertIn(cat, json.loads(getResponse.data))
 
-    '''
+    userResponse = json.loads(response.data)
+    user["user_id"] = userResponse["user"]["user_id"]
+
+    getResponse = app.test_client().get("/api/v1/users")
+    self.assertIn(user, json.loads(getResponse.data)["users"])
+
+  def test_integration_get_single_user(self):
+    user = {
+      "username": "asd",
+      "password": "1234",
+      "email": "asd@asd.com"
+    }
+    response = app.test_client().post("/api/v1/users",
+                                           data=json.dumps(user),
+                                           content_type='application/json')
+
+    userResponse = json.loads(response.data)
+    user["user_id"] = userResponse["user"]["user_id"]
+
+    getResponse = app.test_client().get('/api/v1/users/{}'.format(user["user_id"]))
+    self.assertEqual(user,json.loads(getResponse.data)["user"])
+
+
+

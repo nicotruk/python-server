@@ -5,7 +5,6 @@ from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 import pprint
 
-
 class UsersResource(Resource):
     def get(self):
         return make_response(jsonify(User.getAll()), 200)
