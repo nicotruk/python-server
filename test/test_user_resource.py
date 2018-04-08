@@ -7,27 +7,26 @@ from resources.user_resource import UsersResource
 from app import app
 import unittest
 import json
-import pprint
 
 class UsersResourceTestCase(unittest.TestCase):
 
   def test_get_all_users(self):
     response = app.test_client().get("/api/v1/users")
-    pprint.pprint(response)
     self.assertEqual(response.status_code, 200)
 
-  '''def test_post_cat(self):
-    cat = {
-      "name": "Rocky",
-      "color": "blue",
-      "owner": "Gonzalo",
-      "weight": "3kg"
+  def test_post_user(self):
+    user = {
+      "username": "asd",
+      "password": "1234",
+      "email": "asd@asd.com"
     }
-    response = app.test_client().post("/api/v1/cats",
+    response = app.test_client().post("/api/v1/users",
                                            data=json.dumps(cat),
                                            content_type='application/json')
-    self.assertEqual(response.status_code, 200)
+    user["user_id"] = response.data["user_id"]
+    self.assertEqual(response.data, user)
 
+    '''
   def test_integration_create_cat(self):
     cat = {
       "name": "Rocky",
