@@ -23,7 +23,7 @@ class UsersResourceTestCase(unittest.TestCase):
     response = app.test_client().post("/api/v1/users",
                                            data=json.dumps(user),
                                            content_type='application/json')
-    user["user_id"] = response.data["user_id"]
+    user.user_id = response.data.user_id
     self.assertEqual(response.data, user)
 
     '''
