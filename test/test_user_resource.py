@@ -21,7 +21,7 @@ class UsersResourceTestCase(unittest.TestCase):
       "email": "asd@asd.com"
     }
     response = app.test_client().post("/api/v1/users",
-                                           data=json.dumps(cat),
+                                           data=json.dumps(user),
                                            content_type='application/json')
     user["user_id"] = response.data["user_id"]
     self.assertEqual(response.data, user)
