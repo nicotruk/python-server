@@ -7,6 +7,7 @@ from resources.user_resource import UsersResource
 from app import app
 import unittest
 import json
+import pprint
 
 class UsersResourceTestCase(unittest.TestCase):
 
