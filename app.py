@@ -5,7 +5,6 @@ from model.mongodb import mongo
 from resources.user_resource import SingleUserResource
 #from resources.user_resource import UsersCountResource
 from resources.user_resource import UsersResource
-from resources.cat_resource import CatResource
 
 app = Flask("python_server")
 
