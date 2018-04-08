@@ -24,7 +24,7 @@ class UsersResourceTestCase(unittest.TestCase):
                                            data=json.dumps(user),
                                            content_type='application/json')
     s = json.dumps(response)
-    print s
+    print(s)
     self.assertEqual(response.status_code, 200)
 
     '''
