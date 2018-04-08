@@ -12,7 +12,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
   def test_get_all_users(self):
     service = UsersResource()
-    self.assertEqual(service.getAll(), [])
+    self.assertEqual(service.get(), [])
 
   '''def test_post_cat(self):
     cat = {
