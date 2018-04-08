@@ -11,10 +11,9 @@ import json
 class UsersResourceTestCase(unittest.TestCase):
 
   def test_get_all_users(self):
-    with app.app_context():
-      service = UsersResource()
-
-      self.assertEqual(service.get(), [])
+    response = app.test_client().get("/api/v1/users")
+    pprint.pprint(response)
+    self.assertEqual(response.status_code, 200)
 
   '''def test_post_cat(self):
     cat = {
