@@ -7,6 +7,7 @@ from resources.user_resource import UsersResource
 from app import app
 import unittest
 import json
+import pprint
 
 class UsersResourceTestCase(unittest.TestCase):
 
@@ -23,8 +24,7 @@ class UsersResourceTestCase(unittest.TestCase):
     response = app.test_client().post("/api/v1/users",
                                            data=json.dumps(user),
                                            content_type='application/json')
-    s = json.dumps(response)
-    print(s)
+    pprint.pprint(response)
     self.assertEqual(response.status_code, 200)
 
     '''
