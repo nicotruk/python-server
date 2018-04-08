@@ -3,12 +3,12 @@ import sys, os
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 ########
-from resources.user_resource import UserResource
+from resources.user_resource import UsersResource
 from app import app
 import unittest
 import json
 
-class UserResourceTestCase(unittest.TestCase):
+class UsersResourceTestCase(unittest.TestCase):
 
   def test_get_all_users(self):
     service = UserResource()
