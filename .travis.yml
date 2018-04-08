@@ -7,7 +7,7 @@ services:
 install:
   - pip install -r requirements-test.txt
 before_script:
-  - sleep 15
+  - sleep 10
 script: 
   - pytest --cov-config .coveragerc --cov=$(pwd)
 after_success:
