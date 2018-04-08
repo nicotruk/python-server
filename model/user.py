@@ -2,6 +2,9 @@ from model.mongodb import mongo
 import uuid
 import pprint
 
+class UserNotFoundException(Exception):
+  pass
+
 class User:
 
     def __init__(self, user_id, username, password, email):
@@ -23,13 +26,30 @@ class User:
         return usersResponse
 
     @staticmethod
+    def getUserById(user_id):
+        userResponse = mongo.db.users.find_one({"user_id": user_id})
+
+        if userResponse is None:
+            raise UserNotFoundException("There is no user with that ID!")
+
+        pprint.pprint(userResponse)
+        response = {
+            "user": {
+                "user_id": userResponse["user_id"],
+                "username": userResponse["username"],
+                "password": userResponse["password"],
+                "email": userResponse["email"]
+            }
+        }
+        return response
+
+    @staticmethod
     def create(username, password, email):
         user_id = str(uuid.uuid4())
         newUser = User(user_id, username, password, email)
         encodedUser = User._encode_user(newUser)
         mongo.db.users.insert(encodedUser)
         response = {
-            "statusCode": 200,
             "user": {
                 "user_id": encodedUser["user_id"],
                 "username": encodedUser["username"],

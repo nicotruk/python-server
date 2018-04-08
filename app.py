@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 
 from model.mongodb import mongo
-#from resources.user_resource import SingleUserResource
+from resources.user_resource import SingleUserResource
 #from resources.user_resource import UsersCountResource
 from resources.user_resource import UsersResource
 from resources.cat_resource import CatResource
@@ -17,7 +17,7 @@ mongo.init_app(app, config_prefix='MONGO')
 
 api.add_resource(UsersResource, '/users')
 #api.add_resource(UsersCountResource, '/users/count')
-#api.add_resource(SingleUserResource, '/users/<user_id>')
+api.add_resource(SingleUserResource, '/users/<user_id>')
 api.add_resource(CatResource, '/cats')
 
 @app.route('/')

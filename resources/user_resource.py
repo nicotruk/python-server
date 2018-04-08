@@ -1,29 +1,30 @@
 import json
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask_restful import Resource
-from model.user import User
+from model.user import User, UserNotFoundException
+from resources.error_handler import ErrorHandler
+import pprint
 
 
 class UsersResource(Resource):
     def get(self):
-        return jsonify(User.getAll())
+        return make_response(jsonify(User.getAll()), 200)
 
     def post(self):
         user_data = json.loads(request.data)
-        return jsonify(User.create(user_data["username"], user_data["password"], user_data["email"]))
+        return make_response(jsonify(User.create(user_data["username"], user_data["password"], user_data["email"])), 200)
 
 
-'''class SingleUserResource(Resource):
+class SingleUserResource(Resource):
     def get(self, user_id):
-        mongo_response = mongo.db.users.find_one({"user_id": user_id})
-        if mongo_response is None:
-            return {"error": "No user with user id : {}".format(user_id)}, 404
+        try:
+            return make_response(jsonify(User.getUserById(user_id)), 200)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            return ErrorHandler.create_error_response(status_code, message)
 
-        users_db_response = User()
-        users_db_response._decode_user(mongo_response)
-        return json.dumps(users_db_response.__dict__)
-
-
+'''
 class UsersCountResource(Resource):
     def get(self):
         users_count = mongo.db.users.count()
