@@ -17,7 +17,6 @@ mongo.init_app(app, config_prefix='MONGO')
 api.add_resource(UsersResource, '/users')
 #api.add_resource(UsersCountResource, '/users/count')
 api.add_resource(SingleUserResource, '/users/<user_id>')
-api.add_resource(CatResource, '/cats')
 
 @app.route('/')
 def hello_world():
