@@ -7,10 +7,9 @@ class UserNotFoundException(Exception):
 
 class User:
 
-    def __init__(self, user_id, username, password, email):
+    def __init__(self, user_id, username, email):
         self.user_id = user_id
         self.username = username
-        self.password = password
         self.email = email
 
     @staticmethod
@@ -37,23 +36,21 @@ class User:
             "user": {
                 "user_id": userResponse["user_id"],
                 "username": userResponse["username"],
-                "password": userResponse["password"],
                 "email": userResponse["email"]
             }
         }
         return response
 
     @staticmethod
-    def create(username, password, email):
+    def create(username, email):
         user_id = str(uuid.uuid4())
-        newUser = User(user_id, username, password, email)
+        newUser = User(user_id, username, email)
         encodedUser = User._encode_user(newUser)
         mongo.db.users.insert(encodedUser)
         response = {
             "user": {
                 "user_id": encodedUser["user_id"],
                 "username": encodedUser["username"],
-                "password": encodedUser["password"],
                 "email": encodedUser["email"]
             }
         }
@@ -61,7 +58,7 @@ class User:
 
     @staticmethod
     def _encode_user(user):
-        return {"_type": "user", "user_id": user.user_id, "username": user.username, "password": user.password, "email": user.email}
+        return {"_type": "user", "user_id": user.user_id, "username": user.username, "email": user.email}
 
     @staticmethod
     def _decode_user(document):
@@ -69,7 +66,6 @@ class User:
         user = {
             "user_id": document["user_id"],
             "username": document["username"],
-            "password": document["password"],
             "email": document["email"]
         }
         return user
