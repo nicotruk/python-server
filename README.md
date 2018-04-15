@@ -19,7 +19,7 @@ $ (sudo) pip install -r requirements.txt
     4.1 Utilizando flask
     ```
     $ export FLASK_APP=app.py
-    $ flask run
+    $ flask run --host=0.0.0.0 --port=8000
     ```
     4.2 Ejecutar aplicacion con gunicorn como webserver
     ```

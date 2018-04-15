@@ -7,3 +7,4 @@ Flask-PyMongo==0.5.1
 gunicorn==19.7.1
 pytest==3.2.1
 pytest-cov==2.5.1
+mock==2.0.0

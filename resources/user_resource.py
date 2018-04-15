@@ -5,8 +5,8 @@ from flask_restful import Resource
 from flask import Response
 from model.user import User, UserNotFoundException
 from model.registration_data import RegistrationData
+from shared_server_config import SHARED_SERVER_URI, SHARED_SERVER_USER_PATH
 from resources.error_handler import ErrorHandler
-from shared_server_config import SHARED_SERVER_USER_PATH
 
 
 class UsersResource(Resource):
@@ -15,9 +15,15 @@ class UsersResource(Resource):
 
     def post(self):
         user_data = json.loads(request.data)
-        return make_response(jsonify(User.create(user_data["username"], user_data["password"], user_data["email"])),
-                             200)
-
+        '''payload = {
+            "username": user_data["username"],
+            "password": user_data["password"],
+            "applicationOwner": "1234"
+        }'''
+        #response = requests.post('{}/api/user'.format(SHARED_SERVER_URI), data=json.dumps(payload))
+        #if response.status_code is 200: 
+        return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
+        #return response
 
 class SingleUserResource(Resource):
     def get(self, user_id):
@@ -28,6 +34,25 @@ class SingleUserResource(Resource):
             message = e.args[0]
             return ErrorHandler.create_error_response(status_code, message)
 
+class UserLoginResource(Resource):
+    def post(self):
+        credentials = json.loads(request.data)
+        payload = {
+            "username": credentials["username"],
+            "password": credentials["password"]
+        }
+        #response = requests.post('{}/api/token'.format(SHARED_SERVER_URI), data=json.dumps(payload))
+        token = {
+            "token": "asdkljlkñfdjsalñghjwoihtqlkwjelkñjdalkñsfj"
+        }
+        return make_response(jsonify(token))
+
+'''
+class UsersCountResource(Resource):
+    def get(self):
+        users_count = mongo.db.users.count()
+        return users_count
+        '''
 
 class RegistrationResource(Resource):
     def post(self):
