@@ -1,7 +1,7 @@
 import requests
 from flask_restful import Resource
 from flask import Response
-from shared_server_config import SHARED_SERVER_URI
+from shared_server_config import SHARED_SERVER_PING_PATH
 
 SUCCESS_MESSAGE = 'Connected'
 
@@ -13,7 +13,7 @@ class PingResource(Resource):
 
 class PingSharedServerResource(Resource):
     def get(self):
-        response = requests.get(SHARED_SERVER_URI)
+        response = requests.get(SHARED_SERVER_PING_PATH)
         if response.ok:
             return Response(SUCCESS_MESSAGE, 200)
         else:

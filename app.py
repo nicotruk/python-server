@@ -5,7 +5,7 @@ from model.mongodb import mongo
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
-#from resources.user_resource import UsersCountResource
+from resources.user_resource import RegistrationResource
 from resources.user_resource import UsersResource
 
 app = Flask("python_server")
@@ -17,11 +17,12 @@ app.config['MONGO_DBNAME'] = 'python_server'
 mongo.init_app(app, config_prefix='MONGO')
 
 api.add_resource(UsersResource, '/users')
-#api.add_resource(UsersCountResource, '/users/count')
 api.add_resource(SingleUserResource, '/users/<user_id>')
+api.add_resource(RegistrationResource, '/user')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/pingSharedServer')
+
 
 @app.route('/')
 def hello_world():

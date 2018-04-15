@@ -2,8 +2,10 @@ from model.mongodb import mongo
 import uuid
 import pprint
 
+
 class UserNotFoundException(Exception):
-  pass
+    pass
+
 
 class User:
 
@@ -16,29 +18,29 @@ class User:
     @staticmethod
     def getAll():
         users_db_response = list(mongo.db.users.find())
-        usersResponse = {
+        users_response = {
             "users": []
         }
 
         for userDBResponse in users_db_response:
-            usersResponse["users"].append(User._decode_user(userDBResponse))
+            users_response["users"].append(User._decode_user(userDBResponse))
 
-        return usersResponse
+        return users_response
 
     @staticmethod
     def getUserById(user_id):
-        userResponse = mongo.db.users.find_one({"user_id": user_id})
+        user_response = mongo.db.users.find_one({"user_id": user_id})
 
-        if userResponse is None:
+        if user_response is None:
             raise UserNotFoundException("There is no user with that ID!")
 
-        pprint.pprint(userResponse)
+        pprint.pprint(user_response)
         response = {
             "user": {
-                "user_id": userResponse["user_id"],
-                "username": userResponse["username"],
-                "password": userResponse["password"],
-                "email": userResponse["email"]
+                "user_id": user_response["user_id"],
+                "username": user_response["username"],
+                "password": user_response["password"],
+                "email": user_response["email"]
             }
         }
         return response
@@ -46,15 +48,15 @@ class User:
     @staticmethod
     def create(username, password, email):
         user_id = str(uuid.uuid4())
-        newUser = User(user_id, username, password, email)
-        encodedUser = User._encode_user(newUser)
-        mongo.db.users.insert(encodedUser)
+        new_user = User(user_id, username, password, email)
+        encoded_user = User._encode_user(new_user)
+        mongo.db.users.insert(encoded_user)
         response = {
             "user": {
-                "user_id": encodedUser["user_id"],
-                "username": encodedUser["username"],
-                "password": encodedUser["password"],
-                "email": encodedUser["email"]
+                "user_id": encoded_user["user_id"],
+                "username": encoded_user["username"],
+                "password": encoded_user["password"],
+                "email": encoded_user["email"]
             }
         }
         return response
