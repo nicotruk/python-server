@@ -23,6 +23,6 @@ class RegistrationResourceTestCase(unittest.TestCase):
             "username": "nico",
             "password": "1234"
         }
-        response = app.test_client().post("/api/v1/user", data=json.dumps(user_data), content_type='application/json')
+        response = app.test_client().post("/api/v1/login", data=json.dumps(user_data), content_type='application/json')
         # If the request is sent successfully, then I expect a response to be returned.
         self.assertEqual(response.status_code, 200)

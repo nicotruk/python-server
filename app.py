@@ -18,7 +18,7 @@ mongo.init_app(app, config_prefix='MONGO')
 
 api.add_resource(UsersResource, '/users')
 api.add_resource(SingleUserResource, '/users/<user_id>')
-api.add_resource(RegistrationResource, '/user')
+api.add_resource(RegistrationResource, '/login')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/pingSharedServer')
