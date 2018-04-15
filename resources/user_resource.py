@@ -43,7 +43,7 @@ class UserLoginResource(Resource):
         }
         #response = requests.post('{}/api/token'.format(SHARED_SERVER_URI), data=json.dumps(payload))
         token = {
-            "token": "asdkljlkñfdjsalñghjwoihtqlkwjelkñjdalkñsfj"
+            "token": "ahsdfqkjwrykuqetrkjghafgdhsagfdjghqefghq"
         }
         return make_response(jsonify(token))
 
