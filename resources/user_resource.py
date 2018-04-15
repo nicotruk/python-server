@@ -13,15 +13,15 @@ class UsersResource(Resource):
 
     def post(self):
         user_data = json.loads(request.data)
-        payload = {
+        '''payload = {
             "username": user_data["username"],
             "password": user_data["password"],
             "applicationOwner": "1234"
-        }
-        response = requests.post('{}/api/user'.format(SHARED_SERVER_URI), data=json.dumps(payload))
-        if response.status_code is 200: 
-            return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
-        return response
+        }'''
+        #response = requests.post('{}/api/user'.format(SHARED_SERVER_URI), data=json.dumps(payload))
+        #if response.status_code is 200: 
+        return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
+        #return response
 
 class SingleUserResource(Resource):
     def get(self, user_id):
@@ -39,8 +39,11 @@ class UserLoginResource(Resource):
             "username": credentials["username"],
             "password": credentials["password"]
         }
-        response = requests.post('{}/api/token'.format(SHARED_SERVER_URI), data=json.dumps(payload))
-        return response
+        #response = requests.post('{}/api/token'.format(SHARED_SERVER_URI), data=json.dumps(payload))
+        token = {
+            "token": "asdkljlkñfdjsalñghjwoihtqlkwjelkñjdalkñsfj"
+        }
+        return make_response(jsonify(token))
 
 '''
 class UsersCountResource(Resource):

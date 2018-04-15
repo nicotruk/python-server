@@ -62,15 +62,5 @@ class UsersResourceTestCase(unittest.TestCase):
     getResponse = app.test_client().get('/api/v1/users/{}'.format(user["user_id"]))
     self.assertEqual(user,json.loads(getResponse.data)["user"])
 
-  def test_login_hash(self):
-    user = {
-      "username": "asd",
-      "password": "1234"
-    }
-
-    app.test_client().post("/api/v1/users/login", data=json.dumps(user), content_type='application/json')
-
-    self.assertEqual(1,2)
-
 
 
