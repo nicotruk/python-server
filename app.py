@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_restful import Api
 
-from model.mongodb import mongo
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
@@ -15,7 +14,6 @@ api = Api(app, prefix="/api/v1")
 
 # connect to another MongoDB database
 app.config['MONGO_DBNAME'] = 'python_server'
-mongo.init_app(app, config_prefix='MONGO')
 
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')

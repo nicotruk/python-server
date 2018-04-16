@@ -1,3 +1,4 @@
-from flask_pymongo import PyMongo
+from pymongo import MongoClient
 
-mongo = PyMongo()
+mongo = MongoClient()
+db = mongo.python_server

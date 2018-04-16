@@ -1,4 +1,4 @@
-from model.mongodb import mongo
+from model.mongodb import db
 import uuid
 import pprint
 
@@ -16,7 +16,7 @@ class User:
 
     @staticmethod
     def getAll():
-        users_db_response = list(mongo.db.users.find())
+        users_db_response = list(db.users.find())
         users_response = {
             "users": []
         }
@@ -28,7 +28,7 @@ class User:
 
     @staticmethod
     def getUserById(user_id):
-        user_response = mongo.db.users.find_one({"user_id": user_id})
+        user_response = db.users.find_one({"user_id": user_id})
 
         if user_response is None:
             raise UserNotFoundException("There is no user with that ID!")
@@ -48,7 +48,7 @@ class User:
         user_id = str(uuid.uuid4())
         new_user = User(user_id, username, email)
         encoded_user = User._encode_user(new_user)
-        mongo.db.users.insert(encoded_user)
+        db.users.insert(encoded_user)
         response = {
             "user": {
                 "user_id": encoded_user["user_id"],
