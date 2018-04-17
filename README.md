@@ -25,7 +25,9 @@ $ (sudo) pip install -r requirements.txt
     ```
     gunicorn -w 4 -b 0.0.0.0:8000 app:app --log-file=-
     ```
-5. Intalación de MongoDB (por línea de comandos)
+
+### Intalación de MongoDB (por línea de comandos)
+
 ```
 $ sudo apt-get install -y mongodb-org
 $ sudo service mongod start
