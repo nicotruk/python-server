@@ -2,6 +2,9 @@ language: python
 python:
   - "2.7.13"
   - "3.6"
+env:
+  - "DB_PORT_27017_TCP_ADDR=mongodb://localhost"
+  - "MONGO_PORT=27017"
 services:
   - mongodb
 install:
