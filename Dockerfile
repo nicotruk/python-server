@@ -6,6 +6,10 @@ WORKDIR /python-server
 
 EXPOSE 8000
 
+ENV DB_PORT_27017_TCP_ADDR mongodb://grupo2:123@ds249269.mlab.com
+
+ENV MONGO_PORT 49269/heroku_5d6zh6jz
+
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
