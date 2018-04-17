@@ -1,6 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/nicotruk/python-server/badge.svg?branch=Coverage)](https://coveralls.io/github/nicotruk/python-server?branch=Coverage)
 
-# Python App Server:
+# Python App Server
 
 1. Generar entorno mediante virtualenv
 ```
@@ -29,4 +29,16 @@ $ (sudo) pip install -r requirements.txt
 ```
 $ sudo apt-get install -y mongodb-org
 $ sudo service mongod start
+```
+
+### Instalacion con Docker
+
+Proceder a la carpeta root del proyecto (en la que se encuentran los archivos Dockerfile y docker-compose.yml) y correr los siguientes comando:
+
+```
+(sudo) docker-compose build
+```
+
+```
+(sudo) docker-compose up
 ```

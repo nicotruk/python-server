@@ -1,6 +1,6 @@
 web:
   build: .
-  command: python -u app.py
+  command: gunicorn -w 4 -b 0.0.0.0:5000 app:app --log-file=-
   ports:
     - "5000:5000"
   volumes:
