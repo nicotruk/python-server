@@ -3,7 +3,7 @@ python:
   - "2.7.13"
   - "3.6"
 env: 
-  - "MONGO_URL=mongodb://localhost/"
+  - "DB_PORT_27017_TCP_ADDR=mongodb://localhost/"
 services:
   - mongodb
 install:
