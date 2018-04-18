@@ -21,7 +21,8 @@ class UsersResource(Resource):
             "password": user_data["password"],
             "applicationOwner": "1234"
         }
-        response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload))
+        headers = {'content-type': 'application/json'}
+        response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
         if response.status_code is 200: 
             return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
         return make_response(response.text, response.status_code)
@@ -42,8 +43,16 @@ class UserLoginResource(Resource):
             "username": credentials["username"],
             "password": credentials["password"]
         }
-        response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload))
-        return make_response(response.text, response.status_code)
+        headers = {'content-type': 'application/json'}
+        response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
+        jsonResponse = json.loads(response.text)
+        builtResponse = {
+            "token": {
+                "expiresAt": jsonResponse["token"]["expiresAt"],
+                "token": jsonResponse["token"]["token"]
+            }
+        }
+        return make_response(jsonify(builtResponse), response.status_code)
 
 '''
 class UsersCountResource(Resource):
