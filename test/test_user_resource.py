@@ -26,7 +26,7 @@ class UsersResourceTestCase(unittest.TestCase):
     self.assertEqual(response.status_code, 200)
 
   @patch('resources.user_resource.requests.post')
-  def test_post_user(self):
+  def test_post_user(self, mock_post):
     mock_post.return_value.ok = True
 
     user = {
@@ -46,7 +46,7 @@ class UsersResourceTestCase(unittest.TestCase):
     self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
     
   @patch('resources.user_resource.requests.post')
-  def test_integration_create_user(self):
+  def test_integration_create_user(self, mock_post):
     mock_post.return_value.ok = True
 
     user = {
@@ -64,7 +64,7 @@ class UsersResourceTestCase(unittest.TestCase):
     self.assertIn(user, json.loads(getResponse.data)["users"])
 
   @patch('resources.user_resource.requests.post')
-  def test_integration_get_single_user(self):
+  def test_integration_get_single_user(self, mock_post):
     mock_post.return_value.ok = True
 
     user = {
