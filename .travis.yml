@@ -3,7 +3,11 @@ python:
   - "2.7.13"
   - "3.6"
 env:
-  - DB_PORT_27017_TCP_ADDR=mongodb://localhost MONGO_PORT=27017
+  global:
+    - MONGO_URL=mongodb://localhost
+    - MONGO_PORT=27017
+    - SS_USER=http://www.mocky.io/v2/5ad6e0fc2e00002b00c93c3d
+    - SS_TOKEN=http://www.mocky.io/v2/5ad6e0fc2e00002b00c93c3d
 services:
   - mongodb
 install:
