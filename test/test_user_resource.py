@@ -51,8 +51,14 @@ class UsersResourceTestCase(unittest.TestCase):
 
   @patch('resources.user_resource.requests.post')
   def test_login(self, mock_post):
-    #Lo siguiente no es ideal, pero por ahora sirve. Habria que tratar de construir un objecto requests.Response
-    mock_post.return_value = requests.get("http://www.mocky.io/v2/5ad6f91c2e00007800c93cb3")
+    response = {
+      "token": {
+        "expiresAt": "123",
+        "token": "asd"
+      }
+    }
+    mock_post.return_value.text = json.dumps(response)
+    mock_post.return_value.status_code = 200
 
     user = {
       "username": "asd",
