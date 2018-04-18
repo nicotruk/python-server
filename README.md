@@ -1,4 +1,5 @@
-[![Coverage Status](https://coveralls.io/repos/github/nicotruk/python-server/badge.svg?branch=Coverage)](https://coveralls.io/github/nicotruk/python-server?branch=Coverage)
+[![Build Status](https://travis-ci.org/taller2-2018-1-grupo2/python-server.svg?branch=master)](https://travis-ci.org/taller2-2018-1-grupo2/python-server)
+[![Coverage Status](https://coveralls.io/repos/github/taller2-2018-1-grupo2/python-server/badge.svg?branch=master)](https://coveralls.io/github/taller2-2018-1-grupo2/python-server?branch=master)
 
 # Python App Server
 
