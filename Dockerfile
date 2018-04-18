@@ -10,10 +10,6 @@ ENV MONGO_URL mongodb://grupo2:123@ds249269.mlab.com
 
 ENV MONGO_PORT 49269/heroku_5d6zh6jz
 
-ENV SS_USER https://stories-shared-server.herokuapp.com/api/user
-
-ENV SS_TOKEN https://stories-shared-server.herokuapp.com/api/token
-
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt

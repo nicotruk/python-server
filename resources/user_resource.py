@@ -1,5 +1,6 @@
 import json
 import requests
+import pprint
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 from flask import Response
@@ -23,7 +24,7 @@ class UsersResource(Resource):
         response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload))
         if response.status_code is 200: 
             return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
-        return response.json()
+        return make_response(response.text, response.status_code)
 
 class SingleUserResource(Resource):
     def get(self, user_id):
@@ -42,7 +43,7 @@ class UserLoginResource(Resource):
             "password": credentials["password"]
         }
         response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload))
-        return response
+        return make_response(response.text, response.status_code)
 
 '''
 class UsersCountResource(Resource):
