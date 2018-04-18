@@ -6,6 +6,7 @@ sys.path.insert(0, myPath + '/../')
 from resources.user_resource import UsersResource
 from model.mongodb import db
 from app import app
+from mock import patch
 import unittest
 import json
 import pprint
@@ -65,7 +66,7 @@ class UsersResourceTestCase(unittest.TestCase):
   @patch('resources.user_resource.requests.post')
   def test_integration_get_single_user(self):
     mock_post.return_value.ok = True
-    
+
     user = {
       "username": "asd",
       "email": "asd@asd.com"
