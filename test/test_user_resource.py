@@ -37,6 +37,7 @@ class UsersResourceTestCase(unittest.TestCase):
                                            data=json.dumps(user),
                                            content_type='application/json')
     userResponse = json.loads(response.data)
+    pprint.pprint(userResponse)
     user["user_id"] = userResponse["user"]["user_id"]
     self.assertEqual(user, userResponse["user"])
 
