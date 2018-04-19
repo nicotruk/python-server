@@ -45,14 +45,22 @@ class UserLoginResource(Resource):
         }
         headers = {'content-type': 'application/json'}
         response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
-        jsonResponse = json.loads(response.text)
-        builtResponse = {
-            "token": {
-                "expiresAt": jsonResponse["token"]["expiresAt"],
-                "token": jsonResponse["token"]["token"]
+        json_response = json.loads(response.text)
+        if response.status_code is 200:
+            built_response = {
+                "token": {
+                    "expiresAt": json_response["token"]["expiresAt"],
+                    "token": json_response["token"]["token"]
+                }
             }
-        }
-        return make_response(jsonify(builtResponse), response.status_code)
+        else:
+            built_response = {
+                "error": {
+                    "code": json_response["code"],
+                    "message": json_response["message"]
+                }
+            }
+        return make_response(jsonify(built_response), response.status_code)
 
 '''
 class UsersCountResource(Resource):
