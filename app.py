@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask
 from flask_restful import Api
 
@@ -32,4 +34,6 @@ def hello_world():
 
 if __name__ == '__main__':
     configure_logger()
+    logging.info("Starting Python Server Services...")
     app.run(host='0.0.0.0')
+    logging.info("Started")
