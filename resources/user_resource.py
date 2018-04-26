@@ -11,7 +11,7 @@ from shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PA
 
 class UsersResource(Resource):
     def get(self):
-        return make_response(jsonify(User.getAll()), 200)
+        return make_response(jsonify(User.get_all()), 200)
 
     def post(self):
         user_data = json.loads(request.data)
@@ -30,7 +30,7 @@ class UsersResource(Resource):
 class SingleUserResource(Resource):
     def get(self, user_id):
         try:
-            return make_response(jsonify(User.getUserById(user_id)), 200)
+            return make_response(jsonify(User.get_user_by_id(user_id)), 200)
         except UserNotFoundException as e:
             status_code = 403
             message = e.args[0]
