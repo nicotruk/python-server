@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 
+from model.logging import configure_logger
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
@@ -30,4 +31,5 @@ def hello_world():
 
 
 if __name__ == '__main__':
+    configure_logger()
     app.run(host='0.0.0.0')

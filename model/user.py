@@ -48,7 +48,7 @@ class User:
         user_id = str(uuid.uuid4())
         new_user = User(user_id, username, email)
         encoded_user = User._encode_user(new_user)
-        db.users.insert(encoded_user)
+        db.users.insert_one(encoded_user)
         response = {
             "user": {
                 "user_id": encoded_user["user_id"],

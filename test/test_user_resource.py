@@ -20,7 +20,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
     def tearDown(self):
         with app.app_context():
-            db.users.remove({})
+            db.users.delete_many({})
 
     def test_get_all_users(self):
         response = self.app.get("/api/v1/users")
