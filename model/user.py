@@ -1,4 +1,4 @@
-from model.mongodb import db
+from config.mongodb import db
 import uuid
 import pprint
 

@@ -6,7 +6,7 @@ from flask_restful import Resource
 
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
-from shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
+from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
 
 
 class UsersResource(Resource):

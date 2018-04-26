@@ -1,7 +1,7 @@
 import requests
 from flask_restful import Resource
 from flask import Response
-from shared_server_config import SHARED_SERVER_PING_PATH
+from config.shared_server_config import SHARED_SERVER_PING_PATH
 import logging
 
 SUCCESS_MESSAGE = 'Connected'

@@ -5,7 +5,7 @@ import sys
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 ########
-from model.mongodb import db
+from config.mongodb import db
 from app import app
 from mock import patch
 import unittest

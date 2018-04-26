@@ -3,7 +3,7 @@ import logging
 from flask import Flask
 from flask_restful import Api
 
-from model.logging import configure_logger
+from config.logging import configure_logger
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
