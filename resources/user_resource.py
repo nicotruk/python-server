@@ -1,19 +1,28 @@
 import json
+import logging
 
 import requests
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 
+from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
-from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
 
 
 class UsersResource(Resource):
     def get(self):
-        return make_response(jsonify(User.get_all()), 200)
+        try:
+            logging.info("Received UsersResource GET Request")
+            users_response = User.get_all()
+            logging.debug("Python Server Response: 200 - %s", users_response)
+            return make_response(jsonify(users_response), 200)
+        except ValueError:
+            logging.error("Python Server Response: 500 - %s", "Unable to handle UsersResource GET Request")
+            return ErrorHandler.create_error_response(500, "Unable to handle UsersResource GET Request")
 
     def post(self):
+        logging.info("Received UsersResource POST Request")
         user_data = json.loads(request.data)
         payload = {
             "username": user_data["username"],
