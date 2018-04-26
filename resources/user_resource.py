@@ -1,13 +1,12 @@
 import json
+
 import requests
-import pprint
 from flask import request, jsonify, make_response
 from flask_restful import Resource
-from flask import Response
+
 from model.user import User, UserNotFoundException
-from model.registration_data import RegistrationData
-from shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
 from resources.error_handler import ErrorHandler
+from shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
 
 
 class UsersResource(Resource):
@@ -23,9 +22,10 @@ class UsersResource(Resource):
         }
         headers = {'content-type': 'application/json'}
         response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-        if response.status_code is 200: 
+        if response.status_code is 200:
             return make_response(jsonify(User.create(user_data["username"], user_data["email"])), 200)
         return make_response(response.text, response.status_code)
+
 
 class SingleUserResource(Resource):
     def get(self, user_id):
@@ -35,6 +35,7 @@ class SingleUserResource(Resource):
             status_code = 403
             message = e.args[0]
             return ErrorHandler.create_error_response(status_code, message)
+
 
 class UserLoginResource(Resource):
     def post(self):
@@ -61,6 +62,7 @@ class UserLoginResource(Resource):
                 }
             }
         return make_response(jsonify(built_response), response.status_code)
+
 
 '''
 class UsersCountResource(Resource):

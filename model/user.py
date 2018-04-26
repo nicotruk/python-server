@@ -15,7 +15,7 @@ class User:
         self.email = email
 
     @staticmethod
-    def getAll():
+    def get_all():
         users_db_response = list(db.users.find())
         users_response = {
             "users": []
@@ -27,7 +27,7 @@ class User:
         return users_response
 
     @staticmethod
-    def getUserById(user_id):
+    def get_user_by_id(user_id):
         user_response = db.users.find_one({"user_id": user_id})
 
         if user_response is None:
