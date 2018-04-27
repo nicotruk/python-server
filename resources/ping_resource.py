@@ -1,8 +1,10 @@
-import requests
-from flask_restful import Resource
-from flask import Response
-from config.shared_server_config import SHARED_SERVER_PING_PATH
 import logging
+
+import requests
+from flask import Response
+from flask_restful import Resource
+
+from config.shared_server_config import SHARED_SERVER_PING_PATH
 
 SUCCESS_MESSAGE = 'Connected'
 
@@ -24,5 +26,6 @@ class PingSharedServerResource(Resource):
             logging.debug("Python Server Response: 200 - %s", SUCCESS_MESSAGE)
             return Response(SUCCESS_MESSAGE, 200)
         else:
-            logging.info("Python Server Response: None")
-            return None
+            failure_message = "Connection to Shared Server failed"
+            logging.warning("Python Server Response: 404 - %s", failure_message)
+            return Response(failure_message, 404)

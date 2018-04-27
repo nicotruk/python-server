@@ -24,7 +24,7 @@ api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
 
 api.add_resource(PingResource, '/ping')
-api.add_resource(PingSharedServerResource, '/pingSharedServer')
+api.add_resource(PingSharedServerResource, '/ping/sharedServer')
 
 
 @app.route('/')
