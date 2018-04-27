@@ -7,4 +7,5 @@ def configure_logger():
     # logging_level = logging.WARNING
     # logging_level = logging.ERROR
     # logging_level = logging.CRITICAL
-    logging.basicConfig(filename='python-server.log', level=logging_level)
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', filename='python-server.log',
+                        level=logging_level)
