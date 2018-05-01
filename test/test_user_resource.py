@@ -5,7 +5,7 @@ import sys
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 ########
-from model.mongodb import db
+from config.mongodb import db
 from app import app
 from mock import patch
 import unittest
@@ -20,7 +20,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
     def tearDown(self):
         with app.app_context():
-            db.users.remove({})
+            db.users.delete_many({})
 
     def test_get_all_users(self):
         response = self.app.get("/api/v1/users")

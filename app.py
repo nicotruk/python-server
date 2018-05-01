@@ -1,6 +1,9 @@
+import logging
+
 from flask import Flask
 from flask_restful import Api
 
+from config.logging import configure_logger
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
@@ -21,7 +24,7 @@ api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
 
 api.add_resource(PingResource, '/ping')
-api.add_resource(PingSharedServerResource, '/pingSharedServer')
+api.add_resource(PingSharedServerResource, '/ping/sharedServer')
 
 
 @app.route('/')
@@ -30,4 +33,7 @@ def hello_world():
 
 
 if __name__ == '__main__':
+    configure_logger()
+    logging.info("Starting Python Server Services...")
     app.run(host='0.0.0.0')
+    logging.info("Started")
