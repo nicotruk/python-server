@@ -10,6 +10,9 @@ from resources.user_resource import SingleUserResource
 from resources.user_resource import UserLoginResource
 # from resources.user_resource import UsersCountResource
 from resources.user_resource import UsersResource
+from resources.friendship_resource import FriendshipRequestResource
+from resources.friendship_resource import FriendshipRequestsSentResource
+from resources.friendship_resource import FriendshipRequestsReceivedResource
 
 app = Flask("python_server")
 
@@ -21,6 +24,10 @@ app.config['MONGO_DBNAME'] = 'python_server'
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
+
+api.add_resource(FriendshipRequestResource, '/friendship/request')
+api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_user_id>')
+api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_user_id>')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')

@@ -1,7 +1,5 @@
 import json
 import logging
-import pprint
-from os import stat
 
 import requests
 from flask import request, jsonify, make_response
