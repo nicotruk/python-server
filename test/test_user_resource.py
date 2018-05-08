@@ -10,7 +10,6 @@ from app import app
 from mock import patch
 import unittest
 import json
-import pprint
 
 test_user = {
     "username": "asd",
@@ -19,6 +18,7 @@ test_user = {
     "first_name": "Nombre",
     "last_name": "Apellido" 
 }
+
 
 class UsersResourceTestCase(unittest.TestCase):
 
