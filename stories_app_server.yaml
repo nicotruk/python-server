@@ -6,12 +6,15 @@ info:
 host: virtserver.swaggerhub.com
 basePath: /nicotruk/ApplicationServerAPI/1.0.0
 tags:
-- name: ping
-  description: |
-    Llamados de verificacion de conexiones a los servidores
-- name: users
-  description: |
-    Llamados relacionados con el login y la registracion de usuarios
+  - name: ping
+    description: |
+      Llamados de verificacion de conexiones a los servidores
+  - name: users
+    description: |
+      Llamados relacionados con el login y la registracion de usuarios
+  - name: friendship
+    description: |
+      Llamados relacionados con las solicitudes de amistad entre usuarios
 schemes:
 - https
 - http
@@ -26,7 +29,6 @@ paths:
       - ping
       summary: Conexion a Application Server
       description: Chequea conexion a Application Server
-      parameters: []
       responses:
         200:
           description: Conectado
@@ -36,10 +38,65 @@ paths:
       - ping
       summary: Conexion a Shared Server
       description: Chequea conexion a Shared Server
-      parameters: []
       responses:
         200:
           description: Conectado
         404:
           description: Conexion a Shared Server fallida
+  /users:
+    post:
+      tags:
+      - users
+      summary: Creacion de nuevo usuario
+      description: Se crea un usuario con la data recibida
+      responses:
+        200:
+          description: Usuario creado exitosamente
+        500:
+          description: Error en creacion de usuario
+    get:
+      tags:
+      - users
+      summary: Consulta de usuarios
+      description: Consulta de todos los usuarios guardados en la DB
+      responses:
+        200:
+          description: Consulta realizada exitosamente
+        500:
+          description: Error en la consulta
+  /friendship/request:
+    post:
+      tags:
+      - friendship
+      summary: Resgistracion de solicitud de amistad
+      description: Se registra la solicitud de amistad entre dos usuarios
+      responses:
+        201:
+          description: Solicitud registrada exitosamente
+        409:
+          description: Ya existe una solicitud entre dichos usuarios
+        500:
+          description: Error en el servidor
+  /friendship/request/sent/<from_user_id>:
+    get:
+      tags:
+      - friendship
+      summary: Consulta de solicitudes enviadas
+      description: Consulta de las solicitudes enviadas por un usuario en particular
+      responses:
+        200:
+          description: Consulta realizada exitosamente
+        500:
+          description: Error en el servidor
+  /friendship/request/received/<to_user_id>:
+    get:
+      tags:
+      - friendship
+      summary: Consulta de solicitudes recibidas
+      description: Consulta de las solicitudes recibidas para un usuario en particular
+      responses:
+        200:
+          description: Consulta realizada exitosamente
+        500:
+          description: Error en el servidor
 definitions: {}
