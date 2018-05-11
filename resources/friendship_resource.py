@@ -19,7 +19,7 @@ class FriendshipRequestResource(Resource):
                                                                   request_data["to_user_id"],
                                                                   int(round(time.time() * 1000)))
             if friendship_request_created is None:
-                logging.debug("Python Server Response: 200 - %s", "Friendship request already exists")
+                logging.debug("Python Server Response: 409 - %s", "Friendship request already exists")
                 return make_response("Friendship request already exists", 409)
             else:
                 logging.debug("Python Server Response: 201 - %s", friendship_request_created)

@@ -13,6 +13,8 @@ from resources.user_resource import UsersResource
 from resources.friendship_resource import FriendshipRequestResource
 from resources.friendship_resource import FriendshipRequestsSentResource
 from resources.friendship_resource import FriendshipRequestsReceivedResource
+from resources.message_resource import DirectMessageResource
+from resources.message_resource import DirectMessagesReceivedResource
 
 app = Flask("python_server")
 
@@ -28,6 +30,9 @@ api.add_resource(SingleUserResource, '/users/<user_id>')
 api.add_resource(FriendshipRequestResource, '/friendship/request')
 api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_user_id>')
 api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_user_id>')
+
+api.add_resource(DirectMessageResource, '/direct_message')
+api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_user_id>')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')
