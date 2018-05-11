@@ -1,0 +1,164 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "API para el shared server de Stories",
+    "title" : "Stories - Aplication Server API",
+    "version" : "1.0.0"
+  },
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "tags" : [ {
+    "name" : "ping",
+    "description" : "Llamados de verificacion de conexiones a los servidores\n"
+  }, {
+    "name" : "users",
+    "description" : "Llamados relacionados con el login y la registracion de usuarios\n"
+  }, {
+    "name" : "friendship",
+    "description" : "Llamados relacionados con las solicitudes de amistad entre usuarios\n"
+  }, {
+    "name" : "direct messages",
+    "description" : "Llamados relacionados con el servicio de mensajeria entre usuarios\n"
+  }, {
+    "name" : "stories",
+    "description" : "Llamadas relacionados con las historias de usuarios\n"
+  } ],
+  "paths" : {
+    "/ping" : {
+      "get" : {
+        "tags" : [ "ping" ],
+        "summary" : "Conexion a Application Server",
+        "description" : "Chequea conexion a Application Server",
+        "responses" : {
+          "200" : {
+            "description" : "Conectado"
+          }
+        }
+      }
+    },
+    "/ping/sharedServer" : {
+      "get" : {
+        "tags" : [ "ping" ],
+        "summary" : "Conexion a Shared Server",
+        "description" : "Chequea conexion a Shared Server",
+        "responses" : {
+          "200" : {
+            "description" : "Conectado"
+          },
+          "404" : {
+            "description" : "Conexion a Shared Server fallida"
+          }
+        }
+      }
+    },
+    "/users" : {
+      "post" : {
+        "tags" : [ "users" ],
+        "summary" : "Creacion de nuevo usuario",
+        "description" : "Se crea un usuario con la data recibida",
+        "responses" : {
+          "200" : {
+            "description" : "Usuario creado exitosamente"
+          },
+          "500" : {
+            "description" : "Error en creacion de usuario"
+          }
+        }
+      },
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta de usuarios",
+        "description" : "Consulta de todos los usuarios guardados en la DB",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en la consulta"
+          }
+        }
+      }
+    },
+    "/friendship/request" : {
+      "post" : {
+        "tags" : [ "friendship" ],
+        "summary" : "Resgistracion de solicitud de amistad",
+        "description" : "Se registra la solicitud de amistad entre dos usuarios",
+        "responses" : {
+          "201" : {
+            "description" : "Solicitud registrada exitosamente"
+          },
+          "409" : {
+            "description" : "Ya existe una solicitud entre dichos usuarios"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/friendship/request/sent/<from_user_id>" : {
+      "get" : {
+        "tags" : [ "friendship" ],
+        "summary" : "Consulta de solicitudes enviadas",
+        "description" : "Consulta de las solicitudes enviadas por un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/friendship/request/received/<to_user_id>" : {
+      "get" : {
+        "tags" : [ "friendship" ],
+        "summary" : "Consulta de solicitudes recibidas",
+        "description" : "Consulta de las solicitudes recibidas para un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/direct_message" : {
+      "post" : {
+        "tags" : [ "direct messages" ],
+        "summary" : "Envio de mensaje entre usuarios",
+        "description" : "Se registra el envio de un mensaje directo entre dos usuarios",
+        "responses" : {
+          "201" : {
+            "description" : "Solicitud registrada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/direct_message/<to_user_id>" : {
+      "get" : {
+        "tags" : [ "direct messages" ],
+        "summary" : "Consulta de mensajes recibidos",
+        "description" : "Consulta de los mensajes recibidos para un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/nicotruk/ApplicationServerAPI/1.0.0",
+  "schemes" : [ "https", "http" ]
+}
