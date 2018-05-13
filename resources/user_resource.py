@@ -37,7 +37,7 @@ class UsersResource(Resource):
             headers = {'content-type': 'application/json'}
             response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             logging.debug("Shared Server Response: %s - %s", response.status_code, response.text)
-            if response.status_code is 200:
+            if response.ok:
                 user_created = User.create(user_data["username"], user_data["email"], user_data["first_name"], user_data["last_name"])
                 logging.debug("Python Server Response: 200 - %s", user_created)
                 return make_response(jsonify(user_created), 200)
@@ -92,7 +92,7 @@ class UserLoginResource(Resource):
             response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
             logging.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             json_response = json.loads(response.text)
-            if response.status_code is 200:
+            if response.ok:
                 built_response = {
                     "token": {
                         "expiresAt": json_response["token"]["expiresAt"],
