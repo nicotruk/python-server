@@ -91,11 +91,14 @@ class UserLoginResource(Resource):
             logging.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             json_response = json.loads(response.text)
             if response.ok:
+                user_id_response = User.get_user_id_by_username(credentials["username"])
+
                 built_response = {
                     "token": {
                         "expiresAt": json_response["token"]["expiresAt"],
                         "token": json_response["token"]["token"]
-                    }
+                    },
+                    "user_id": user_id_response["user_id"]
                 }
                 logging.debug("Python Server Response: %s - %s", response.status_code, built_response)
             else:
