@@ -87,6 +87,12 @@ class UsersResourceTestCase(unittest.TestCase):
 
     @patch('resources.user_resource.requests.post')
     def test_login(self, mock_post):
+        user = test_user.copy()
+
+        post_response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+
         response = {
             "token": {
                 "expiresAt": "123",
