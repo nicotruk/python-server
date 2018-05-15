@@ -8,7 +8,7 @@ from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
 from resources.user_resource import UserLoginResource
-# from resources.user_resource import UsersCountResource
+from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
 from resources.friendship_resource import FriendshipRequestResource
 from resources.friendship_resource import FriendshipRequestsSentResource
@@ -26,6 +26,7 @@ app.config['MONGO_DBNAME'] = 'python_server'
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
+api.add_resource(UserSearchResource, '/users/search/<partial_username>')
 
 api.add_resource(FriendshipRequestResource, '/friendship/request')
 api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_user_id>')
