@@ -15,8 +15,8 @@ class DirectMessageResource(Resource):
         try:
             logging.info("Received DirectMessageResource POST Request")
             request_data = json.loads(request.data)
-            direct_message_created = DirectMessage.create(request_data["from_user_id"],
-                                                          request_data["to_user_id"],
+            direct_message_created = DirectMessage.create(request_data["from_username"],
+                                                          request_data["to_username"],
                                                           request_data["message"],
                                                           int(round(time.time() * 1000)))
             if direct_message_created is None:
@@ -32,10 +32,10 @@ class DirectMessageResource(Resource):
 
 class DirectMessagesReceivedResource(Resource):
 
-    def get(self, to_user_id):
+    def get(self, to_username):
         try:
             logging.info("Received DirectMessagesReceivedResource - received requests - GET Request")
-            direct_messages = DirectMessage.get_received_direct_messages(to_user_id)
+            direct_messages = DirectMessage.get_received_direct_messages(to_username)
             logging.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
         except ValueError:

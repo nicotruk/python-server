@@ -1,7 +1,7 @@
 class FriendshipRequestVO:
 
-    def __init__(self, _id, from_user_id, to_user_id, timestamp):
+    def __init__(self, _id, from_username, to_username, timestamp):
         self._id = _id
-        self.from_user_id = from_user_id
-        self.to_user_id = to_user_id
+        self.from_username = from_username
+        self.to_username = to_username
         self.timestamp = timestamp

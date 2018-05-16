@@ -15,12 +15,12 @@ class FriendshipRequestResource(Resource):
         try:
             logging.info("Received FriendshipRequestResource POST Request")
             request_data = json.loads(request.data)
-            friendship_request_created = FriendshipRequest.create(request_data["from_user_id"],
-                                                                  request_data["to_user_id"],
+            friendship_request_created = FriendshipRequest.create(request_data["from_username"],
+                                                                  request_data["to_username"],
                                                                   int(round(time.time() * 1000)))
             if friendship_request_created is None:
                 logging.debug("Python Server Response: 409 - %s", "Friendship request already exists")
-                return make_response("Friendship request already exists", 409)
+                return make_response("Friendship request already exists", 201)
             else:
                 logging.debug("Python Server Response: 201 - %s", friendship_request_created)
                 return make_response(jsonify(friendship_request_created), 201)
@@ -32,10 +32,10 @@ class FriendshipRequestResource(Resource):
 
 class FriendshipRequestsSentResource(Resource):
 
-    def get(self, from_user_id):
+    def get(self, from_username):
         try:
             logging.info("Received FriendshipRequestResource - sent requests - GET Request")
-            friendship_requests = FriendshipRequest.get_sent_friendship_requests(from_user_id)
+            friendship_requests = FriendshipRequest.get_sent_friendship_requests(from_username)
             logging.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
         except ValueError:
@@ -46,10 +46,10 @@ class FriendshipRequestsSentResource(Resource):
 
 class FriendshipRequestsReceivedResource(Resource):
 
-    def get(self, to_user_id):
+    def get(self, to_username):
         try:
             logging.info("Received FriendshipRequestResource - received requests - GET Request")
-            friendship_requests = FriendshipRequest.get_received_friendship_requests(to_user_id)
+            friendship_requests = FriendshipRequest.get_received_friendship_requests(to_username)
             logging.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
         except ValueError:

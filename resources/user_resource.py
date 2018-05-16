@@ -1,5 +1,6 @@
 import json
 import logging
+import pprint
 
 import requests
 from flask import request, jsonify, make_response
@@ -114,4 +115,31 @@ class UserLoginResource(Resource):
             error = "Unable to handle UsersResource POST Request"
             logging.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+
+class UserSearchResource(Resource):
+    def get(self, user_id, partial_username):
+        try:
+            logging.info("Received UserSearchResource GET Request")
+            users_response = User.get_all()
+            users = users_response["users"]
+
+            built_response = {
+                "found_users": []
+            }
+            if users:
+                for user in users:
+                    if partial_username in user["username"] and user_id != user["user_id"]:
+                        built_response["found_users"].append(user)
+
+            logging.debug("Python Server Response: 200 - %s", built_response)
+
+            return make_response(jsonify(built_response), 200)
+        except ValueError:
+            error = "Unable to handle UserSearchResource GET Request"
+            logging.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
+
+
+
+
 
