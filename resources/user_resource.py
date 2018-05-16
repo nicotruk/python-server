@@ -5,7 +5,7 @@ import requests
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 
-from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH
+from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, SHARED_SERVER_APPLICATION_OWNER
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 
@@ -30,7 +30,7 @@ class UsersResource(Resource):
             payload = {
                 "username": user_data["username"],
                 "password": user_data["password"],
-                "applicationOwner": "1234"
+                "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
             headers = {'content-type': 'application/json'}
             response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)

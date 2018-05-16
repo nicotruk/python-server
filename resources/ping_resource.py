@@ -8,7 +8,6 @@ from config.shared_server_config import SHARED_SERVER_PING_PATH
 
 SUCCESS_MESSAGE = 'Connected'
 
-
 class PingResource(Resource):
     def get(self):
         logging.info("Received PingResource GET Request")
