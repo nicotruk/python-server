@@ -117,7 +117,7 @@ class UserLoginResource(Resource):
             return ErrorHandler.create_error_response(500, error)
 
 class UserSearchResource(Resource):
-    def get(self, partial_username):
+    def get(self, user_id, partial_username):
         try:
             logging.info("Received UserSearchResource GET Request")
             users_response = User.get_all()
@@ -128,7 +128,7 @@ class UserSearchResource(Resource):
             }
             if users:
                 for user in users:
-                    if partial_username in user["username"]:
+                    if partial_username in user["username"] and user_id != user["user_id"]:
                         built_response["found_users"].append(user)
 
             logging.debug("Python Server Response: 200 - %s", built_response)

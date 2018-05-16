@@ -11,8 +11,8 @@ import unittest
 import json
 
 test_direct_message = {
-    "from_user_id": "123",
-    "to_user_id": "456",
+    "from_username": "123",
+    "to_username": "456",
     "message": "Hello!"
 }
 
@@ -44,10 +44,10 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(direct_message),
                       content_type='application/json')
-        uri = "/api/v1/direct_message/" + direct_message["to_user_id"]
+        uri = "/api/v1/direct_message/" + direct_message["to_username"]
         response = self.app.get(uri,
                                 content_type='application/json')
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 1)
-        self.assertEqual(direct_message_response["direct_messages"][0]["to_user_id"],
-                         direct_message["to_user_id"])
+        self.assertEqual(direct_message_response["direct_messages"][0]["to_username"],
+                         direct_message["to_username"])

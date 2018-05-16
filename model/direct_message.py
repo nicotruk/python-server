@@ -5,15 +5,15 @@ from model.db.direct_messageVO import DirectMessageVO
 class DirectMessage:
 
     @staticmethod
-    def create(from_user_id, to_user_id, message, timestamp):
-        new_direct_message = DirectMessageVO(None, from_user_id, to_user_id, message, timestamp)
+    def create(from_username, to_username, message, timestamp):
+        new_direct_message = DirectMessageVO(None, from_username, to_username, message, timestamp)
         encoded_message = DirectMessage._encode_direct_message(new_direct_message)
         db_request = db.direct_messages.insert_one(encoded_message)
         response = {
             "direct_message": {
                 "_id": str(db_request.inserted_id),
-                "from_user_id": encoded_message["from_user_id"],
-                "to_user_id": encoded_message["to_user_id"],
+                "from_username": encoded_message["from_username"],
+                "to_username": encoded_message["to_username"],
                 "message": encoded_message["message"],
                 "timestamp": encoded_message["timestamp"]
             }
@@ -21,8 +21,8 @@ class DirectMessage:
         return response
 
     @staticmethod
-    def get_received_direct_messages(to_user_id):
-        direct_messages_db_response = list(db.direct_messages.find({"to_user_id": to_user_id}))
+    def get_received_direct_messages(to_username):
+        direct_messages_db_response = list(db.direct_messages.find({"to_username": to_username}))
         direct_messages_response = {
             "direct_messages": []
         }
@@ -35,8 +35,8 @@ class DirectMessage:
     def _encode_direct_message(direct_message):
         return {
             "_type": "direct_message",
-            "from_user_id": direct_message.from_user_id,
-            "to_user_id": direct_message.to_user_id,
+            "from_username": direct_message.from_username,
+            "to_username": direct_message.to_username,
             "message": direct_message.message,
             "timestamp": direct_message.timestamp
         }
@@ -46,8 +46,8 @@ class DirectMessage:
         assert document["_type"] == "direct_message"
         direct_message = {
             "_id": str(document["_id"]),
-            "from_user_id": document["from_user_id"],
-            "to_user_id": document["to_user_id"],
+            "from_username": document["from_username"],
+            "to_username": document["to_username"],
             "message": document["message"],
             "timestamp": document["timestamp"]
         }

@@ -26,14 +26,14 @@ app.config['MONGO_DBNAME'] = 'python_server'
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
-api.add_resource(UserSearchResource, '/users/search/<partial_username>')
+api.add_resource(UserSearchResource, '/users/search/<user_id>/<partial_username>')
 
 api.add_resource(FriendshipRequestResource, '/friendship/request')
-api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_user_id>')
-api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_user_id>')
+api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_username>')
+api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_username>')
 
 api.add_resource(DirectMessageResource, '/direct_message')
-api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_user_id>')
+api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_username>')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')
