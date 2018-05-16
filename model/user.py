@@ -4,10 +4,8 @@ from model.db.userVO import UserVO
 import uuid
 import pprint
 
-
 class UserNotFoundException(Exception):
     pass
-
 
 class User:
 
@@ -56,7 +54,7 @@ class User:
             "profile_pic": profile_pic
         }
 
-        result = db.users.find_one_and_update({"user_id": user_id}, {'$set': updated_fields}, 
+        result = db.users.find_one_and_update({"user_id": user_id}, {'$set': updated_fields},
             return_document=ReturnDocument.AFTER)
 
         if result is None:
@@ -88,9 +86,9 @@ class User:
     @staticmethod
     def _encode_user(user):
         return {
-            "_type": "user", 
-            "user_id": user.user_id, 
-            "username": user.username, 
+            "_type": "user",
+            "user_id": user.user_id,
+            "username": user.username,
             "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name,

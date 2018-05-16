@@ -1,6 +1,7 @@
 class StoryVO:
 
-    def __init__(self, user_id, location, visibility, title, description, file_url, is_quick_story, timestamp):
+    def __init__(self, id, user_id, location, visibility, title, description, file_url, is_quick_story, timestamp):
+        self.id = id
         self.user_id = user_id
         self.location = location
         self.visibility = visibility
