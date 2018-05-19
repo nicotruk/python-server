@@ -10,9 +10,11 @@ from resources.user_resource import SingleUserResource
 from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
-from resources.friendship_resource import FriendshipRequestResource
-from resources.friendship_resource import FriendshipRequestsSentResource
-from resources.friendship_resource import FriendshipRequestsReceivedResource
+from resources.friendship_request_resource import FriendshipRequestResource
+from resources.friendship_request_resource import FriendshipRequestsSentResource
+from resources.friendship_request_resource import FriendshipRequestsReceivedResource
+from resources.friendship_request_resource import SingleFriendshipRequestResource
+from resources.friendship_resource import FriendshipResource
 from resources.message_resource import DirectMessageResource
 from resources.message_resource import DirectMessagesReceivedResource
 from resources.story_resource import StoriesResource
@@ -32,6 +34,9 @@ api.add_resource(UserSearchResource, '/users/search/<user_id>/<partial_username>
 api.add_resource(FriendshipRequestResource, '/friendship/request')
 api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_username>')
 api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_username>')
+api.add_resource(SingleFriendshipRequestResource, '/friendship/request/<from_username>/<to_username>')
+
+api.add_resource(FriendshipResource, '/friendship')
 
 api.add_resource(DirectMessageResource, '/direct_message')
 api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_username>')
