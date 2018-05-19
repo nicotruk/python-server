@@ -46,6 +46,18 @@ class User:
         return response
 
     @staticmethod
+    def get_user_by_username(username):
+        user_response = db.users.find_one({"username": username})
+
+        if user_response is None:
+            raise UserNotFoundException("There is no user with that username!")
+
+        response = {
+            "user": User._decode_user(user_response)
+        }
+        return response
+
+    @staticmethod
     def update_user(user_id, first_name, last_name, email, profile_pic):
         updated_fields = {
             "first_name": first_name,
@@ -84,6 +96,30 @@ class User:
         return response
 
     @staticmethod
+    def add_friend(username, friend_username):
+        try:
+            user_response = User.get_user_by_username(username)
+            friends_usernames = user_response["user"]["friends_usernames"]
+            friends_usernames.append(friend_username)
+            updated_fields = {
+                "friends_usernames": friends_usernames
+            }
+
+            result = db.users.find_one_and_update({"username": username}, {'$set': updated_fields},
+                return_document=ReturnDocument.AFTER)
+
+            if result is None:
+                raise UserNotFoundException("Couldn't update Friends Usernames list.")
+
+            response = {
+                "user": User._decode_user(result)
+            }
+
+            return response
+        except UserNotFoundException:
+            raise UserNotFoundException
+
+    @staticmethod
     def _encode_user(user):
         return {
             "_type": "user",
@@ -93,7 +129,7 @@ class User:
             "first_name": user.first_name,
             "last_name": user.last_name,
             "profile_pic": user.profile_pic,
-            "friends_ids": user.friends_ids
+            "friends_usernames": user.friends_usernames
         }
 
     @staticmethod
@@ -106,6 +142,6 @@ class User:
             "first_name": document["first_name"],
             "last_name": document["last_name"],
             "profile_pic": document["profile_pic"],
-            "friends_ids": document["friends_ids"]
+            "friends_usernames": document["friends_usernames"]
         }
         return user

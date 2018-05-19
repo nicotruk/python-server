@@ -118,7 +118,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         user = test_user.copy()
         user["profile_pic"] = ''
-        user["friends_ids"] = []
+        user["friends_usernames"] = []
 
         response = self.app.post("/api/v1/users",
                                  data=json.dumps(user),
@@ -137,7 +137,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         user = test_user.copy()
         user["profile_pic"] = ''
-        user["friends_ids"] = []
+        user["friends_usernames"] = []
 
         response = self.app.post("/api/v1/users",
                                  data=json.dumps(user),

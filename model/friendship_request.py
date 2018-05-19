@@ -47,6 +47,20 @@ class FriendshipRequest:
         return response
 
     @staticmethod
+    def delete(from_username, to_username):
+        db_response = db.friendship_requests.delete_one({'from_username': from_username, 'to_username': to_username})
+        if db_response.deleted_count == 1:
+            response = {
+                "friendship_request": {
+                    "from_username": from_username,
+                    "to_username": to_username
+                }
+            }
+        else: 
+            response = None
+        return response
+
+    @staticmethod
     def _encode_friendship_request(friendship_request):
         return {
             "_type": "friendship_request",
