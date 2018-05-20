@@ -97,7 +97,7 @@
         }
       }
     },
-    "/friendship/request/sent/<from_user_id>" : {
+    "/friendship/request/sent/<from_username>" : {
       "get" : {
         "tags" : [ "friendship" ],
         "summary" : "Consulta de solicitudes enviadas",
@@ -112,7 +112,7 @@
         }
       }
     },
-    "/friendship/request/received/<to_user_id>" : {
+    "/friendship/request/received/<to_username>" : {
       "get" : {
         "tags" : [ "friendship" ],
         "summary" : "Consulta de solicitudes recibidas",
@@ -142,10 +142,25 @@
         }
       }
     },
-    "/direct_message/<to_user_id>" : {
+    "/direct_message/received/<to_username>" : {
       "get" : {
         "tags" : [ "direct messages" ],
         "summary" : "Consulta de mensajes recibidos",
+        "description" : "Consulta de los mensajes recibidos para un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/direct_message/<username>" : {
+      "get" : {
+        "tags" : [ "direct messages" ],
+        "summary" : "Consulta de mensajes enviados y/o recibidos por el usuario",
         "description" : "Consulta de los mensajes recibidos para un usuario en particular",
         "responses" : {
           "200" : {
