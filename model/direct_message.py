@@ -32,6 +32,19 @@ class DirectMessage:
         return direct_messages_response
 
     @staticmethod
+    def get_user_direct_messages_sorted_by_timestamp(username):
+        direct_messages_db_response = list(
+            db.direct_messages.find({"$or": [{"from_username": username}, {"to_username": username}]}).sort(
+                "timestamp"))
+        direct_messages_response = {
+            "direct_messages": []
+        }
+        for direct_message_db_response in direct_messages_db_response:
+            direct_messages_response["direct_messages"].append(
+                DirectMessage._decode_direct_message(direct_message_db_response))
+        return direct_messages_response
+
+    @staticmethod
     def _encode_direct_message(direct_message):
         return {
             "_type": "direct_message",
