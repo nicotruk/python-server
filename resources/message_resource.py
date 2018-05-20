@@ -42,3 +42,17 @@ class DirectMessagesReceivedResource(Resource):
             error = "Unable to handle DirectMessagesReceivedResource - received requests - GET Request"
             logging.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+
+
+class UserDirectMessagesResource(Resource):
+
+    def get(self, username):
+        try:
+            logging.info("Received UserDirectMessagesResource - received requests - GET Request")
+            direct_messages = DirectMessage.get_user_direct_messages_sorted_by_timestamp(username)
+            logging.debug("Python Server Response: 200 - %s", direct_messages)
+            return make_response(jsonify(direct_messages), 200)
+        except ValueError:
+            error = "Unable to handle UserDirectMessagesResource - received requests - GET Request"
+            logging.error("Python Server Response: %s - %s", 500, error)
+            return ErrorHandler.create_error_response(500, error)

@@ -17,6 +17,7 @@ from resources.friendship_request_resource import SingleFriendshipRequestResourc
 from resources.friendship_resource import FriendshipResource
 from resources.message_resource import DirectMessageResource
 from resources.message_resource import DirectMessagesReceivedResource
+from resources.message_resource import UserDirectMessagesResource
 from resources.story_resource import StoriesResource
 
 app = Flask("python_server")
@@ -39,7 +40,8 @@ api.add_resource(SingleFriendshipRequestResource, '/friendship/request/<from_use
 api.add_resource(FriendshipResource, '/friendship')
 
 api.add_resource(DirectMessageResource, '/direct_message')
-api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_username>')
+api.add_resource(DirectMessagesReceivedResource, '/direct_message/received/<to_username>')
+api.add_resource(UserDirectMessagesResource, '/direct_message/<username>')
 
 api.add_resource(StoriesResource, '/stories')
 
