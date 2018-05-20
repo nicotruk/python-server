@@ -15,14 +15,16 @@ from resources.ping_resource import SUCCESS_MESSAGE
 
 class PingResourceTestCase(unittest.TestCase):
 
-    def test_ping_app_server(self):
+    @patch('resources.ping_resource.current_app')
+    def test_ping_app_server(self, mock_app):
         service = PingResource()
         response = service.get()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, SUCCESS_MESSAGE.encode('utf-8'))
 
     @patch('resources.ping_resource.requests.get')
-    def test_ping_shared_server(self, mock_get):
+    @patch('resources.ping_resource.current_app')
+    def test_ping_shared_server(self, mock_get, mock_app):
         # Configure the mock to return a response with an OK status code.
         mock_get.return_value.ok = True
         # Call the service, which will send a request to the server.

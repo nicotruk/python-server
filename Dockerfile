@@ -14,4 +14,4 @@ RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-CMD gunicorn -w 4 app:app --log-file=-
+CMD gunicorn -w 4 app:app --log-level=debug

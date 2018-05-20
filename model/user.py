@@ -2,7 +2,6 @@ from config.mongodb import db
 from pymongo import ReturnDocument
 from model.db.userVO import UserVO
 import uuid
-import pprint
 
 class UserNotFoundException(Exception):
     pass
