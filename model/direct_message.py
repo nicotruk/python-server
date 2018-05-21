@@ -33,9 +33,22 @@ class DirectMessage:
 
     @staticmethod
     def get_user_direct_messages_sorted_by_timestamp(username):
+        # direct_messages_db_response = list(
+        #    db.direct_messages.find({"$or": [{"from_username": username}, {"to_username": username}]}).sort(
+        #        "timestamp"))
+        pipeline = [
+            {"$match": {"$or": [{"from_username": username}, {"to_username": username}]}},
+            {"$project": {"_id": 1, "from_username": 1, "to_username": 1, "message": 1, "timestamp": 1, "_type": 1,
+                          "interlocutor": {
+                              "$cond": [{"$eq": ["$from_username", "nico8"]}, "$to_username", "$from_username"]}}},
+            {"$sort": {"timestamp": -1}},
+            {"$group": {"_id": "$interlocutor", "from_username": {"$first": "$from_username"},
+                        "to_username": {"$first": "$to_username"}, "message": {"$first": "$message"},
+                        "timestamp": {"$first": "$timestamp"}, "_type": {"$first": "$_type"}}}
+        ]
         direct_messages_db_response = list(
-            db.direct_messages.find({"$or": [{"from_username": username}, {"to_username": username}]}).sort(
-                "timestamp"))
+            db.direct_messages.aggregate(pipeline))
+
         direct_messages_response = {
             "direct_messages": []
         }
@@ -43,6 +56,7 @@ class DirectMessage:
             direct_messages_response["direct_messages"].append(
                 DirectMessage._decode_direct_message(direct_message_db_response))
         return direct_messages_response
+
 
     @staticmethod
     def _encode_direct_message(direct_message):
@@ -53,6 +67,7 @@ class DirectMessage:
             "message": direct_message.message,
             "timestamp": direct_message.timestamp
         }
+
 
     @staticmethod
     def _decode_direct_message(document):
