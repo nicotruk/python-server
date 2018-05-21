@@ -16,6 +16,7 @@ from resources.friendship_resource import FriendshipResource
 from resources.message_resource import DirectMessageResource
 from resources.message_resource import DirectMessagesReceivedResource
 from resources.message_resource import UserDirectMessagesResource
+from resources.message_resource import ConversationMessagesResource
 from resources.story_resource import StoriesResource
 
 app = Flask("python_server")
@@ -42,6 +43,7 @@ api.add_resource(FriendshipResource, '/friendship')
 api.add_resource(DirectMessageResource, '/direct_message')
 api.add_resource(DirectMessagesReceivedResource, '/direct_message/received/<to_username>')
 api.add_resource(UserDirectMessagesResource, '/direct_message/<username>')
+api.add_resource(ConversationMessagesResource, '/direct_message/conversation/<username>/<friend_username>')
 
 api.add_resource(StoriesResource, '/stories')
 
@@ -52,6 +54,7 @@ api.add_resource(PingSharedServerResource, '/ping/sharedServer')
 @app.route('/')
 def hello_world():
     return "Hi, I'm a Python Server!"
+
 
 if __name__ == '__main__':
     app.logger.info("Starting Python Server Services...")

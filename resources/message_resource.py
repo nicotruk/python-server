@@ -55,3 +55,17 @@ class UserDirectMessagesResource(Resource):
             error = "Unable to handle UserDirectMessagesResource - received requests - GET Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+
+
+class ConversationMessagesResource(Resource):
+
+    def get(self, username, friend_username):
+        try:
+            current_app.logger.info("Received ConversationMessagesResource - received requests - GET Request")
+            direct_messages = DirectMessage.get_conversation_messages_sorted_by_timestamp(username, friend_username)
+            current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
+            return make_response(jsonify(direct_messages), 200)
+        except ValueError:
+            error = "Unable to handle ConversationMessagesResource - received requests - GET Request"
+            current_app.logger.error("Python Server Response: %s - %s", 500, error)
+            return ErrorHandler.create_error_response(500, error)

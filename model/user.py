@@ -3,8 +3,10 @@ from pymongo import ReturnDocument
 from model.db.userVO import UserVO
 import uuid
 
+
 class UserNotFoundException(Exception):
     pass
+
 
 class User:
 
@@ -66,7 +68,7 @@ class User:
         }
 
         result = db.users.find_one_and_update({"user_id": user_id}, {'$set': updated_fields},
-            return_document=ReturnDocument.AFTER)
+                                              return_document=ReturnDocument.AFTER)
 
         if result is None:
             raise UserNotFoundException("There is no user with that ID!")
@@ -105,7 +107,7 @@ class User:
             }
 
             result = db.users.find_one_and_update({"username": username}, {'$set': updated_fields},
-                return_document=ReturnDocument.AFTER)
+                                                  return_document=ReturnDocument.AFTER)
 
             if result is None:
                 raise UserNotFoundException("Couldn't update Friends Usernames list.")
