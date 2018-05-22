@@ -1,9 +1,7 @@
-import logging
-
 from flask import Flask
 from flask_restful import Api
 
-from config.logging import configure_logger
+from config.logger import configure_logger
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.user_resource import SingleUserResource
@@ -17,6 +15,8 @@ from resources.friendship_request_resource import SingleFriendshipRequestResourc
 from resources.friendship_resource import FriendshipResource
 from resources.message_resource import DirectMessageResource
 from resources.message_resource import DirectMessagesReceivedResource
+from resources.message_resource import UserDirectMessagesResource
+from resources.message_resource import ConversationMessagesResource
 from resources.story_resource import StoriesResource
 
 app = Flask("python_server")
@@ -25,6 +25,8 @@ api = Api(app, prefix="/api/v1")
 
 # connect to another MongoDB database
 app.config['MONGO_DBNAME'] = 'python_server'
+
+configure_logger(app)
 
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
@@ -39,7 +41,9 @@ api.add_resource(SingleFriendshipRequestResource, '/friendship/request/<from_use
 api.add_resource(FriendshipResource, '/friendship')
 
 api.add_resource(DirectMessageResource, '/direct_message')
-api.add_resource(DirectMessagesReceivedResource, '/direct_message/<to_username>')
+api.add_resource(DirectMessagesReceivedResource, '/direct_message/received/<to_username>')
+api.add_resource(UserDirectMessagesResource, '/direct_message/<username>')
+api.add_resource(ConversationMessagesResource, '/direct_message/conversation/<username>/<friend_username>')
 
 api.add_resource(StoriesResource, '/stories')
 
@@ -53,7 +57,6 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    configure_logger()
-    logging.info("Starting Python Server Services...")
+    app.logger.info("Starting Python Server Services...")
     app.run(host='0.0.0.0')
-    logging.info("Started")
+    app.logger.info("Started")

@@ -8,9 +8,9 @@
 1. Instalar las dependencias (debe hacerse corriendo en el env) con `(sudo) pip install -r requirements.txt`.
 1. Ejecutar aplicación utilizando un webserver:
     * Utilizando flask `export FLASK_APP=app.py && flask run --host=0.0.0.0 --port=8000`.
-    * Ejecutar aplicacion con gunicorn como webserver `gunicorn -w 4 -b 0.0.0.0:8000 app:app --log-file=-`
+    * Ejecutar aplicacion con gunicorn como webserver `gunicorn -w 4 -b 0.0.0.0:8000 app:app --log-level=debug`
 
-### Intalación de MongoDB (por línea de comandos)
+### Instalación de MongoDB (por línea de comandos)
 
 ```
 $ sudo apt-get install -y mongodb-org
