@@ -50,7 +50,6 @@ class StoriesResource(Resource):
                 current_app.logger.debug("Python Server Response: %s - %s", response.status_code, response.text)
             return make_response(response.text, response.status_code)
         except ValueError:
-            print('Error happened')
             error = "Unable to handle StoriesResource POST Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
