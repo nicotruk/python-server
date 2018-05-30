@@ -59,6 +59,14 @@ class User:
         return response
 
     @staticmethod
+    def get_profile_pic(username):
+        try:
+            response = User.get_user_by_username(username)
+            return response["user"]["profile_pic"]
+        except UserNotFoundException as e:
+            return ""
+
+    @staticmethod
     def update_user(user_id, first_name, last_name, email, profile_pic):
         updated_fields = {
             "first_name": first_name,
@@ -146,3 +154,6 @@ class User:
             "friends_usernames": document["friends_usernames"]
         }
         return user
+
+
+

@@ -5,6 +5,7 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from model.friendship_request import FriendshipRequest
+from model.user import User
 from resources.error_handler import ErrorHandler
 
 
@@ -35,6 +36,11 @@ class FriendshipRequestsSentResource(Resource):
         try:
             current_app.logger.info("Received FriendshipRequestResource - sent requests - GET Request")
             friendship_requests = FriendshipRequest.get_sent_friendship_requests(from_username)
+
+            if friendship_requests["friendship_requests"]:
+                for friendship_request in friendship_requests["friendship_requests"]:
+                    friendship_request["profile_pic"] = User.get_profile_pic(friendship_request["to_username"])
+
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
         except ValueError:
@@ -49,6 +55,11 @@ class FriendshipRequestsReceivedResource(Resource):
         try:
             current_app.logger.info("Received FriendshipRequestResource - received requests - GET Request")
             friendship_requests = FriendshipRequest.get_received_friendship_requests(to_username)
+
+            if friendship_requests["friendship_requests"]:
+                for friendship_request in friendship_requests["friendship_requests"]:
+                    friendship_request["profile_pic"] = User.get_profile_pic(friendship_request["from_username"])
+
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
         except ValueError:
