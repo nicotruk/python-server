@@ -1,3 +1,4 @@
+sudo: required
 language: python
 python:
 - "3.6"
@@ -7,6 +8,7 @@ env:
   - MONGO_PORT=27017
 services:
 - mongodb
+- docker
 install:
 - pip install -r requirements-test.txt
 script:
@@ -14,10 +16,8 @@ script:
 after_success:
 - coveralls
 deploy:
-  provider: heroku
-  api_key:
-    secure: qJCNTzY+YVbLPd9T3U1F6mgauWF5vVb16f8Y3m945FXSRyRM54hYj5AFWKOS16EUAvRW0Rw7o9n0b/sMbpblbaohgtpJ0cdF44NAFMG6P5LOUGO67VW9TBS3p7KjUk1j85tZtqkLzN0nMqgOvrznqkh6VE/awSPOkd9/JfW0VaAzooJ3tKXPU0VwEE6OE+N9xLuiuG7JCI0/ohdFkSoWwmJAO+8zxld0HBZ7R2SIFWwYdd4k6C4lGqd7wwWXO83WhOX6pMuQyb1hDcEPfT1CYA+pozEEo2T7UA/AWAZ4yCBnAqN1eE+Axs0C8k2jR0Od/pAJ5+cuQixprK0Hq8TK5Ged6kVqT2voUgSO/Cbu0RrfAGr/XFdl9lp4infDz3/UJd9yzRdtP3b1W/ymbH+8Ksts7ll7H/HZmK518CrD7Fa4aiPcicW8WuLzLr1lwwlOL2z+vgCzGIUz2b4QDdtoJRnOq/5mwztsRo7WexYU47m47ZL3VGXYqn1H+1s98NLYNGuHIJTvxtASVbuDuWo0dVgcPCDBfVKV9mIfzadetzyFHpqXyzGnnAKxiL9SnSa8yBAm24QA6c6dYoUb6XlILFoqgLthch2IJ0CtLDDODeSOy8LCIYSMd0ZDkuWR1gz2Q7u/fLey1HPB7DGvXuFf+YWWyXzWxpxLay7Fsy2/V40=
-  app: app-server-stories
+  provider: script
+  script: bash docker_push.sh
   on:
     branch: master
     repo: taller2-2018-1-grupo2/python-server
