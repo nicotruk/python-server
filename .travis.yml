@@ -19,5 +19,5 @@ deploy:
   provider: script
   script: bash docker_push.sh
   on:
-    branch: docker_to_heroku
+    branch: master
     repo: taller2-2018-1-grupo2/python-server
