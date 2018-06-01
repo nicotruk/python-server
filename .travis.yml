@@ -17,10 +17,7 @@ after_success:
 - coveralls
 deploy:
   provider: script
-  script:
-    - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
-    - docker build -t registry.heroku.com/app-server-stories/web .
-    - docker push registry.heroku.com/app-server-stories/web
+  script: bash docker_push.sh
   on:
     branch: docker_to_heroku
     repo: taller2-2018-1-grupo2/python-server
