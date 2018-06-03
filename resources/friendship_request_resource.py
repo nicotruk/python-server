@@ -5,7 +5,7 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from model.friendship_request import FriendshipRequest
-from model.user import User
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 
 
