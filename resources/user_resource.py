@@ -127,10 +127,20 @@ class UserSearchResource(Resource):
             built_response = {
                 "found_users": []
             }
+
+            current_username = User.get_user_by_id(user_id)["user"]["username"]
+
             if users:
                 for user in users:
-                    if partial_username in user["username"] and user_id != user["user_id"]:
-                        built_response["found_users"].append(user)
+                    if partial_username in user["username"] and user_id != user["user_id"] and current_username not in user["friends_usernames"]:
+                        final_user = {
+                            "username": user["username"],
+                            "profile_pic": user["profile_pic"],
+                            "first_name": user["first_name"],
+                            "last_name": user["last_name"]
+                        }
+
+                        built_response["found_users"].append(final_user)
 
             current_app.logger.debug("Python Server Response: 200 - %s", built_response)
 
@@ -139,3 +149,43 @@ class UserSearchResource(Resource):
             error = "Unable to handle UserSearchResource GET Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
+
+
+class UserFriendsResource(Resource):
+    def get(self, user_id):
+        try:
+            current_app.logger.info("Received UserFriendsResource GET Request")
+            user = User.get_user_by_id(user_id)
+
+            friends_usernames = user["user"]["friends_usernames"]
+
+            response = {
+                "friends": []
+            }
+
+            if friends_usernames:
+                for username in friends_usernames:
+                    return_friend = User.get_user_by_username(username)["user"]
+                    friend = {
+                        "username": username,
+                        "profile_pic": return_friend["profile_pic"],
+                        "first_name": return_friend["first_name"],
+                        "last_name": return_friend["last_name"]
+                    }
+                    response["friends"].append(friend)
+
+            current_app.logger.debug("Python Server Response: 200 - %s", user)
+            return make_response(jsonify(response), 200)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
+
+
+

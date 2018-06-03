@@ -65,7 +65,7 @@ class User:
         try:
             response = User.get_user_by_username(username)
             return response["user"]["profile_pic"]
-        except UserNotFoundException:
+        except UserNotFoundException as e:
             return ""
 
     @staticmethod
@@ -90,9 +90,9 @@ class User:
         return response
 
     @staticmethod
-    def create(username, email, first_name, last_name, firebase_token):
+    def create(username, email, first_name, last_name):
         user_id = str(uuid.uuid4())
-        new_user = UserVO(user_id, username, email, first_name, last_name, '', [], firebase_token)
+        new_user = UserVO(user_id, username, email, first_name, last_name, '', [])
         encoded_user = User._encode_user(new_user)
         db.users.insert_one(encoded_user)
         response = {
@@ -101,8 +101,7 @@ class User:
                 "username": encoded_user["username"],
                 "email": encoded_user["email"],
                 "first_name": encoded_user["first_name"],
-                "last_name": encoded_user["last_name"],
-                "firebase_token": encoded_user["firebase_token"]
+                "last_name": encoded_user["last_name"]
             }
         }
         return response
@@ -141,8 +140,7 @@ class User:
             "first_name": user.first_name,
             "last_name": user.last_name,
             "profile_pic": user.profile_pic,
-            "friends_usernames": user.friends_usernames,
-            "firebase_token": user.firebase_token
+            "friends_usernames": user.friends_usernames
         }
 
     @staticmethod
@@ -155,8 +153,7 @@ class User:
             "first_name": document["first_name"],
             "last_name": document["last_name"],
             "profile_pic": document["profile_pic"],
-            "friends_usernames": document["friends_usernames"],
-            "firebase_token": document["firebase_token"]
+            "friends_usernames": document["friends_usernames"]
         }
         return user
 

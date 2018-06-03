@@ -7,6 +7,7 @@ sys.path.insert(0, myPath + '/../')
 ########
 from config.mongodb import db
 from app import app
+from mock import patch
 import unittest
 import json
 
@@ -15,16 +16,46 @@ test_friendship_request = {
     "to_username": "456"
 }
 
+test_first_user = {
+    "username": "123",
+    "password": "123",
+    "email": "asd@asd.com",
+    "first_name": "Nombre",
+    "last_name": "Apellido"
+}
+
+test_second_user = {
+    "username": "456",
+    "password": "456",
+    "email": "asd@asd.com",
+    "first_name": "Nombre",
+    "last_name": "Apellido" 
+}
+
 
 class FriendshipRequestResourceTestCase(unittest.TestCase):
 
-    def setUp(self):
+    @patch('resources.user_resource.requests.post')
+    def setUp(self, mock_post):
+        mock_post.return_value.status_code = 200
         self.app = app.test_client()
         self.app.testing = True
+
+        user1 = test_first_user.copy()
+        user2 = test_second_user.copy()
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user1),
+                      content_type='application/json')
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
 
     def tearDown(self):
         with app.app_context():
             db.friendship_requests.delete_many({})
+            db.users.delete_many({})
 
     def test_create_friendship_request(self):
         friendship_request = test_friendship_request.copy()
