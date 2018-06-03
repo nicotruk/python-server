@@ -1,8 +1,11 @@
 import json
+
 import requests
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
-from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, SHARED_SERVER_APPLICATION_OWNER
+
+from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, \
+    SHARED_SERVER_APPLICATION_OWNER
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 
@@ -34,7 +37,7 @@ class UsersResource(Resource):
             response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             if response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["first_name"], user_data["last_name"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["first_name"], user_data["last_name"], user_data["firebase_token"])
                 current_app.logger.debug("Python Server Response: 200 - %s", user_created)
                 return make_response(jsonify(user_created), 200)
             current_app.logger.debug("Python Server Response: %s - %s", response.status_code, response.text)
@@ -112,6 +115,7 @@ class UserLoginResource(Resource):
             error = "Unable to handle UsersResource POST Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+
 
 class UserSearchResource(Resource):
     def get(self, user_id, partial_username):
