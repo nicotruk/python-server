@@ -39,7 +39,10 @@ class FriendshipRequestsSentResource(Resource):
 
             if friendship_requests["friendship_requests"]:
                 for friendship_request in friendship_requests["friendship_requests"]:
-                    friendship_request["profile_pic"] = User.get_profile_pic(friendship_request["to_username"])
+                    user = User.get_user_by_username(friendship_request["to_username"])["user"]
+                    friendship_request["profile_pic"] = user["profile_pic"]
+                    friendship_request["first_name"] = user["first_name"]
+                    friendship_request["last_name"] = user["last_name"]                    
 
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
@@ -47,6 +50,11 @@ class FriendshipRequestsSentResource(Resource):
             error = "Unable to handle FriendshipRequestResource - sent requests - GET Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
 
 
 class FriendshipRequestsReceivedResource(Resource):
@@ -58,7 +66,10 @@ class FriendshipRequestsReceivedResource(Resource):
 
             if friendship_requests["friendship_requests"]:
                 for friendship_request in friendship_requests["friendship_requests"]:
-                    friendship_request["profile_pic"] = User.get_profile_pic(friendship_request["from_username"])
+                    user = User.get_user_by_username(friendship_request["from_username"])["user"]
+                    friendship_request["profile_pic"] = user["profile_pic"]
+                    friendship_request["first_name"] = user["first_name"]
+                    friendship_request["last_name"] = user["last_name"]  
 
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
@@ -66,6 +77,11 @@ class FriendshipRequestsReceivedResource(Resource):
             error = "Unable to handle FriendshipRequestResource - received requests - GET Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
 
 class SingleFriendshipRequestResource(Resource):
 

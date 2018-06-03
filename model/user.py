@@ -59,14 +59,6 @@ class User:
         return response
 
     @staticmethod
-    def get_profile_pic(username):
-        try:
-            response = User.get_user_by_username(username)
-            return response["user"]["profile_pic"]
-        except UserNotFoundException as e:
-            return ""
-
-    @staticmethod
     def update_user(user_id, first_name, last_name, email, profile_pic):
         updated_fields = {
             "first_name": first_name,
@@ -109,7 +101,8 @@ class User:
         try:
             user_response = User.get_user_by_username(username)
             friends_usernames = user_response["user"]["friends_usernames"]
-            friends_usernames.append(friend_username)
+            if friend_username not in friends_usernames:
+                friends_usernames.append(friend_username)
             updated_fields = {
                 "friends_usernames": friends_usernames
             }
