@@ -10,6 +10,7 @@ from app import app
 from mock import patch
 import unittest
 import json
+import pprint
 
 test_user = {
     "username": "asd",
@@ -37,6 +38,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_post_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
 
@@ -52,6 +60,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_update_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
 
@@ -115,6 +130,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_integration_create_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
         user["profile_pic"] = ''
@@ -134,6 +156,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_integration_get_single_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
         user["profile_pic"] = ''
