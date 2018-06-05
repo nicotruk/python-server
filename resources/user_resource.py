@@ -35,7 +35,7 @@ class UsersResource(Resource):
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
             if signup_response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["first_name"], user_data["last_name"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"])
                 
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
@@ -86,7 +86,7 @@ class SingleUserResource(Resource):
             current_app.logger.info("Received SingleUserResource PUT Request")
             request_data = json.loads(request.data)
 
-            updated_user = User.update_user(user_id, request_data["first_name"], request_data["last_name"],
+            updated_user = User.update_user(user_id, request_data["name"],
                 request_data["email"], request_data["profile_pic"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", updated_user)
@@ -155,8 +155,7 @@ class UserSearchResource(Resource):
                         final_user = {
                             "username": user["username"],
                             "profile_pic": user["profile_pic"],
-                            "first_name": user["first_name"],
-                            "last_name": user["last_name"]
+                            "name": user["name"]
                         }
 
                         built_response["found_users"].append(final_user)
@@ -193,8 +192,7 @@ class UserFriendsResource(Resource):
                     friend = {
                         "username": username,
                         "profile_pic": return_friend["profile_pic"],
-                        "first_name": return_friend["first_name"],
-                        "last_name": return_friend["last_name"]
+                        "name": return_friend["name"]
                     }
                     response["friends"].append(friend)
 

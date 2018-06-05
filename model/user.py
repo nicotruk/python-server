@@ -59,10 +59,9 @@ class User:
         return response
 
     @staticmethod
-    def update_user(user_id, first_name, last_name, email, profile_pic):
+    def update_user(user_id, name, email, profile_pic):
         updated_fields = {
-            "first_name": first_name,
-            "last_name": last_name,
+            "name": name,
             "email": email,
             "profile_pic": profile_pic
         }
@@ -80,9 +79,9 @@ class User:
         return response
 
     @staticmethod
-    def create(username, email, first_name, last_name):
+    def create(username, email, name):
         user_id = str(uuid.uuid4())
-        new_user = UserVO(user_id, username, email, first_name, last_name, '', [])
+        new_user = UserVO(user_id, username, email, name, '', [])
         encoded_user = User._encode_user(new_user)
         db.users.insert_one(encoded_user)
         response = {
@@ -90,8 +89,7 @@ class User:
                 "user_id": encoded_user["user_id"],
                 "username": encoded_user["username"],
                 "email": encoded_user["email"],
-                "first_name": encoded_user["first_name"],
-                "last_name": encoded_user["last_name"]
+                "name": encoded_user["name"]
             }
         }
         return response
@@ -128,8 +126,7 @@ class User:
             "user_id": user.user_id,
             "username": user.username,
             "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
+            "name": user.name,
             "profile_pic": user.profile_pic,
             "friends_usernames": user.friends_usernames
         }
@@ -141,8 +138,7 @@ class User:
             "user_id": document["user_id"],
             "username": document["username"],
             "email": document["email"],
-            "first_name": document["first_name"],
-            "last_name": document["last_name"],
+            "name": document["name"],
             "profile_pic": document["profile_pic"],
             "friends_usernames": document["friends_usernames"]
         }

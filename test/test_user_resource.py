@@ -16,8 +16,7 @@ test_user = {
     "username": "asd",
     "password": "123",
     "email": "asd@asd.com",
-    "first_name": "Nombre",
-    "last_name": "Apellido" 
+    "name": "Nombre Apellido"
 }
 
 
@@ -78,8 +77,7 @@ class UsersResourceTestCase(unittest.TestCase):
         user_id = user_response["user"]["user_id"]
 
         changes = {
-            "first_name": "new_name",
-            "last_name": "new_last_name",
+            "name": "new_name",
             "email": "new_email",
             "profile_pic": "new_profile_pic"
         }
@@ -90,8 +88,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         json_response = json.loads(update_response.data)
 
-        self.assertEqual(json_response["user"]["first_name"], changes["first_name"])
-        self.assertEqual(json_response["user"]["last_name"], changes["last_name"])
+        self.assertEqual(json_response["user"]["name"], changes["name"])
         self.assertEqual(json_response["user"]["email"], changes["email"])
         self.assertEqual(json_response["user"]["profile_pic"], changes["profile_pic"])
 

@@ -20,16 +20,14 @@ test_first_user = {
     "username": "123",
     "password": "123",
     "email": "asd@asd.com",
-    "first_name": "Nombre",
-    "last_name": "Apellido"
+    "name": "Nombre Apellido"
 }
 
 test_second_user = {
     "username": "456",
     "password": "456",
     "email": "asd@asd.com",
-    "first_name": "Nombre",
-    "last_name": "Apellido" 
+    "name": "Nombre Apellido"
 }
 
 
