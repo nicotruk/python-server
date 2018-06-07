@@ -17,8 +17,8 @@ test_user = {
     "password": "123",
     "email": "asd@asd.com",
     "name": "Nombre Apellido",
+    "profile_pic": "",
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234",
-    "profile_pic": ""
 }
 
 

@@ -165,6 +165,3 @@ class User:
             "firebase_token": document["firebase_token"]
         }
         return user
-
-
-

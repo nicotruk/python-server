@@ -37,13 +37,16 @@ class UsersResource(Resource):
             }
             headers = {'content-type': 'application/json'}
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code,
+                                     signup_response.text)
             if signup_response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '', user_data["firebase_token"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '',
+                                           user_data["firebase_token"])
 
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
-                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
+                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code,
+                                         login_response.text)
                 json_response = json.loads(login_response.text)
 
                 if login_response.ok:
@@ -54,7 +57,8 @@ class UsersResource(Resource):
                             "token": json_response["token"]["token"]
                         }
                     }
-                    current_app.logger.debug("Python Server Response: %s - %s", login_response.status_code, built_response)
+                    current_app.logger.debug("Python Server Response: %s - %s", login_response.status_code,
+                                             built_response)
                 else:
                     built_response = {
                         "error": {
@@ -62,14 +66,17 @@ class UsersResource(Resource):
                             "message": json_response["message"]
                         }
                     }
-                    current_app.logger.error("Python Server Response: %s - %s", login_response.status_code, built_response)
+                    current_app.logger.error("Python Server Response: %s - %s", login_response.status_code,
+                                             built_response)
                 return make_response(jsonify(built_response), login_response.status_code)
-            current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
+            current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code,
+                                     signup_response.text)
             return make_response(signup_response.text, signup_response.status_code)
         except ValueError:
             error = "Unable to handle UsersResource POST Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
+
 
 class FacebookLoginResource(Resource):
     def post(self):
@@ -88,10 +95,12 @@ class FacebookLoginResource(Resource):
 
             if user["user"] is None:
                 signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-                current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+                current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code,
+                                         signup_response.text)
 
                 if not signup_response.ok and signup_response.status_code != 400:
-                    current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
+                    current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code,
+                                             signup_response.text)
                     return make_response(signup_response.text, signup_response.status_code)
                 else:
                     profile_pic_url = user_data["profile_pic"]
@@ -128,6 +137,7 @@ class FacebookLoginResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+
 class SingleUserResource(Resource):
     def get(self, user_id):
         try:
@@ -147,7 +157,7 @@ class SingleUserResource(Resource):
             request_data = json.loads(request.data)
 
             updated_user = User.update_user(user_id, request_data["name"],
-                request_data["email"], request_data["profile_pic"])
+                                            request_data["email"], request_data["profile_pic"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", updated_user)
             return make_response(jsonify(updated_user), 200)
@@ -212,7 +222,8 @@ class UserSearchResource(Resource):
 
             if users:
                 for user in users:
-                    if partial_username in user["username"] and user_id != user["user_id"] and current_username not in user["friends_usernames"]:
+                    if partial_username in user["username"] and user_id != user["user_id"] and current_username not in \
+                            user["friends_usernames"]:
                         final_user = {
                             "username": user["username"],
                             "profile_pic": user["profile_pic"],
@@ -264,6 +275,3 @@ class UserFriendsResource(Resource):
             message = e.args[0]
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
-
-
-
