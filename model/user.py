@@ -59,6 +59,22 @@ class User:
         return response
 
     @staticmethod
+    def get_facebook_user(username):
+        user_response = db.users.find_one({"username": username})
+
+        response = {
+            "user": {}
+        }
+
+        if user_response is None:
+            response["user"] = user_response
+        else:
+            response["user"] = User._decode_user(user_response)
+            response["user"].pop("friends_usernames")
+
+        return response
+
+    @staticmethod
     def update_user(user_id, name, email, profile_pic):
         updated_fields = {
             "name": name,
@@ -79,9 +95,9 @@ class User:
         return response
 
     @staticmethod
-    def create(username, email, name):
+    def create(username, email, name, profile_pic):
         user_id = str(uuid.uuid4())
-        new_user = UserVO(user_id, username, email, name, '', [])
+        new_user = UserVO(user_id, username, email, name, profile_pic, [])
         encoded_user = User._encode_user(new_user)
         db.users.insert_one(encoded_user)
         response = {
@@ -89,7 +105,8 @@ class User:
                 "user_id": encoded_user["user_id"],
                 "username": encoded_user["username"],
                 "email": encoded_user["email"],
-                "name": encoded_user["name"]
+                "name": encoded_user["name"],
+                "profile_pic": encoded_user["profile_pic"]
             }
         }
         return response

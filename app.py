@@ -9,6 +9,7 @@ from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
 from resources.user_resource import UserFriendsResource
+from resources.user_resource import FacebookLoginResource
 from resources.friendship_request_resource import FriendshipRequestResource
 from resources.friendship_request_resource import FriendshipRequestsSentResource
 from resources.friendship_request_resource import FriendshipRequestsReceivedResource
@@ -31,6 +32,7 @@ configure_logger(app)
 
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
+api.add_resource(FacebookLoginResource, '/users/fb_login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
 api.add_resource(UserFriendsResource, '/users/friends/<user_id>')
 api.add_resource(UserSearchResource, '/users/search/<user_id>/<partial_username>')

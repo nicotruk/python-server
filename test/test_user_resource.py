@@ -16,7 +16,8 @@ test_user = {
     "username": "asd",
     "password": "123",
     "email": "asd@asd.com",
-    "name": "Nombre Apellido"
+    "name": "Nombre Apellido",
+    "profile_pic": ""
 }
 
 

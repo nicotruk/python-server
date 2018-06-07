@@ -1,5 +1,6 @@
 import json
 import requests
+import base64
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, SHARED_SERVER_APPLICATION_OWNER
@@ -35,7 +36,7 @@ class UsersResource(Resource):
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
             if signup_response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["name"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '')
                 
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
@@ -67,6 +68,62 @@ class UsersResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+class FacebookLoginResource(Resource):
+    def post(self):
+        try:
+            current_app.logger.info("Received FacebookLoginResource POST Request")
+            user_data = json.loads(request.data)
+
+            payload = {
+                "username": user_data["username"],
+                "password": user_data["username"],
+                "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
+            }
+            headers = {'content-type': 'application/json'}
+
+            user = User.get_facebook_user(user_data["username"])
+
+            if user["user"] is None:
+                signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
+                current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+
+                if not signup_response.ok:
+                    current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
+                    return make_response(signup_response.text, signup_response.status_code)
+                else:
+                    profile_pic_url = user_data["profile_pic"]
+                    profile_pic_bytes = base64.b64encode(requests.get(profile_pic_url).content)
+                    profile_pic_string = profile_pic_bytes.decode('utf-8')
+
+                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string)
+
+            payload.pop("applicationOwner")
+            login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
+            current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
+            json_response = json.loads(login_response.text)
+
+            if login_response.ok:
+                built_response = {
+                    "user": user["user"],
+                    "token": {
+                        "expiresAt": json_response["token"]["expiresAt"],
+                        "token": json_response["token"]["token"]
+                    }
+                }
+                current_app.logger.debug("Python Server Response: %s - %s", login_response.status_code, built_response)
+            else:
+                built_response = {
+                    "error": {
+                        "code": json_response["code"],
+                        "message": json_response["message"]
+                    }
+                }
+                current_app.logger.error("Python Server Response: %s - %s", login_response.status_code, built_response)
+            return make_response(jsonify(built_response), login_response.status_code)
+        except ValueError:
+            error = "Unable to handle FacebookLoginResource POST Request"
+            current_app.logger.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
 
 class SingleUserResource(Resource):
     def get(self, user_id):
