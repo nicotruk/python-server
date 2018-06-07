@@ -21,7 +21,8 @@ test_first_user = {
     "password": "123",
     "email": "asd@asd.com",
     "first_name": "Nombre",
-    "last_name": "Apellido"
+    "last_name": "Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234"
 }
 
 test_second_user = {
@@ -29,7 +30,8 @@ test_second_user = {
     "password": "456",
     "email": "asd@asd.com",
     "first_name": "Nombre",
-    "last_name": "Apellido" 
+    "last_name": "Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h555"
 }
 
 
@@ -64,7 +66,8 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
                                  data=json.dumps(friendship_request),
                                  content_type='application/json')
         friendship_response = json.loads(response.data)
-        self.assertEqual(friendship_request["from_username"], friendship_response["friendship_request"]["from_username"])
+        self.assertEqual(friendship_request["from_username"],
+                         friendship_response["friendship_request"]["from_username"])
         self.assertEqual(friendship_request["to_username"], friendship_response["friendship_request"]["to_username"])
 
     def test_sent_friendship_requests(self):
