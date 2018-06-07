@@ -10,14 +10,15 @@ from app import app
 from mock import patch
 import unittest
 import json
+import pprint
 
 test_user = {
     "username": "asd",
     "password": "123",
     "email": "asd@asd.com",
-    "first_name": "Nombre",
-    "last_name": "Apellido",
-    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234"
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234",
+    "profile_pic": ""
 }
 
 
@@ -38,6 +39,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_post_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
 
@@ -53,6 +61,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_update_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
 
@@ -64,8 +79,7 @@ class UsersResourceTestCase(unittest.TestCase):
         user_id = user_response["user"]["user_id"]
 
         changes = {
-            "first_name": "new_name",
-            "last_name": "new_last_name",
+            "name": "new_name",
             "email": "new_email",
             "profile_pic": "new_profile_pic"
         }
@@ -76,8 +90,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         json_response = json.loads(update_response.data)
 
-        self.assertEqual(json_response["user"]["first_name"], changes["first_name"])
-        self.assertEqual(json_response["user"]["last_name"], changes["last_name"])
+        self.assertEqual(json_response["user"]["name"], changes["name"])
         self.assertEqual(json_response["user"]["email"], changes["email"])
         self.assertEqual(json_response["user"]["profile_pic"], changes["profile_pic"])
 
@@ -116,6 +129,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_integration_create_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
         user["profile_pic"] = ''
@@ -135,6 +155,13 @@ class UsersResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def test_integration_get_single_user(self, mock_post):
         mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
         user = test_user.copy()
         user["profile_pic"] = ''

@@ -1,6 +1,7 @@
 import json
 
 import requests
+import base64
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
@@ -8,6 +9,7 @@ from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_T
     SHARED_SERVER_APPLICATION_OWNER
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+import pprint
 
 
 class UsersResource(Resource):
@@ -34,19 +36,97 @@ class UsersResource(Resource):
                 "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
             headers = {'content-type': 'application/json'}
-            response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-            current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
-            if response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["first_name"], user_data["last_name"], user_data["firebase_token"])
-                current_app.logger.debug("Python Server Response: 200 - %s", user_created)
-                return make_response(jsonify(user_created), 200)
-            current_app.logger.debug("Python Server Response: %s - %s", response.status_code, response.text)
-            return make_response(response.text, response.status_code)
+            signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
+            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+            if signup_response.ok:
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '', user_data["firebase_token"])
+
+                payload.pop("applicationOwner")
+                login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
+                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
+                json_response = json.loads(login_response.text)
+
+                if login_response.ok:
+                    built_response = {
+                        "user": user_created["user"],
+                        "token": {
+                            "expiresAt": json_response["token"]["expiresAt"],
+                            "token": json_response["token"]["token"]
+                        }
+                    }
+                    current_app.logger.debug("Python Server Response: %s - %s", login_response.status_code, built_response)
+                else:
+                    built_response = {
+                        "error": {
+                            "code": json_response["code"],
+                            "message": json_response["message"]
+                        }
+                    }
+                    current_app.logger.error("Python Server Response: %s - %s", login_response.status_code, built_response)
+                return make_response(jsonify(built_response), login_response.status_code)
+            current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
+            return make_response(signup_response.text, signup_response.status_code)
         except ValueError:
             error = "Unable to handle UsersResource POST Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+class FacebookLoginResource(Resource):
+    def post(self):
+        try:
+            current_app.logger.info("Received FacebookLoginResource POST Request")
+            user_data = json.loads(request.data)
+
+            payload = {
+                "username": user_data["username"],
+                "password": user_data["username"],
+                "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
+            }
+            headers = {'content-type': 'application/json'}
+
+            user = User.get_facebook_user(user_data["username"])
+
+            if user["user"] is None:
+                signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
+                current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+
+                if not signup_response.ok and signup_response.status_code != 400:
+                    current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
+                    return make_response(signup_response.text, signup_response.status_code)
+                else:
+                    profile_pic_url = user_data["profile_pic"]
+                    profile_pic_bytes = base64.b64encode(requests.get(profile_pic_url).content)
+                    profile_pic_string = profile_pic_bytes.decode('utf-8')
+
+                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string)
+
+            payload.pop("applicationOwner")
+            login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
+            current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
+            json_response = json.loads(login_response.text)
+
+            if login_response.ok:
+                built_response = {
+                    "user": user["user"],
+                    "token": {
+                        "expiresAt": json_response["token"]["expiresAt"],
+                        "token": json_response["token"]["token"]
+                    }
+                }
+                current_app.logger.debug("Python Server Response: %s - %s", login_response.status_code, built_response)
+            else:
+                built_response = {
+                    "error": {
+                        "code": json_response["code"],
+                        "message": json_response["message"]
+                    }
+                }
+                current_app.logger.error("Python Server Response: %s - %s", login_response.status_code, built_response)
+            return make_response(jsonify(built_response), login_response.status_code)
+        except ValueError:
+            error = "Unable to handle FacebookLoginResource POST Request"
+            current_app.logger.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
 
 class SingleUserResource(Resource):
     def get(self, user_id):
@@ -66,7 +146,7 @@ class SingleUserResource(Resource):
             current_app.logger.info("Received SingleUserResource PUT Request")
             request_data = json.loads(request.data)
 
-            updated_user = User.update_user(user_id, request_data["first_name"], request_data["last_name"],
+            updated_user = User.update_user(user_id, request_data["name"],
                 request_data["email"], request_data["profile_pic"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", updated_user)
@@ -136,8 +216,7 @@ class UserSearchResource(Resource):
                         final_user = {
                             "username": user["username"],
                             "profile_pic": user["profile_pic"],
-                            "first_name": user["first_name"],
-                            "last_name": user["last_name"]
+                            "name": user["name"]
                         }
 
                         built_response["found_users"].append(final_user)
@@ -174,8 +253,7 @@ class UserFriendsResource(Resource):
                     friend = {
                         "username": username,
                         "profile_pic": return_friend["profile_pic"],
-                        "first_name": return_friend["first_name"],
-                        "last_name": return_friend["last_name"]
+                        "name": return_friend["name"]
                     }
                     response["friends"].append(friend)
 

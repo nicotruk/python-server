@@ -41,8 +41,7 @@ class FriendshipRequestsSentResource(Resource):
                 for friendship_request in friendship_requests["friendship_requests"]:
                     user = User.get_user_by_username(friendship_request["to_username"])["user"]
                     friendship_request["profile_pic"] = user["profile_pic"]
-                    friendship_request["first_name"] = user["first_name"]
-                    friendship_request["last_name"] = user["last_name"]                    
+                    friendship_request["name"] = user["name"]                   
 
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
@@ -68,8 +67,7 @@ class FriendshipRequestsReceivedResource(Resource):
                 for friendship_request in friendship_requests["friendship_requests"]:
                     user = User.get_user_by_username(friendship_request["from_username"])["user"]
                     friendship_request["profile_pic"] = user["profile_pic"]
-                    friendship_request["first_name"] = user["first_name"]
-                    friendship_request["last_name"] = user["last_name"]  
+                    friendship_request["name"] = user["name"] 
 
             current_app.logger.debug("Python Server Response: 200 - %s", friendship_requests)
             return make_response(jsonify(friendship_requests), 200)
