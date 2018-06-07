@@ -57,8 +57,8 @@ class UsersResourceTestCase(unittest.TestCase):
         user = test_user.copy()
 
         post_response = self.app.post("/api/v1/users",
-                                 data=json.dumps(user),
-                                 content_type='application/json')
+                                      data=json.dumps(user),
+                                      content_type='application/json')
 
         user_response = json.loads(post_response.data)
         user_id = user_response["user"]["user_id"]
@@ -71,8 +71,8 @@ class UsersResourceTestCase(unittest.TestCase):
         }
 
         update_response = self.app.put("/api/v1/users/{}".format(user_id),
-                                 data=json.dumps(changes),
-                                 content_type='application/json')
+                                       data=json.dumps(changes),
+                                       content_type='application/json')
 
         json_response = json.loads(update_response.data)
 
@@ -91,8 +91,8 @@ class UsersResourceTestCase(unittest.TestCase):
         user = test_user.copy()
 
         post_response = self.app.post("/api/v1/users",
-                                 data=json.dumps(user),
-                                 content_type='application/json')
+                                      data=json.dumps(user),
+                                      content_type='application/json')
 
         response = {
             "token": {
