@@ -87,7 +87,7 @@ class FacebookLoginResource(Resource):
                 signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
                 current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
 
-                if not signup_response.ok:
+                if not signup_response.ok and signup_response.status_code != 400:
                     current_app.logger.debug("Python Server Response: %s - %s", signup_response.status_code, signup_response.text)
                     return make_response(signup_response.text, signup_response.status_code)
                 else:
