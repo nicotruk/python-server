@@ -275,3 +275,20 @@ class UserFriendsResource(Resource):
             message = e.args[0]
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
+
+
+class UserFirebaseTokenResource(Resource):
+    def put(self, user_id):
+        try:
+            current_app.logger.info("Received UserFirebaseTokenResource PUT Request")
+            request_data = json.loads(request.data)
+
+            updated_user = User.update_user_firebase_token(user_id, request_data["firebase_token"])
+
+            current_app.logger.debug("Python Server Response: 200 - %s", updated_user)
+            return make_response(jsonify(updated_user), 200)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)

@@ -83,17 +83,27 @@ class User:
             "email": email,
             "profile_pic": profile_pic
         }
-
         result = db.users.find_one_and_update({"user_id": user_id}, {'$set': updated_fields},
                                               return_document=ReturnDocument.AFTER)
-
         if result is None:
             raise UserNotFoundException("There is no user with that ID!")
-
         response = {
             "user": User._decode_user(result)
         }
+        return response
 
+    @staticmethod
+    def update_user_firebase_token(user_id, firebase_token):
+        updated_fields = {
+            "firebase_token": firebase_token
+        }
+        result = db.users.find_one_and_update({"user_id": user_id}, {'$set': updated_fields},
+                                              return_document=ReturnDocument.AFTER)
+        if result is None:
+            raise UserNotFoundException("There is no user with that ID!")
+        response = {
+            "user": User._decode_user(result)
+        }
         return response
 
     @staticmethod

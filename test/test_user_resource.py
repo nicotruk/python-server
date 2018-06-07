@@ -94,6 +94,38 @@ class UsersResourceTestCase(unittest.TestCase):
         self.assertEqual(json_response["user"]["email"], changes["email"])
         self.assertEqual(json_response["user"]["profile_pic"], changes["profile_pic"])
 
+    @patch('resources.user_resource.requests.post')
+    def test_update_firebase_token(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        user = test_user.copy()
+
+        post_response = self.app.post("/api/v1/users",
+                                      data=json.dumps(user),
+                                      content_type='application/json')
+
+        user_response = json.loads(post_response.data)
+        user_id = user_response["user"]["user_id"]
+
+        changes = {
+            "firebase_token": "newFirebaseToken"
+        }
+
+        update_response = self.app.put("/api/v1/users/firebase/{}".format(user_id),
+                                       data=json.dumps(changes),
+                                       content_type='application/json')
+
+        json_response = json.loads(update_response.data)
+
+        self.assertEqual(json_response["user"]["firebase_token"], changes["firebase_token"])
+
     def test_get_single_user_error_user_not_found(self):
         response = self.app.get("/api/v1/users/1234")
         self.assertEqual(response.status_code, 403)

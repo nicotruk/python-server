@@ -10,6 +10,7 @@ from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
 from resources.user_resource import UserFriendsResource
 from resources.user_resource import FacebookLoginResource
+from resources.user_resource import UserFirebaseTokenResource
 from resources.friendship_request_resource import FriendshipRequestResource
 from resources.friendship_request_resource import FriendshipRequestsSentResource
 from resources.friendship_request_resource import FriendshipRequestsReceivedResource
@@ -48,6 +49,8 @@ api.add_resource(DirectMessageResource, '/direct_message')
 api.add_resource(DirectMessagesReceivedResource, '/direct_message/received/<to_username>')
 api.add_resource(UserDirectMessagesResource, '/direct_message/<username>')
 api.add_resource(ConversationMessagesResource, '/direct_message/conversation/<username>/<friend_username>')
+
+api.add_resource(UserFirebaseTokenResource, '/users/firebase/<user_id>')
 
 api.add_resource(StoriesResource, '/stories')
 
