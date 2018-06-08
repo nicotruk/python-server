@@ -1,26 +1,30 @@
+import os.path
+
+import firebase_admin
+from firebase_admin import credentials
 from flask import Flask
 from flask_restful import Api
 
 from config.logger import configure_logger
-from resources.ping_resource import PingResource
-from resources.ping_resource import PingSharedServerResource
-from resources.user_resource import SingleUserResource
-from resources.user_resource import UserLoginResource
-from resources.user_resource import UserSearchResource
-from resources.user_resource import UsersResource
-from resources.user_resource import UserFriendsResource
-from resources.user_resource import FacebookLoginResource
-from resources.user_resource import UserFirebaseTokenResource
 from resources.friendship_request_resource import FriendshipRequestResource
-from resources.friendship_request_resource import FriendshipRequestsSentResource
 from resources.friendship_request_resource import FriendshipRequestsReceivedResource
+from resources.friendship_request_resource import FriendshipRequestsSentResource
 from resources.friendship_request_resource import SingleFriendshipRequestResource
 from resources.friendship_resource import FriendshipResource
+from resources.message_resource import ConversationMessagesResource
 from resources.message_resource import DirectMessageResource
 from resources.message_resource import DirectMessagesReceivedResource
 from resources.message_resource import UserDirectMessagesResource
-from resources.message_resource import ConversationMessagesResource
+from resources.ping_resource import PingResource
+from resources.ping_resource import PingSharedServerResource
 from resources.story_resource import StoriesResource
+from resources.user_resource import FacebookLoginResource
+from resources.user_resource import SingleUserResource
+from resources.user_resource import UserFirebaseTokenResource
+from resources.user_resource import UserFriendsResource
+from resources.user_resource import UserLoginResource
+from resources.user_resource import UserSearchResource
+from resources.user_resource import UsersResource
 
 app = Flask("python_server")
 
@@ -56,6 +60,11 @@ api.add_resource(StoriesResource, '/stories')
 
 api.add_resource(PingResource, '/ping')
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')
+
+my_path = os.path.abspath(os.path.dirname(__file__))
+path = os.path.join(my_path, "serviceAccountKey.json")
+cred = credentials.Certificate(path)
+default_app = firebase_admin.initialize_app(cred)
 
 
 @app.route('/')

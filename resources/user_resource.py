@@ -1,7 +1,7 @@
+import base64
 import json
 
 import requests
-import base64
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
@@ -9,7 +9,6 @@ from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_T
     SHARED_SERVER_APPLICATION_OWNER
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
-import pprint
 
 
 class UsersResource(Resource):
