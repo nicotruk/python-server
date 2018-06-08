@@ -1,5 +1,8 @@
+from firebase_admin import messaging
+
 from config.mongodb import db
 from model.db.direct_messageVO import DirectMessageVO
+from model.user import User, UserNotFoundException
 
 
 class DirectMessage:
@@ -74,6 +77,21 @@ class DirectMessage:
             direct_messages_response["direct_messages"].append(
                 DirectMessage._decode_direct_message(direct_message_db_response))
         return direct_messages_response
+
+    @staticmethod
+    def send_firebase_message(from_username, to_username, message):
+        try:
+            token = User.get_user_by_username(to_username)["user"]["firebase_token"]
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=from_username,
+                    body=message
+                ),
+                token=token
+            )
+            response = messaging.send(message)
+        except UserNotFoundException:
+            raise UserNotFoundException
 
     @staticmethod
     def _encode_direct_message(direct_message):

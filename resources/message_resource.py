@@ -6,6 +6,7 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from model.direct_message import DirectMessage
+from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
 
 
@@ -22,20 +23,22 @@ class DirectMessageResource(Resource):
             if direct_message_created is None:
                 raise ValueError('DB error')
             else:
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=request_data["from_username"],
-                        body=request_data["to_username"]
-                    ),
-                    token="cG6vdlrz7_A:APA91bF9g1O42cfnv4r2bGx4JzVo9uv3UyMtzOuBk_C6eMvfj1ZO4cAuXivaAUXcoML0ZTWEI5Fr1SZlmUJOYExTQj7UBD-fR3OOK5rDkb92a6mSSKTdng-mhECklKN1Opdbdx5R3F_r"
-                )
-                response = messaging.send(message)
+                DirectMessage.send_firebase_message(request_data["from_username"], request_data["to_username"],
+                                                    request_data["message"])
                 current_app.logger.debug("Python Server Response: 201 - %s", direct_message_created)
                 return make_response(jsonify(direct_message_created), 201)
-        except ValueError as e:
+        except ValueError:
             error = "Unable to handle DirectMessageResource POST Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException:
+            error = "Unable to send Firebase Notification - User not found"
+            current_app.logger.error("Python Server Response: 409 - %s", error)
+            return ErrorHandler.create_error_response(409, error)
+        except messaging.ApiCallError:
+            error = "Unable to send Firebase Notification - ApiCallError"
+            current_app.logger.error("Python Server Response: 409 - %s", error)
+            return ErrorHandler.create_error_response(409, error)
 
 
 class DirectMessagesReceivedResource(Resource):
