@@ -89,7 +89,7 @@ class DirectMessage:
                 ),
                 token=token
             )
-            response = messaging.send(message)
+            messaging.send(message)
         except UserNotFoundException:
             raise UserNotFoundException
 

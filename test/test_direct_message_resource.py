@@ -2,6 +2,8 @@
 import os
 import sys
 
+from mock import patch
+
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 ########
@@ -75,6 +77,42 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 1)
 
+    @patch('resources.user_resource.requests.post')
+    @patch('model.direct_message.messaging.send')
+    def test_send_firebase_notification(self, mock_messaging, mock_post):
+        config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = True
+        mock_messaging.return_value.status_code = 200
+        with app.app_context():
+            db.users.delete_many({})
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        direct_message = test_direct_message.copy()
+        user = {
+            "username": direct_message["to_username"],
+            "password": "123",
+            "email": "asd@asd.com",
+            "name": "Nombre Apellido",
+            "profile_pic": "",
+            "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234",
+        }
+
+        self.app.post("/api/v1/users", data=json.dumps(user), content_type='application/json')
+
+        self.app.post("/api/v1/direct_message",
+                      data=json.dumps(direct_message),
+                      content_type='application/json')
+
+        mock_messaging.call_args_list[0][0][0].notification = direct_message["message"]
+        mock_messaging.call_args_list[0][0][0].title = direct_message["from_username"]
+        mock_messaging.assert_called()
+
     def test_user_messages(self):
         direct_message = test_direct_message.copy()
         self.app.post("/api/v1/direct_message",
@@ -135,3 +173,5 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         self.assertIn(direct_message_response["direct_messages"][1]["to_username"], users)
         self.assertLessEqual(direct_message_response["direct_messages"][0]["timestamp"],
                              direct_message_response["direct_messages"][1]["timestamp"])
+#        messaging.send.assert_called_once_with(direct_message["from_username"], direct_message["to_username"],
+#                                               direct_message["message"])
