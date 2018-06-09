@@ -5,6 +5,7 @@ from firebase_admin import messaging
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
+import config.firebase_config
 from model.direct_message import DirectMessage
 from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
@@ -23,8 +24,9 @@ class DirectMessageResource(Resource):
             if direct_message_created is None:
                 raise ValueError('DB error')
             else:
-                DirectMessage.send_firebase_message(request_data["from_username"], request_data["to_username"],
-                                                    request_data["message"])
+                if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
+                    DirectMessage.send_firebase_message(request_data["from_username"], request_data["to_username"],
+                                                        request_data["message"])
                 current_app.logger.debug("Python Server Response: 201 - %s", direct_message_created)
                 return make_response(jsonify(direct_message_created), 201)
         except ValueError:

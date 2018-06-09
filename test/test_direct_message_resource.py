@@ -9,6 +9,7 @@ from config.mongodb import db
 from app import app
 import unittest
 import json
+import config.firebase_config
 
 test_direct_message = {
     "from_username": "123",
@@ -20,6 +21,7 @@ test_direct_message = {
 class DirectMessageResourceTestCase(unittest.TestCase):
 
     def setUp(self):
+        config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = False
         self.app = app.test_client()
         self.app.testing = True
 
