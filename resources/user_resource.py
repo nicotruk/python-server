@@ -41,7 +41,7 @@ class UsersResource(Resource):
             if signup_response.ok:
                 user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '',
                                            user_data["firebase_token"])
-
+                current_app.logger.debug("User created with firebase_token = %s", user_data["firebase_token"])
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
                 current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code,
