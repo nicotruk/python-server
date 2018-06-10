@@ -209,7 +209,7 @@ class UserLoginResource(Resource):
 
 
 class UserSearchResource(Resource):
-    def get(self, user_id, partial_username):
+    def get(self, user_id, query):
         try:
             current_app.logger.info("Received UserSearchResource GET Request")
             users_response = User.get_all()
@@ -223,15 +223,16 @@ class UserSearchResource(Resource):
 
             if users:
                 for user in users:
-                    if partial_username in user["username"] and user_id != user["user_id"] and current_username not in \
-                            user["friends_usernames"]:
-                        final_user = {
-                            "username": user["username"],
-                            "profile_pic": user["profile_pic"],
-                            "name": user["name"]
-                        }
+                    if user_id != user["user_id"]:
+                        if current_username.lower() not in [x.lower() for x in user["friends_usernames"]]:
+                            if query.lower() in user["username"].lower() or query.lower() in user["name"].lower():
+                                final_user = {
+                                    "username": user["username"],
+                                    "profile_pic": user["profile_pic"],
+                                    "name": user["name"]
+                                }
 
-                        built_response["found_users"].append(final_user)
+                                built_response["found_users"].append(final_user)
 
             current_app.logger.debug("Python Server Response: 200 - %s", built_response)
 

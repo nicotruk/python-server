@@ -40,7 +40,7 @@ api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(FacebookLoginResource, '/users/fb_login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
 api.add_resource(UserFriendsResource, '/users/friends/<user_id>')
-api.add_resource(UserSearchResource, '/users/search/<user_id>/<partial_username>')
+api.add_resource(UserSearchResource, '/users/search/<user_id>/<query>')
 
 api.add_resource(FriendshipRequestResource, '/friendship/request')
 api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_username>')
