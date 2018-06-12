@@ -15,7 +15,7 @@ class FirebaseManager:
                     body=message
                 ),
                 data={
-                    'type': notification_type
+                    'notification_type': notification_type
                 },
                 token=token
             )
