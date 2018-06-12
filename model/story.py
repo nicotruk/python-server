@@ -4,6 +4,8 @@ from model.db.storyVO import StoryVO
 import uuid
 import pprint
 
+from .user import User
+
 class Story:
 
     @staticmethod
@@ -14,6 +16,44 @@ class Story:
         }
 
         for story in db_response:
+            response["stories"].append(Story._decode(story))
+
+        return response
+
+    @staticmethod
+    def get_by_user(userId):
+
+        # Get all public stories
+        publicStories = list(db.stories.find({ "visibility": "public" }))
+
+        # Get all private stories
+        privateStories = list(db.stories.find({ "visibility": "private" }))
+
+        # Filter out private stories, keeping only
+        # 1) Private stories of the user
+        # 2) Private stories of the user's friends
+        user = db.users.find_one({ "user_id": userId })
+        userFriendsIds = list()
+
+        for friends_username in user["friends_usernames"]:
+            friend = db.users.find_one({ "username": friends_username })
+            userFriendsIds.append(friend.user_id)
+
+        validUserIds = userFriendsIds + [userId]
+        visiblePrivateStories = list()
+
+        for privateStory in privateStories:
+            if privateStory["user_id"] in validUserIds:
+                visiblePrivateStories.append(privateStory)
+
+        # Merge all stories
+        result = publicStories + visiblePrivateStories
+
+        response = {
+            "stories": []
+        }
+
+        for story in result:
             response["stories"].append(Story._decode(story))
 
         return response
