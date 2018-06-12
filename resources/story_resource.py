@@ -3,6 +3,7 @@ import json
 import requests
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
+from flask_restful import reqparse
 
 from config.shared_server_config import SHARED_SERVER_FILE_UPLOAD_PATH
 from model.story import Story
@@ -12,9 +13,12 @@ class StoriesResource(Resource):
 
     def get(self):
         try:
-            current_app.logger.info("Received StoriesResource GET Request")
-            response = Story.get_all()
+            userId = request.args.get('user_id')
+            current_app.logger.info("Received StoriesResource GET Requestfor User ID: " + userId)
+
+            response = Story.get_by_user(userId)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
+
             return make_response(jsonify(response), 200)
         except ValueError:
             error = "Unable to handle StoriesResource GET Request"
