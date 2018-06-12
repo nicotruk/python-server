@@ -78,7 +78,7 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         self.assertEqual(len(direct_message_response["direct_messages"]), 1)
 
     @patch('resources.user_resource.requests.post')
-    @patch('model.direct_message.messaging.send')
+    @patch('model.firebase_manager.messaging.send')
     def test_send_firebase_notification(self, mock_messaging, mock_post):
         config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = True
         mock_messaging.return_value.status_code = 200
