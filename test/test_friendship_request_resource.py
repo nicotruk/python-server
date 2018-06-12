@@ -10,6 +10,7 @@ from app import app
 from mock import patch
 import unittest
 import json
+import config.firebase_config
 
 test_friendship_request = {
     "from_username": "123",
@@ -38,6 +39,7 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
     @patch('resources.user_resource.requests.post')
     def setUp(self, mock_post):
         mock_post.return_value.status_code = 200
+        config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = False
         self.app = app.test_client()
         self.app.testing = True
 

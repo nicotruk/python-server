@@ -5,6 +5,7 @@ from flask_restful import Resource
 
 from model.friendship_request import FriendshipRequest
 from model.user import User
+from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
 
 
@@ -35,4 +36,4 @@ class FriendshipResource(Resource):
             error = "Unable to handle SetFriendshipResource POST Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
-        
+
