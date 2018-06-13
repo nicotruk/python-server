@@ -49,7 +49,7 @@ class StoriesResource(Resource):
                     story_data["is_quick_story"],
                     story_data["timestamp"]
                 )
-                current_app.logger.debug("Shared Server Response: 201 - %s", story_created)
+                current_app.logger.debug("Python Server Response: 201 - %s", story_created)
                 current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
                 return make_response(jsonify(story_created), 200)
             return make_response(response.text, response.status_code)
