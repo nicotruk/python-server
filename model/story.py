@@ -2,7 +2,11 @@ from config.mongodb import db
 from pymongo import ReturnDocument
 from model.db.storyVO import StoryVO
 import uuid
-import pprint
+
+
+class StoryNotFoundException(Exception):
+    pass
+
 
 from .user import User
 
@@ -65,6 +69,20 @@ class Story:
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
+        return response
+
+    @staticmethod
+    def update(story_id, file_url):
+        updated_fields = {
+            "file_url": file_url
+        }
+        result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields},
+                                                return_document=ReturnDocument.AFTER)
+        if result is None:
+            raise StoryNotFoundException("There is no story with that ID!")
+        response = {
+            "story": Story._decode(result)
+        }
         return response
 
     @staticmethod
