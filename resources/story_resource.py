@@ -15,7 +15,7 @@ class StoriesResource(Resource):
     def get(self):
         try:
             userId = request.args.get('user_id')
-            current_app.logger.info("Received StoriesResource GET Requestfor User ID: " + userId)
+            current_app.logger.info("Received StoriesResource GET Request for User ID: " + userId)
 
             response = Story.get_by_user(userId)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
@@ -51,6 +51,7 @@ class StoriesResource(Resource):
             headers = {'content-type': 'application/json'}
             response = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH, data=json.dumps(payload), headers=headers)
             file_data = json.loads(response.text)
+
             if response.ok:
                 story_created = Story.create(
                     story_data["user_id"],
@@ -64,7 +65,7 @@ class StoriesResource(Resource):
                 )
                 current_app.logger.debug("Python Server Response: 201 - %s", story_created)
                 return make_response(jsonify(story_created), 200)
-                current_app.logger.debug("Python Server Response: %s - %s", response.status_code, response.text)
+
             return make_response(response.text, response.status_code)
         except ValueError:
             error = "Unable to handle StoriesResource POST Request"
