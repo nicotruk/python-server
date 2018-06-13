@@ -80,9 +80,7 @@ class Story:
                                                 return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
-        response = {
-            "story": Story._decode(result)
-        }
+        response = Story._decode(result)
         return response
 
     @staticmethod
