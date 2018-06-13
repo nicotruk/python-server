@@ -1,13 +1,11 @@
 import json
 
-import requests
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
-from flask_restful import reqparse
 
-from config.shared_server_config import SHARED_SERVER_FILE_UPLOAD_PATH
 from model.story import Story
 from resources.error_handler import ErrorHandler
+
 
 class StoriesResource(Resource):
 
