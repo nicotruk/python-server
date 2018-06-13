@@ -63,9 +63,9 @@ class Story:
         return response
 
     @staticmethod
-    def create(user_id, location, visibility, title, description, file_url, is_quick_story, timestamp):
+    def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
         id = str(uuid.uuid4())
-        new_story = StoryVO(id, user_id, location, visibility, title, description, file_url, is_quick_story, timestamp)
+        new_story = StoryVO(id, user_id, location, visibility, title, description, is_quick_story, timestamp)
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
