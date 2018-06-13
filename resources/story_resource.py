@@ -7,7 +7,7 @@ from flask_restful import reqparse
 
 from config.shared_server_config import SHARED_SERVER_FILE_UPLOAD_PATH
 from model.story import Story
-from model.user import User
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 
 class StoriesResource(Resource):
