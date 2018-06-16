@@ -41,7 +41,7 @@ class Story:
 
         for friends_username in user["friends_usernames"]:
             friend = db.users.find_one({ "username": friends_username })
-            userFriendsIds.append(friend.user_id)
+            userFriendsIds.append(friend["user_id"])
 
         validUserIds = userFriendsIds + [userId]
         visiblePrivateStories = list()
