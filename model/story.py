@@ -41,7 +41,7 @@ class Story:
 
         for friends_username in user["friends_usernames"]:
             friend = db.users.find_one({ "username": friends_username })
-            userFriendsIds.append(friend.user_id)
+            userFriendsIds.append(friend["user_id"])
 
         validUserIds = userFriendsIds + [userId]
         visiblePrivateStories = list()
@@ -81,6 +81,19 @@ class Story:
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
+        return response
+
+    @staticmethod
+    def delete(story_id):
+        db_response = db.stories.delete_one({"id": story_id})
+        if db_response.deleted_count == 1:
+            response = {
+                "story": {
+                    "story_id": story_id
+                }
+            }
+        else: 
+            response = None
         return response
 
     @staticmethod

@@ -56,3 +56,27 @@ class StoriesResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+class SingleStoryResource(Resource):
+
+    def delete(self, story_id):
+        try:
+            current_app.logger.info("Received SingleStoryResource - DELETE Request")
+            deleted_story = Story.delete(story_id)
+            if deleted_story is None:
+                current_app.logger.debug("Python Server Response: 409 - %s",
+                                         "No story found with that ID!.")
+                return make_response("No story found with that ID!.", 403)
+            else:
+                current_app.logger.debug("Python Server Response: 201 - %s", deleted_story)
+                return make_response(jsonify(deleted_story), 201)
+        except ValueError:
+            error = "Unable to handle SingleFriendshipRequestResource - DELETE Request"
+            current_app.logger.error("Python Server Response: %s - %s", 500, error)
+            return ErrorHandler.create_error_response(500, error)
+
+
+
+
+
+
+
