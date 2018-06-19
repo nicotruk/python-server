@@ -56,6 +56,7 @@ class StoriesResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+
 class SingleStoryResource(Resource):
 
     def delete(self, story_id):

@@ -1,6 +1,7 @@
 from config.mongodb import db
 from pymongo import ReturnDocument
 from model.db.storyVO import StoryVO
+from model.user import UserNotFoundException
 import uuid
 
 
@@ -37,35 +38,39 @@ class Story:
         # 1) Private stories of the user
         # 2) Private stories of the user's friends
         user = db.users.find_one({ "user_id": userId })
-        userFriendsIds = list()
 
-        for friends_username in user["friends_usernames"]:
-            friend = db.users.find_one({ "username": friends_username })
-            userFriendsIds.append(friend["user_id"])
+        if user is None:
+            raise UserNotFoundException("User not found")
+        else:
+            userFriendsIds = list()
 
-        validUserIds = userFriendsIds + [userId]
-        visiblePrivateStories = list()
+            for friends_username in user["friends_usernames"]:
+                friend = db.users.find_one({ "username": friends_username })
+                userFriendsIds.append(friend["user_id"])
 
-        for privateStory in privateStories:
-            if privateStory["user_id"] in validUserIds:
-                visiblePrivateStories.append(privateStory)
+            validUserIds = userFriendsIds + [userId]
+            visiblePrivateStories = list()
 
-        # Merge all stories
-        result = publicStories + visiblePrivateStories
+            for privateStory in privateStories:
+                if privateStory["user_id"] in validUserIds:
+                    visiblePrivateStories.append(privateStory)
 
-        response = {
-            "stories": []
-        }
+            # Merge all stories
+            result = publicStories + visiblePrivateStories
 
-        for story in result:
-            response["stories"].append(Story._decode(story))
+            response = {
+                "stories": []
+            }
 
-        return response
+            for story in result:
+                response["stories"].append(Story._decode(story))
+
+            return response
 
     @staticmethod
     def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
-        id = str(uuid.uuid4())
-        new_story = StoryVO(id, user_id, location, visibility, title, description, is_quick_story, timestamp)
+        story_id = str(uuid.uuid4())
+        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp)
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
