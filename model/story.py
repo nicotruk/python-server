@@ -84,6 +84,19 @@ class Story:
         return response
 
     @staticmethod
+    def delete(story_id):
+        db_response = db.stories.delete_one({"id": story_id})
+        if db_response.deleted_count == 1:
+            response = {
+                "story": {
+                    "story_id": story_id
+                }
+            }
+        else: 
+            response = None
+        return response
+
+    @staticmethod
     def _encode(item):
         return {
             "_type": "story",
