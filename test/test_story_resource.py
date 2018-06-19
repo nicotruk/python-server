@@ -98,3 +98,38 @@ class StoriesResourceTestCase(unittest.TestCase):
         stories_response = json.loads(response.data)
         stories = stories_response["stories"]
         self.assertEqual(len(stories), 1)
+        self.assertEqual(stories[0]["title"], test_story["title"])
+        self.assertEqual(stories[0]["description"], test_story["description"])
+
+    @patch('resources.user_resource.requests.post')
+    def test_post_and_delete_story(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        user = test_user.copy()
+
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_response = json.loads(response.data)
+        user_id = user_response["user"]["user_id"]
+
+        story = test_story.copy()
+        story["user_id"] = user_id
+        response = self.app.post("/api/v1/stories",
+                                 data=json.dumps(story),
+                                 content_type='application/json')
+        response_story = json.loads(response.data)
+
+        response = self.app.delete("/api/v1/stories/{}".format(response_story["id"]))
+        self.assertEqual(response.status_code, 201)
+
+    def test_delete_nonexistent_story(self):
+        response = self.app.delete("/api/v1/stories/{}".format("sarasa"))
+        self.assertEqual(response.status_code, 403)

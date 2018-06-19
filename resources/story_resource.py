@@ -64,7 +64,7 @@ class SingleStoryResource(Resource):
             current_app.logger.info("Received SingleStoryResource - DELETE Request")
             deleted_story = Story.delete(story_id)
             if deleted_story is None:
-                current_app.logger.debug("Python Server Response: 409 - %s",
+                current_app.logger.debug("Python Server Response: 403 - %s",
                                          "No story found with that ID!.")
                 return make_response("No story found with that ID!.", 403)
             else:
