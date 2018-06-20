@@ -58,6 +58,13 @@ class Story:
             # Merge all stories
             result = publicStories + visiblePrivateStories
 
+            # Add user info in each story
+            for story in result:
+                user = db.users.find_one({ "user_id": story["user_id"] })
+                story["username"] = user["username"]
+                story["name"] = user["name"]
+                story["profile_pic"] = user["profile_pic"]
+
             response = {
                 "stories": []
             }
@@ -97,7 +104,7 @@ class Story:
                     "story_id": story_id
                 }
             }
-        else: 
+        else:
             response = None
         return response
 

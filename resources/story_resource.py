@@ -18,13 +18,6 @@ class StoriesResource(Resource):
             response = Story.get_by_user(userId)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
 
-            if response["stories"]:
-                for story in response["stories"]:
-                    user = User.get_user_by_id(story["user_id"])
-                    story["username"] = user["user"]["username"]
-                    story["name"] = user["user"]["name"]
-                    story["profile_pic"] = user["user"]["profile_pic"]
-
             return make_response(jsonify(response), 200)
         except ValueError:
             error = "Unable to handle StoriesResource GET Request"

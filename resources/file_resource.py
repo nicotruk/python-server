@@ -16,11 +16,10 @@ class FileResource(Resource):
             current_app.logger.info("Received FileResource POST Request")
             uploaded_file = request.files['file'].read()
             filename = request.form.get('filename')
-            shared_server_upload = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH,
-                                                 files={'file': (filename, uploaded_file)})
-            current_app.logger.debug("Shared Server Response: %s - %s", shared_server_upload.status_code,
-                                     shared_server_upload.text)
+            shared_server_upload = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH, files={'file': (filename, uploaded_file)})
+            current_app.logger.debug("Shared Server Response: %s - %s", shared_server_upload.status_code, shared_server_upload.text)
             file_data = json.loads(shared_server_upload.text)
+
             if shared_server_upload.ok:
                 story_updated = Story.update(
                     story_id,
