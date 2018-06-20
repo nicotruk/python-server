@@ -4,10 +4,8 @@ from model.db.storyVO import StoryVO
 from model.user import UserNotFoundException
 import uuid
 
-
 class StoryNotFoundException(Exception):
     pass
-
 
 from .user import User
 
@@ -57,13 +55,6 @@ class Story:
 
             # Merge all stories
             result = publicStories + visiblePrivateStories
-
-            # Add user info in each story
-            for story in result:
-                user = db.users.find_one({ "user_id": story["user_id"] })
-                story["username"] = user["username"]
-                story["name"] = user["name"]
-                story["profile_pic"] = user["profile_pic"]
 
             response = {
                 "stories": []
@@ -126,6 +117,7 @@ class Story:
     @staticmethod
     def _decode(document):
         assert document["_type"] == "story"
+
         story = {
             "id": document["id"],
             "user_id": document["user_id"],
@@ -137,4 +129,11 @@ class Story:
             "is_quick_story": document["is_quick_story"],
             "timestamp": document["timestamp"]
         }
+
+        # Add user info in each story
+        user = db.users.find_one({ "user_id": str(story["user_id"]) })
+        story["username"] = user["username"]
+        story["name"] = user["name"]
+        story["profile_pic"] = user["profile_pic"]
+
         return story
