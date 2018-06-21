@@ -11,10 +11,11 @@ from model.direct_message import DirectMessage
 from model.firebase_manager import FirebaseManager
 from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
-
+from resources.token_validation_decorator import token_validation_required
 
 class DirectMessageResource(Resource):
 
+    @token_validation_required
     def post(self):
         try:
             current_app.logger.info("Received DirectMessageResource POST Request")
@@ -47,6 +48,7 @@ class DirectMessageResource(Resource):
 
 class DirectMessagesReceivedResource(Resource):
 
+    @token_validation_required
     def get(self, to_username):
         try:
             current_app.logger.info("Received DirectMessagesReceivedResource - received requests - GET Request")
@@ -61,6 +63,7 @@ class DirectMessagesReceivedResource(Resource):
 
 class UserDirectMessagesResource(Resource):
 
+    @token_validation_required
     def get(self, username):
         try:
             current_app.logger.info("Received UserDirectMessagesResource - received requests - GET Request")
@@ -75,6 +78,7 @@ class UserDirectMessagesResource(Resource):
 
 class ConversationMessagesResource(Resource):
 
+    @token_validation_required
     def get(self, username, friend_username):
         try:
             current_app.logger.info("Received ConversationMessagesResource - received requests - GET Request")

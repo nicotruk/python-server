@@ -7,10 +7,12 @@ from model.friendship_request import FriendshipRequest
 from model.user import User
 from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
+from resources.token_validation_decorator import token_validation_required
 
 
 class FriendshipResource(Resource):
 
+    @token_validation_required
     def post(self):
         try:
             current_app.logger.info("Received SetFriendshipResource POST Request")

@@ -4,11 +4,12 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from model.story import Story
-from model.user import User, UserNotFoundException
+from model.user import UserNotFoundException
 from resources.error_handler import ErrorHandler
+from resources.token_validation_decorator import token_validation_required
 
 class StoriesResource(Resource):
-
+    @token_validation_required
     def get(self):
         try:
             userId = request.args.get('user_id')
@@ -26,6 +27,7 @@ class StoriesResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
+    @token_validation_required
     def post(self):
         try:
             current_app.logger.info("Received StoriesResource POST Request")
@@ -49,6 +51,7 @@ class StoriesResource(Resource):
 
 class SingleStoryResource(Resource):
 
+    @token_validation_required
     def delete(self, story_id):
         try:
             current_app.logger.info("Received SingleStoryResource - DELETE Request")

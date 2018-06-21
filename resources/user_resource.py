@@ -9,10 +9,12 @@ from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_T
     SHARED_SERVER_APPLICATION_OWNER, SHARED_SERVER_TOKEN
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+from resources.token_validation_decorator import token_validation_required
 
 
 class UsersResource(Resource):
 
+    @token_validation_required
     def get(self):
         try:
             current_app.logger.info("Received UsersResource GET Request")
@@ -140,6 +142,7 @@ class FacebookLoginResource(Resource):
 
 
 class SingleUserResource(Resource):
+    @token_validation_required
     def get(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource GET Request")
@@ -152,6 +155,7 @@ class SingleUserResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
+    @token_validation_required
     def put(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource PUT Request")
@@ -209,6 +213,7 @@ class UserLoginResource(Resource):
 
 
 class UserSearchResource(Resource):
+    @token_validation_required
     def get(self, user_id, query):
         try:
             current_app.logger.info("Received UserSearchResource GET Request")
@@ -249,6 +254,7 @@ class UserSearchResource(Resource):
 
 
 class UserFriendsResource(Resource):
+    @token_validation_required
     def get(self, user_id):
         try:
             current_app.logger.info("Received UserFriendsResource GET Request")
@@ -280,6 +286,7 @@ class UserFriendsResource(Resource):
 
 
 class UserFirebaseTokenResource(Resource):
+    @token_validation_required
     def put(self, user_id):
         try:
             current_app.logger.info("Received UserFirebaseTokenResource PUT Request")
