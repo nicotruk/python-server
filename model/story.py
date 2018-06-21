@@ -68,7 +68,7 @@ class Story:
     @staticmethod
     def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
         story_id = str(uuid.uuid4())
-        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp)
+        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '', [])
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
@@ -79,8 +79,7 @@ class Story:
         updated_fields = {
             "file_url": file_url
         }
-        result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields},
-                                                return_document=ReturnDocument.AFTER)
+        result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields}, return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
@@ -110,6 +109,7 @@ class Story:
             "title": item.title,
             "description": item.description,
             "file_url": item.file_url,
+            "likes": item.likes,
             "is_quick_story": item.is_quick_story,
             "timestamp": item.timestamp
         }
@@ -126,6 +126,7 @@ class Story:
             "title": document["title"],
             "description": document["description"],
             "file_url": document["file_url"],
+            "likes": dict.get(document, "likes", []),
             "is_quick_story": document["is_quick_story"],
             "timestamp": document["timestamp"]
         }
