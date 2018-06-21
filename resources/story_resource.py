@@ -7,24 +7,14 @@ from model.story import Story
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 
-
 class StoriesResource(Resource):
 
     def get(self):
         try:
             userId = request.args.get('user_id')
             current_app.logger.info("Received StoriesResource GET Request for User ID: " + userId)
-
             response = Story.get_by_user(userId)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
-
-            if response["stories"]:
-                for story in response["stories"]:
-                    user = User.get_user_by_id(story["user_id"])
-                    story["username"] = user["user"]["username"]
-                    story["name"] = user["user"]["name"]
-                    story["profile_pic"] = user["user"]["profile_pic"]
-
             return make_response(jsonify(response), 200)
         except ValueError:
             error = "Unable to handle StoriesResource GET Request"
@@ -64,7 +54,7 @@ class SingleStoryResource(Resource):
             current_app.logger.info("Received SingleStoryResource - DELETE Request")
             deleted_story = Story.delete(story_id)
             if deleted_story is None:
-                current_app.logger.debug("Python Server Response: 409 - %s",
+                current_app.logger.debug("Python Server Response: 403 - %s",
                                          "No story found with that ID!.")
                 return make_response("No story found with that ID!.", 403)
             else:

@@ -20,19 +20,14 @@ class FileResource(Resource):
             token_validation_payload = {
                 "token": user_token
             }
-            token_validation_response = requests.post(SHARED_SERVER_TOKEN_VALIDATION_PATH,
-                                                      data=json.dumps(token_validation_payload),
-                                                      headers=token_headers)
+            token_validation_response = requests.post(SHARED_SERVER_TOKEN_VALIDATION_PATH, data=json.dumps(token_validation_payload), headers=token_headers)
             if token_validation_response.ok:
                 current_app.logger.info("User token was validated successfully")
                 upload_headers = {'Authorization': 'Bearer {}'.format(user_token)}
                 uploaded_file = request.files['file'].read()
                 filename = request.form.get('filename')
-                shared_server_upload = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH,
-                                                     files={'file': (filename, uploaded_file)},
-                                                     headers=upload_headers)
-                current_app.logger.debug("Shared Server Response: %s - %s", shared_server_upload.status_code,
-                                         shared_server_upload.text)
+                shared_server_upload = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH, files={'file': (filename, uploaded_file)}, headers=upload_headers)
+                current_app.logger.debug("Shared Server Response: %s - %s", shared_server_upload.status_code, shared_server_upload.text)
                 file_data = json.loads(shared_server_upload.text)
                 if shared_server_upload.ok:
                     story_updated = Story.update(
