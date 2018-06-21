@@ -3,9 +3,14 @@ import json
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
+import config.firebase_config
+from config.firebase_config import NOTIFICATION_TYPE_STORY
+from config.firebase_config import NOTIFICATION_TYPE_STORY_MESSAGE
+from model.firebase_manager import FirebaseManager
 from model.story import Story
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+
 
 class StoriesResource(Resource):
 
@@ -40,6 +45,21 @@ class StoriesResource(Resource):
                 story_data["timestamp"]
             )
             current_app.logger.debug("Python Server Response: 201 - %s", story_created)
+            if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
+                try:
+                    user = User.get_user_by_id(story_data["user_id"])
+                    if user is not None:
+                        user = user["user"]
+                        for friend_username in user["friends_usernames"]:
+                            try:
+                                FirebaseManager.send_firebase_message(user["username"],
+                                                                      friend_username,
+                                                                      NOTIFICATION_TYPE_STORY_MESSAGE,
+                                                                      NOTIFICATION_TYPE_STORY)
+                            except UserNotFoundException:
+                                pass
+                except UserNotFoundException:
+                    pass
             return make_response(jsonify(story_created), 200)
         except ValueError:
             error = "Unable to handle StoriesResource POST Request"
@@ -64,10 +84,3 @@ class SingleStoryResource(Resource):
             error = "Unable to handle SingleFriendshipRequestResource - DELETE Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
-
-
-
-
-
-
-
