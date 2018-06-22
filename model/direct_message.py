@@ -34,26 +34,38 @@ class DirectMessage:
 
     @staticmethod
     def get_user_direct_messages_sorted_by_timestamp(username):
-        pipeline = [
-            {"$match": {"$or": [{"from_username": username}, {"to_username": username}]}},
-            {"$project": {"_id": 1, "from_username": 1, "to_username": 1, "message": 1, "timestamp": 1, "_type": 1,
-                          "interlocutor": {
-                              "$cond": [{"$eq": ["$from_username", username]}, "$to_username", "$from_username"]}}},
-            {"$sort": {"timestamp": -1}},
-            {"$group": {"_id": "$interlocutor", "from_username": {"$first": "$from_username"},
-                        "to_username": {"$first": "$to_username"}, "message": {"$first": "$message"},
-                        "timestamp": {"$first": "$timestamp"}, "_type": {"$first": "$_type"}}}
-        ]
-        direct_messages_db_response = list(
-            db.direct_messages.aggregate(pipeline))
+        try:
+            pipeline = [
+                {"$match": {"$or": [{"from_username": username}, {"to_username": username}]}},
+                {"$project": {"_id": 1, "from_username": 1, "to_username": 1, "message": 1, "timestamp": 1, "_type": 1,
+                              "interlocutor": {
+                                  "$cond": [{"$eq": ["$from_username", username]}, "$to_username", "$from_username"]}}},
+                {"$sort": {"timestamp": -1}},
+                {"$group": {"_id": "$interlocutor", "from_username": {"$first": "$from_username"},
+                            "to_username": {"$first": "$to_username"}, "message": {"$first": "$message"},
+                            "timestamp": {"$first": "$timestamp"}, "_type": {"$first": "$_type"}}}
+            ]
+            direct_messages_db_response = list(
+                db.direct_messages.aggregate(pipeline))
 
-        direct_messages_response = {
-            "direct_messages": []
-        }
-        for direct_message_db_response in direct_messages_db_response:
-            direct_messages_response["direct_messages"].append(
-                DirectMessage._decode_direct_message(direct_message_db_response))
-        return direct_messages_response
+            direct_messages_response = {
+                "direct_messages": []
+            }
+            for direct_message_db_response in direct_messages_db_response:
+                direct_messages_response["direct_messages"].append(
+                    DirectMessage._decode_direct_message(direct_message_db_response))
+
+            for message in direct_messages_response["direct_messages"]:
+                user = User.get_user_by_username(message["_id"])["user"]
+                message["name"] = user["name"]
+                message["profile_pic"] = user["profile_pic"]
+
+            return direct_messages_response
+        except UserNotFoundException as e:
+                status_code = 403
+                message = e.args[0]
+                current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+                return ErrorHandler.create_error_response(status_code, message)
 
     @staticmethod
     def get_conversation_messages_sorted_by_timestamp(username, friend_username):
