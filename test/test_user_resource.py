@@ -415,3 +415,31 @@ class UsersResourceTestCase(unittest.TestCase):
         friends = json.loads(response.data)["friends"]
         self.assertEqual(len(friends), 1)
         self.assertEqual(friends[0]["username"], user2["username"])
+
+    # /users POST + /users/fb_login POST
+    @patch('resources.user_resource.requests.post')
+    def test_facebook_login_user_already_created(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        user = test_user.copy()
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user),
+                      content_type='application/json')
+
+        fb_login_response = self.app.post("/api/v1/users/fb_login",
+                      data=json.dumps(user),
+                      content_type='application/json')
+        self.assertEqual(fb_login_response.status_code, 200)
+        response_data = json.loads(fb_login_response.data)
+        self.assertEqual(response["token"],response_data["token"])
+        response_data["user"].pop("user_id")
+        user.pop("password")
+        self.assertEqual(user, response_data["user"])
