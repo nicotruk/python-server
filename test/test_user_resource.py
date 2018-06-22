@@ -32,6 +32,7 @@ class UsersResourceTestCase(unittest.TestCase):
     def tearDown(self):
         with app.app_context():
             db.users.delete_many({})
+            db.friendship_requests.delete_many({})
 
     # /users GET
     def test_get_all_users(self):
@@ -342,3 +343,75 @@ class UsersResourceTestCase(unittest.TestCase):
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 1)
         self.assertEqual(found_users[0]["username"], user2["username"])
+
+    # /users POST + /users/friends/<user_id> GET
+    def test_users_friends_user_not_found(self):
+        response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
+
+    # /users/friends/<user_id> GET
+    @patch('resources.user_resource.requests.post')
+    def test_users_friends(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_id = json.loads(response.data)["user"]["user_id"]
+        user2 = test_user.copy()
+        user2["username"] = user["username"] + "1"
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
+
+        response = self.app.get("/api/v1/users/friends/{}".format(user_id))
+        self.assertEqual(response.status_code, 200)
+        friends = json.loads(response.data)["friends"]
+        self.assertEqual(len(friends), 0)
+
+    # /users POST + /friendship/request POST + /friendship POST + /users/friends/<user_id> GET
+    @patch('resources.user_resource.requests.post')
+    def test_users_friends(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_id = json.loads(response.data)["user"]["user_id"]
+        user2 = test_user.copy()
+        user2["username"] = user["username"] + "1"
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
+
+        friendship_request = {
+            "from_username": user["username"],
+            "to_username": user2["username"]
+        }
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      content_type='application/json')
+        self.app.post("/api/v1/friendship",
+                      data=json.dumps(friendship_request),
+                      content_type='application/json')
+
+        response = self.app.get("/api/v1/users/friends/{}".format(user_id))
+        self.assertEqual(response.status_code, 200)
+        friends = json.loads(response.data)["friends"]
+        self.assertEqual(len(friends), 1)
+        self.assertEqual(friends[0]["username"], user2["username"])
