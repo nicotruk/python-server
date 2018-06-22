@@ -435,11 +435,25 @@ class UsersResourceTestCase(unittest.TestCase):
                       content_type='application/json')
 
         fb_login_response = self.app.post("/api/v1/users/fb_login",
-                      data=json.dumps(user),
-                      content_type='application/json')
+                                          data=json.dumps(user),
+                                          content_type='application/json')
         self.assertEqual(fb_login_response.status_code, 200)
         response_data = json.loads(fb_login_response.data)
-        self.assertEqual(response["token"],response_data["token"])
+        self.assertEqual(response["token"], response_data["token"])
         response_data["user"].pop("user_id")
         user.pop("password")
         self.assertEqual(user, response_data["user"])
+
+    # /users POST + /users/fb_login POST
+    @patch('resources.user_resource.requests.post')
+    def test_facebook_login_500_on_shared_server_500_on_app_server(self, mock_post):
+        mock_post.return_value.status_code = 500
+        mock_post.return_value.ok = False
+        mock_post.return_value.text = "Internal error"
+
+        user = test_user.copy()
+
+        fb_login_response = self.app.post("/api/v1/users/fb_login",
+                                          data=json.dumps(user),
+                                          content_type='application/json')
+        self.assertEqual(fb_login_response.status_code, 500)
