@@ -52,10 +52,18 @@ class UsersResourceTestCase(unittest.TestCase):
                                  data=json.dumps(user),
                                  content_type='application/json')
 
+        self.assertEqual(response.status_code, 200)
         user_response = json.loads(response.data)
         user.pop('password')
         user["user_id"] = user_response["user"]["user_id"]
         self.assertEqual(user, user_response["user"])
+
+    def test_post_user_with_no_data(self):
+        user = ""
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        self.assertEqual(response.status_code, 500)
 
     @patch('resources.user_resource.requests.post')
     def test_update_user(self, mock_post):
