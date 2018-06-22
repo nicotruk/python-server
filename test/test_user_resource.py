@@ -31,10 +31,12 @@ class UsersResourceTestCase(unittest.TestCase):
         with app.app_context():
             db.users.delete_many({})
 
+    # /users GET
     def test_get_all_users(self):
         response = self.app.get("/api/v1/users")
         self.assertEqual(response.status_code, 200)
 
+    # /users POST
     @patch('resources.user_resource.requests.post')
     def test_post_user(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -58,6 +60,7 @@ class UsersResourceTestCase(unittest.TestCase):
         user["user_id"] = user_response["user"]["user_id"]
         self.assertEqual(user, user_response["user"])
 
+    # /users POST
     def test_post_user_with_no_data(self):
         user = ""
         response = self.app.post("/api/v1/users",
@@ -65,6 +68,7 @@ class UsersResourceTestCase(unittest.TestCase):
                                  content_type='application/json')
         self.assertEqual(response.status_code, 500)
 
+    # /users POST + /users/<user_id> PUT
     @patch('resources.user_resource.requests.post')
     def test_update_user(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -101,6 +105,7 @@ class UsersResourceTestCase(unittest.TestCase):
         self.assertEqual(json_response["user"]["email"], changes["email"])
         self.assertEqual(json_response["user"]["profile_pic"], changes["profile_pic"])
 
+    # /users POST + /users/firebase/<user_id> PUT
     @patch('resources.user_resource.requests.post')
     def test_update_firebase_token(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -133,11 +138,13 @@ class UsersResourceTestCase(unittest.TestCase):
 
         self.assertEqual(json_response["user"]["firebase_token"], changes["firebase_token"])
 
+    # /users/<user_id> GET
     def test_get_single_user_error_user_not_found(self):
         response = self.app.get("/api/v1/users/1234")
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
 
+    # /users POST + /users/login POST
     @patch('resources.user_resource.requests.post')
     def test_login(self, mock_post):
         user = test_user.copy()
@@ -165,6 +172,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    # /users POST + /users GET
     @patch('resources.user_resource.requests.post')
     def test_integration_create_user(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -191,6 +199,7 @@ class UsersResourceTestCase(unittest.TestCase):
         get_response = self.app.get("/api/v1/users")
         self.assertIn(user, json.loads(get_response.data)["users"])
 
+    # /users POST + /users/<user_id> GET
     @patch('resources.user_resource.requests.post')
     def test_integration_get_single_user(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -217,6 +226,7 @@ class UsersResourceTestCase(unittest.TestCase):
         get_response = self.app.get('/api/v1/users/{}'.format(user["user_id"]))
         self.assertEqual(user, json.loads(get_response.data)["user"])
 
+    # /users POST + /users/search/<user_id>/<query> GET
     @patch('resources.user_resource.requests.post')
     def test_user_search_no_match(self, mock_post):
         mock_post.return_value.status_code = 200
@@ -250,6 +260,7 @@ class UsersResourceTestCase(unittest.TestCase):
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 0)
 
+    # /users POST + /users/search/<user_id>/<query> GET
     @patch('resources.user_resource.requests.post')
     def test_user_search_one_match(self, mock_post):
         mock_post.return_value.status_code = 200
