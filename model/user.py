@@ -37,18 +37,6 @@ class User:
         return response
 
     @staticmethod
-    def get_user_id_by_username(username):
-        user_response = db.users.find_one({"username": username})
-
-        if user_response is None:
-            raise UserNotFoundException("There is no user with that username!")
-
-        response = {
-            "user_id": user_response["user_id"]
-        }
-        return response
-
-    @staticmethod
     def get_user_by_username(username):
         user_response = db.users.find_one({"username": username})
 

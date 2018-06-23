@@ -2,6 +2,7 @@ from config.mongodb import db
 from model.db.direct_messageVO import DirectMessageVO
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+from flask import current_app
 
 class DirectMessage:
 

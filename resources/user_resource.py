@@ -36,16 +36,13 @@ class UsersResource(Resource):
             }
             headers = {'content-type': 'application/json'}
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code,
-                                     signup_response.text)
+            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
             if signup_response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '',
-                                           user_data["firebase_token"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '', user_data["firebase_token"])
                 current_app.logger.debug("User created with firebase_token = %s", user_data["firebase_token"])
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
-                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code,
-                                         login_response.text)
+                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
                 json_response = json.loads(login_response.text)
 
                 if login_response.ok:
@@ -106,8 +103,7 @@ class FacebookLoginResource(Resource):
                     profile_pic_bytes = base64.b64encode(requests.get(profile_pic_url).content)
                     profile_pic_string = profile_pic_bytes.decode('utf-8')
 
-                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string,
-                                                user_data["firebase_token"])
+                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string, user_data["firebase_token"])
                     current_app.logger.debug("User created with firebase_token = %s", user_data["firebase_token"])
 
             payload.pop("applicationOwner")
@@ -168,7 +164,6 @@ class SingleUserResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
-
 class UserLoginResource(Resource):
     def post(self):
         try:
@@ -183,14 +178,14 @@ class UserLoginResource(Resource):
             current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             json_response = json.loads(response.text)
             if response.ok:
-                user_id_response = User.get_user_id_by_username(credentials["username"])
+                user_response = User.get_user_by_username(credentials["username"])
 
                 built_response = {
                     "token": {
                         "expiresAt": json_response["token"]["expiresAt"],
                         "token": json_response["token"]["token"]
                     },
-                    "user_id": user_id_response["user_id"]
+                    "user": user_response["user"]
                 }
                 current_app.logger.debug("Python Server Response: %s - %s", response.status_code, built_response)
             else:
