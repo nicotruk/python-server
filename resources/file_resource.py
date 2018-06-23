@@ -9,7 +9,6 @@ from model.story import Story
 from resources.token_validation_decorator import token_validation_required
 from resources.error_handler import ErrorHandler
 
-
 class FileResource(Resource):
 
     @token_validation_required
