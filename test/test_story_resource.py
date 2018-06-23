@@ -45,8 +45,10 @@ class StoriesResourceTestCase(unittest.TestCase):
             db.stories.delete_many({})
             db.users.delete_many({})
 
-    def test_get_all_stories_nonexistent_user(self):
-        response = self.app.get("/api/v1/stories?user_id=sarasa")
+    @patch('requests.post')
+    def test_get_all_stories_nonexistent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/stories?user_id=sarasa", headers=headers)
         self.assertEqual(response.status_code, 403)
 
     @patch('resources.user_resource.requests.post')
