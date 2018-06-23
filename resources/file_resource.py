@@ -8,7 +8,6 @@ from config.shared_server_config import SHARED_SERVER_FILE_UPLOAD_PATH
 from model.story import Story
 from resources.error_handler import ErrorHandler
 
-
 class FileResource(Resource):
 
     def post(self, story_id):

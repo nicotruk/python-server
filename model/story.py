@@ -68,7 +68,7 @@ class Story:
     @staticmethod
     def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
         story_id = str(uuid.uuid4())
-        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '', [])
+        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '', [], [])
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
@@ -85,6 +85,14 @@ class Story:
     @staticmethod
     def removeLike(story_id, user_id):
         result = db.stories.find_one_and_update({"id": story_id}, {"$pull": {"likes": user_id }}, return_document=ReturnDocument.AFTER)
+        if result is None:
+            raise StoryNotFoundException("There is no story with that ID!")
+        response = Story._decode(result)
+        return response
+
+    @staticmethod
+    def addComment(story_id, newComment):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"comments": newComment }}, return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
@@ -141,6 +149,7 @@ class Story:
             "description": document["description"],
             "file_url": document["file_url"],
             "likes": dict.get(document, "likes", []),
+            "comments": dict.get(document, "comments", []),
             "is_quick_story": document["is_quick_story"],
             "timestamp": document["timestamp"]
         }

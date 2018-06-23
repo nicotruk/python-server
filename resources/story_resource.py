@@ -77,12 +77,16 @@ class SingleStoryResource(Resource):
 
             story_updated = None
             if patch_document["path"] == "/likes" and patch_document["op"] == "add":
-                current_app.logger.info("Add like to user " + patch_document["value"])
+                current_app.logger.info("Add like to user: " + str(patch_document["value"]))
                 story_updated = Story.addLike(story_id, patch_document["value"])
 
             if patch_document["path"] == "/likes" and patch_document["op"] == "remove":
-                current_app.logger.info("Remove like to user " + patch_document["value"])
+                current_app.logger.info("Remove like to user: " + str(patch_document["value"]))
                 story_updated = Story.removeLike(story_id, patch_document["value"])
+
+            if patch_document["path"] == "/comments" and patch_document["op"] == "add":
+                current_app.logger.info("Adding comment to story: " + str(patch_document["value"]))
+                story_updated = Story.addComment(story_id, patch_document["value"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", story_updated)
             return make_response(jsonify(story_updated), 200)
