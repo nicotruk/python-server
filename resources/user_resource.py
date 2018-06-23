@@ -168,6 +168,7 @@ class SingleUserResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
+
 class UserLoginResource(Resource):
     def post(self):
         try:
