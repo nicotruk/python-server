@@ -72,14 +72,37 @@ class StoriesResource(Resource):
 class SingleStoryResource(Resource):
 
     @token_validation_required
+    def patch(self, story_id):
+        try:
+            # Example: {'op': 'add', 'path': '/likes', 'value': '1c71c8be-2c0d-4a36-a28e-379154f977c8'}
+            # See http://jsonpatch.com/ for more info
+            current_app.logger.info("Received SingleStoryResource PATCH Request for story: " + str(request.data))
+            patch_document = json.loads(request.data)
+
+            story_updated = None
+            if patch_document["path"] == "/likes" and patch_document["op"] == "add":
+                current_app.logger.info("Add like to user " + patch_document["value"])
+                story_updated = Story.addLike(story_id, patch_document["value"])
+
+            if patch_document["path"] == "/likes" and patch_document["op"] == "remove":
+                current_app.logger.info("Remove like to user " + patch_document["value"])
+                story_updated = Story.removeLike(story_id, patch_document["value"])
+
+            current_app.logger.debug("Python Server Response: 200 - %s", story_updated)
+            return make_response(jsonify(story_updated), 200)
+        except ValueError:
+            error = "Unable to handle StoriesResource POST Request"
+            current_app.logger.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
+
+    @token_validation_required
     def delete(self, story_id):
         try:
-            current_app.logger.info("Received SingleStoryResource - DELETE Request")
+            current_app.logger.info("Received SingleStoryResource DELETE Request for story: " + story_id)
             deleted_story = Story.delete(story_id)
             if deleted_story is None:
-                current_app.logger.debug("Python Server Response: 403 - %s",
-                                         "No story found with that ID!.")
-                return make_response("No story found with that ID!.", 403)
+                current_app.logger.debug("Python Server Response: 403 - %s", "No story found with that ID!.")
+                return make_response("No story found with that ID!", 403)
             else:
                 current_app.logger.debug("Python Server Response: 201 - %s", deleted_story)
                 return make_response(jsonify(deleted_story), 201)

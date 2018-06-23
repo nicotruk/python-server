@@ -75,10 +75,24 @@ class Story:
         return response
 
     @staticmethod
-    def update(story_id, file_url):
-        updated_fields = {
-            "file_url": file_url
-        }
+    def addLike(story_id, user_id):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"likes": user_id }}, return_document=ReturnDocument.AFTER)
+        if result is None:
+            raise StoryNotFoundException("There is no story with that ID!")
+        response = Story._decode(result)
+        return response
+
+    @staticmethod
+    def removeLike(story_id, user_id):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$pull": {"likes": user_id }}, return_document=ReturnDocument.AFTER)
+        if result is None:
+            raise StoryNotFoundException("There is no story with that ID!")
+        response = Story._decode(result)
+        return response
+
+    @staticmethod
+    def updateFile(story_id, file_url):
+        updated_fields = { "file_url": file_url }
         result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields}, return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
