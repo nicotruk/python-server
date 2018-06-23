@@ -2,9 +2,12 @@ import os.path
 
 import firebase_admin
 from firebase_admin import credentials
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_restful import Api
 
+from config.app_config import APP_NAME
+from config.app_config import APP_PREFIX
+from config.mongodb import MONGO_DB_NAME
 from config.logger import configure_logger
 from resources.friendship_request_resource import FriendshipRequestResource
 from resources.friendship_request_resource import FriendshipRequestsReceivedResource
@@ -28,42 +31,65 @@ from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
 
-app = Flask("python_server")
-
-api = Api(app, prefix="/api/v1")
+app = Flask(APP_NAME)
+api_bp = Blueprint('api', APP_NAME)
+api = Api(api_bp, prefix=APP_PREFIX)
 
 # connect to another MongoDB database
-app.config['MONGO_DBNAME'] = 'python_server'
+app.config['MONGO_DBNAME'] = MONGO_DB_NAME
 
 configure_logger(app)
 
+# noinspection PyTypeChecker
 api.add_resource(UsersResource, '/users')
+# noinspection PyTypeChecker
 api.add_resource(UserLoginResource, '/users/login')
+# noinspection PyTypeChecker
 api.add_resource(FacebookLoginResource, '/users/fb_login')
+# noinspection PyTypeChecker
 api.add_resource(SingleUserResource, '/users/<user_id>')
+# noinspection PyTypeChecker
 api.add_resource(UserFriendsResource, '/users/friends/<user_id>')
+# noinspection PyTypeChecker
 api.add_resource(UserSearchResource, '/users/search/<user_id>/<query>')
 
+# noinspection PyTypeChecker
 api.add_resource(FriendshipRequestResource, '/friendship/request')
+# noinspection PyTypeChecker
 api.add_resource(FriendshipRequestsSentResource, '/friendship/request/sent/<from_username>')
+# noinspection PyTypeChecker
 api.add_resource(FriendshipRequestsReceivedResource, '/friendship/request/received/<to_username>')
+# noinspection PyTypeChecker
 api.add_resource(SingleFriendshipRequestResource, '/friendship/request/<from_username>/<to_username>')
 
+# noinspection PyTypeChecker
 api.add_resource(FriendshipResource, '/friendship')
 
+# noinspection PyTypeChecker
 api.add_resource(DirectMessageResource, '/direct_message')
+# noinspection PyTypeChecker
 api.add_resource(DirectMessagesReceivedResource, '/direct_message/received/<to_username>')
+# noinspection PyTypeChecker
 api.add_resource(UserDirectMessagesResource, '/direct_message/<username>')
+# noinspection PyTypeChecker
 api.add_resource(ConversationMessagesResource, '/direct_message/conversation/<username>/<friend_username>')
 
+# noinspection PyTypeChecker
 api.add_resource(UserFirebaseTokenResource, '/users/firebase/<user_id>')
 
+# noinspection PyTypeChecker
 api.add_resource(StoriesResource, '/stories')
+# noinspection PyTypeChecker
 api.add_resource(SingleStoryResource, '/stories/<story_id>')
+# noinspection PyTypeChecker
 api.add_resource(FileResource, '/stories/<story_id>/files')
 
+# noinspection PyTypeChecker
 api.add_resource(PingResource, '/ping')
+# noinspection PyTypeChecker
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')
+
+app.register_blueprint(api_bp)
 
 my_path = os.path.abspath(os.path.dirname(__file__))
 path = os.path.join(my_path, "serviceAccountKey.json")

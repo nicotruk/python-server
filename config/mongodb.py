@@ -7,3 +7,5 @@ if "MONGO_URL" in os.environ:
 
 mongo = MongoClient(mongo_uri)
 db = mongo['heroku_5d6zh6jz']
+
+MONGO_DB_NAME = "python_server"
