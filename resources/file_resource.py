@@ -21,13 +21,10 @@ class FileResource(Resource):
             file_data = json.loads(shared_server_upload.text)
 
             if shared_server_upload.ok:
-                story_updated = Story.update(
-                    story_id,
-                    file_data['file']['resource']
-                )
-                current_app.logger.debug("Python Server Response: %s - %s", shared_server_upload.status_code,
-                                         story_updated)
+                story_updated = Story.updateFile(story_id, file_data['file']['resource'])
+                current_app.logger.debug("Python Server Response: %s - %s", shared_server_upload.status_code, story_updated)
                 return make_response(jsonify(story_updated), 200)
+
             return make_response(shared_server_upload.text, shared_server_upload.status_code)
         except ValueError as ex:
             error = "Unable to handle FileResource POST Request" + ex
