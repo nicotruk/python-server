@@ -31,9 +31,15 @@ class FriendshipRequestResource(Resource):
             else:
                 current_app.logger.debug("Python Server Response: 201 - %s", friendship_request_created)
                 if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
-                    FirebaseManager.send_firebase_message(request_data["from_username"], request_data["to_username"],
-                                                          NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE,
-                                                          NOTIFICATION_TYPE_FRIENDSHIP_REQUEST)
+                    try:
+                        user = User.get_user_by_username(request_data["from_username"])["user"]
+                        if user is not None:
+                            FirebaseManager.send_firebase_message(user["name"],
+                                                                  request_data["to_username"],
+                                                                  NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE,
+                                                                  NOTIFICATION_TYPE_FRIENDSHIP_REQUEST)
+                    except UserNotFoundException:
+                        pass
                 return make_response(jsonify(friendship_request_created), 201)
         except ValueError:
             error = "Unable to handle FriendshipRequestResource POST Request"
