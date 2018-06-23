@@ -10,6 +10,7 @@ from config.mongodb import db
 from app import app
 from mock import patch
 import json
+import config.firebase_config
 
 test_user = {
     "username": "asd",
@@ -33,6 +34,7 @@ test_story = {
 class StoriesResourceTestCase(unittest.TestCase):
 
     def setUp(self):
+        config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = False
         self.app = app.test_client()
         self.app.testing = True
 

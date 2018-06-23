@@ -79,6 +79,94 @@
         }
       }
     },
+    "/users/login" : {
+      "post" : {
+        "tags" : [ "users" ],
+        "summary" : "Inicio de sesion de usuario",
+        "description" : "Se envia un usuario y contraseña para su validacion",
+        "responses" : {
+          "200" : {
+            "description" : "Usuario y contraseña validos"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/users/fb_login" : {
+      "post" : {
+        "tags" : [ "users" ],
+        "summary" : "Inicio de sesion de usuario - Facebook Login",
+        "description" : "Inicio de sesion a traves de Facebook",
+        "responses" : {
+          "200" : {
+            "description" : "Sesion iniciada correctamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/users/<user_id>" : {
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta de usuario",
+        "description" : "Consulta de un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "403" : {
+            "description" : "Usuario inexistente"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "users" ],
+        "summary" : "Modificacion de usuario",
+        "description" : "Modificacion de los datos de un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "403" : {
+            "description" : "Usuario inexistente"
+          }
+        }
+      }
+    },
+    "/users/friends/<user_id>" : {
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta de amistades de usuario",
+        "description" : "Consulta de amistades de un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "403" : {
+            "description" : "Usuario inexistente"
+          }
+        }
+      }
+    },
+    "/users/search/<user_id>/<query>" : {
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta de usuarios",
+        "description" : "Consulta de usuarios que nos sean amigos y cuyos \"username\" coincidan con la busqueda",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "403" : {
+            "description" : "Usuario inexistente"
+          }
+        }
+      }
+    },
     "/friendship/request" : {
       "post" : {
         "tags" : [ "friendship" ],

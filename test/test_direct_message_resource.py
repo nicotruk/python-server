@@ -19,13 +19,55 @@ test_direct_message = {
     "message": "Hello!"
 }
 
+test_first_user = {
+    "username": "123",
+    "password": "123",
+    "email": "asd@asd.com",
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234"
+}
+
+test_second_user = {
+    "username": "456",
+    "password": "456",
+    "email": "asd@asd.com",
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h555"
+}
+
+test_otro_user = {
+    "username": "otro",
+    "password": "456",
+    "email": "asd@asd.com",
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h888"
+}
+
 
 class DirectMessageResourceTestCase(unittest.TestCase):
 
-    def setUp(self):
+    @patch('resources.user_resource.requests.post')
+    def setUp(self, mock_post):
+        mock_post.return_value.status_code = 200
         config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED = False
         self.app = app.test_client()
         self.app.testing = True
+
+        user1 = test_first_user.copy()
+        user2 = test_second_user.copy()
+        user3 = test_otro_user.copy()
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user1),
+                      content_type='application/json')
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
+
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user3),
+                      content_type='application/json')
 
     def tearDown(self):
         with app.app_context():

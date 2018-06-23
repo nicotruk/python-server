@@ -9,7 +9,7 @@ import config.firebase_config
 from config.firebase_config import NOTIFICATION_TYPE_MESSAGE
 from model.direct_message import DirectMessage
 from model.firebase_manager import FirebaseManager
-from model.user import UserNotFoundException
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
@@ -20,6 +20,7 @@ class DirectMessageResource(Resource):
         try:
             current_app.logger.info("Received DirectMessageResource POST Request")
             request_data = json.loads(request.data)
+            User.get_user_by_username(request_data["to_username"])
             direct_message_created = DirectMessage.create(request_data["from_username"],
                                                           request_data["to_username"],
                                                           request_data["message"],
@@ -37,7 +38,7 @@ class DirectMessageResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
         except UserNotFoundException:
-            error = "Unable to send Firebase Notification - User not found"
+            error = "Unable to send message - User not found"
             current_app.logger.error("Python Server Response: 409 - %s", error)
             return ErrorHandler.create_error_response(409, error)
         except messaging.ApiCallError:
