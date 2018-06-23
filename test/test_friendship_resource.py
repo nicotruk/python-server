@@ -33,6 +33,8 @@ test_second_user = {
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h555"
 }
 
+headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
+
 
 class FriendshipResourceTestCase(unittest.TestCase):
 
@@ -59,16 +61,18 @@ class FriendshipResourceTestCase(unittest.TestCase):
             db.friendship_requests.delete_many({})
             db.users.delete_many({})
 
-    def test_accept_friendship_request(self):
+    @patch('requests.post')
+    def test_accept_friendship_request(self, mock_post):
+        mock_post.return_value.status_code = 200
         friendship_request = test_friendship_request.copy()
 
         self.app.post("/api/v1/friendship/request",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
 
         response = self.app.post("/api/v1/friendship",
                                  data=json.dumps(friendship_request),
-                                 content_type='application/json')
+                                 headers=headers)
         self.assertEqual(response._status_code, 201)
         friendship_response = json.loads(response.data)
         self.assertEqual(friendship_response["friendship_request"]["from_username"],
@@ -103,11 +107,12 @@ class FriendshipResourceTestCase(unittest.TestCase):
 
         response = self.app.post("/api/v1/friendship",
                                  data=json.dumps(friendship_request),
-                                 content_type='application/json')
+                                 headers=headers)
 
         self.assertEqual(response._status_code, 409)
 
         query_friends_response = self.app.get(
-            '/api/v1/users/search/{}/{}'.format(other_user_data["user"]["user_id"], friendship_request["to_username"]))
+            '/api/v1/users/search/{}/{}'.format(other_user_data["user"]["user_id"], friendship_request["to_username"]),
+            headers=headers)
         query_friends_response_data = json.loads(query_friends_response.data)
         self.assertEqual(len(query_friends_response_data["found_users"]), 0)

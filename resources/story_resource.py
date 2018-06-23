@@ -10,10 +10,11 @@ from model.firebase_manager import FirebaseManager
 from model.story import Story
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+from resources.token_validation_decorator import token_validation_required
 
 
 class StoriesResource(Resource):
-
+    @token_validation_required
     def get(self):
         try:
             userId = request.args.get('user_id')
@@ -31,6 +32,7 @@ class StoriesResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
+    @token_validation_required
     def post(self):
         try:
             current_app.logger.info("Received StoriesResource POST Request")
@@ -66,8 +68,10 @@ class StoriesResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+
 class SingleStoryResource(Resource):
 
+    @token_validation_required
     def patch(self, story_id):
         try:
             # Example: {'op': 'add', 'path': '/likes', 'value': '1c71c8be-2c0d-4a36-a28e-379154f977c8'}
@@ -95,6 +99,7 @@ class SingleStoryResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+    @token_validation_required
     def delete(self, story_id):
         try:
             current_app.logger.info("Received SingleStoryResource DELETE Request for story: " + story_id)

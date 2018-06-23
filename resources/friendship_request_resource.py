@@ -12,10 +12,12 @@ from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST
 from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE
 from firebase_admin import messaging
 from model.firebase_manager import FirebaseManager
+from resources.token_validation_decorator import token_validation_required
 
 
 class FriendshipRequestResource(Resource):
 
+    @token_validation_required
     def post(self):
         try:
             current_app.logger.info("Received FriendshipRequestResource POST Request")
@@ -29,9 +31,15 @@ class FriendshipRequestResource(Resource):
             else:
                 current_app.logger.debug("Python Server Response: 201 - %s", friendship_request_created)
                 if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
-                    FirebaseManager.send_firebase_message(request_data["from_username"], request_data["to_username"],
-                                                          NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE,
-                                                          NOTIFICATION_TYPE_FRIENDSHIP_REQUEST)
+                    try:
+                        user = User.get_user_by_username(request_data["from_username"])["user"]
+                        if user is not None:
+                            FirebaseManager.send_firebase_message(user["name"],
+                                                                  request_data["to_username"],
+                                                                  NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE,
+                                                                  NOTIFICATION_TYPE_FRIENDSHIP_REQUEST)
+                    except UserNotFoundException:
+                        pass
                 return make_response(jsonify(friendship_request_created), 201)
         except ValueError:
             error = "Unable to handle FriendshipRequestResource POST Request"
@@ -45,6 +53,7 @@ class FriendshipRequestResource(Resource):
 
 class FriendshipRequestsSentResource(Resource):
 
+    @token_validation_required
     def get(self, from_username):
         try:
             current_app.logger.info("Received FriendshipRequestResource - sent requests - GET Request")
@@ -71,6 +80,7 @@ class FriendshipRequestsSentResource(Resource):
 
 class FriendshipRequestsReceivedResource(Resource):
 
+    @token_validation_required
     def get(self, to_username):
         try:
             current_app.logger.info("Received FriendshipRequestResource - received requests - GET Request")
@@ -97,6 +107,7 @@ class FriendshipRequestsReceivedResource(Resource):
 
 class SingleFriendshipRequestResource(Resource):
 
+    @token_validation_required
     def delete(self, from_username, to_username):
         try:
             current_app.logger.info("Received SingleFriendshipRequestResource - DELETE Request")

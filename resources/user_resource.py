@@ -6,13 +6,15 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, \
-    SHARED_SERVER_APPLICATION_OWNER
+    SHARED_SERVER_APPLICATION_OWNER, APP_SERVER_TOKEN
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
+from resources.token_validation_decorator import token_validation_required
 
 
 class UsersResource(Resource):
 
+    @token_validation_required
     def get(self):
         try:
             current_app.logger.info("Received UsersResource GET Request")
@@ -34,7 +36,7 @@ class UsersResource(Resource):
                 "password": user_data["password"],
                 "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
-            headers = {'content-type': 'application/json'}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
             if signup_response.ok:
@@ -85,7 +87,7 @@ class FacebookLoginResource(Resource):
                 "password": user_data["username"],
                 "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
-            headers = {'content-type': 'application/json'}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
 
             user = User.get_facebook_user(user_data["username"])
 
@@ -136,6 +138,7 @@ class FacebookLoginResource(Resource):
 
 
 class SingleUserResource(Resource):
+    @token_validation_required
     def get(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource GET Request")
@@ -148,6 +151,7 @@ class SingleUserResource(Resource):
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
 
+    @token_validation_required
     def put(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource PUT Request")
@@ -173,7 +177,7 @@ class UserLoginResource(Resource):
                 "username": credentials["username"],
                 "password": credentials["password"]
             }
-            headers = {'content-type': 'application/json'}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             json_response = json.loads(response.text)
@@ -204,6 +208,7 @@ class UserLoginResource(Resource):
 
 
 class UserSearchResource(Resource):
+    @token_validation_required
     def get(self, user_id, query):
         try:
             current_app.logger.info("Received UserSearchResource GET Request")
@@ -244,6 +249,7 @@ class UserSearchResource(Resource):
 
 
 class UserFriendsResource(Resource):
+    @token_validation_required
     def get(self, user_id):
         try:
             current_app.logger.info("Received UserFriendsResource GET Request")

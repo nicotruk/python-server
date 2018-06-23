@@ -30,6 +30,8 @@ test_story = {
     "timestamp": "1529448160000"
 }
 
+headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
+
 
 class StoriesResourceTestCase(unittest.TestCase):
 
@@ -43,8 +45,10 @@ class StoriesResourceTestCase(unittest.TestCase):
             db.stories.delete_many({})
             db.users.delete_many({})
 
-    def test_get_all_stories_nonexistent_user(self):
-        response = self.app.get("/api/v1/stories?user_id=sarasa")
+    @patch('requests.post')
+    def test_get_all_stories_nonexistent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/stories?user_id=sarasa", headers=headers)
         self.assertEqual(response.status_code, 403)
 
     @patch('resources.user_resource.requests.post')
@@ -65,7 +69,7 @@ class StoriesResourceTestCase(unittest.TestCase):
                                  content_type='application/json')
         user_response = json.loads(response.data)
         user_id = user_response["user"]["user_id"]
-        response = self.app.get("/api/v1/stories?user_id={}".format(user_id))
+        response = self.app.get("/api/v1/stories?user_id={}".format(user_id), headers=headers)
         self.assertEqual(response.status_code, 200)
         stories_response = json.loads(response.data)
         stories = stories_response["stories"]
@@ -94,9 +98,9 @@ class StoriesResourceTestCase(unittest.TestCase):
         story["user_id"] = user_id
         response = self.app.post("/api/v1/stories",
                                  data=json.dumps(story),
-                                 content_type='application/json')
+                                 headers=headers)
         self.assertEqual(response.status_code, 200)
-        response = self.app.get("/api/v1/stories?user_id={}".format(user_id))
+        response = self.app.get("/api/v1/stories?user_id={}".format(user_id), headers=headers)
         stories_response = json.loads(response.data)
         stories = stories_response["stories"]
         self.assertEqual(len(stories), 1)
@@ -126,12 +130,14 @@ class StoriesResourceTestCase(unittest.TestCase):
         story["user_id"] = user_id
         response = self.app.post("/api/v1/stories",
                                  data=json.dumps(story),
-                                 content_type='application/json')
+                                 headers=headers)
         response_story = json.loads(response.data)
 
-        response = self.app.delete("/api/v1/stories/{}".format(response_story["id"]))
+        response = self.app.delete("/api/v1/stories/{}".format(response_story["id"]), headers=headers)
         self.assertEqual(response.status_code, 201)
 
-    def test_delete_nonexistent_story(self):
-        response = self.app.delete("/api/v1/stories/{}".format("sarasa"))
+    @patch('requests.post')
+    def test_delete_nonexistent_story(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.delete("/api/v1/stories/{}".format("sarasa"), headers=headers)
         self.assertEqual(response.status_code, 403)
