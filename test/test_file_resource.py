@@ -29,6 +29,8 @@ test_story = {
     "timestamp": "1529448160000"
 }
 
+headers = {'Authorization': 'Bearer {}'.format("asd")}
+
 
 class FileResourceTestCase(unittest.TestCase):
 
@@ -64,7 +66,7 @@ class FileResourceTestCase(unittest.TestCase):
         story["user_id"] = user_id
         response = self.app.post("/api/v1/stories",
                                  data=json.dumps(story),
-                                 content_type='application/json')
+                                 headers=headers)
         response_story = json.loads(response.data)
 
         story_id = response_story["id"]
@@ -83,7 +85,7 @@ class FileResourceTestCase(unittest.TestCase):
         )
         response = self.app.post("/api/v1/stories/{}/files".format(story_id),
                                  data=data,
-                                 content_type='multipart/form-data')
+                                 headers=headers)
         updated_story = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(file_url, updated_story["file_url"])

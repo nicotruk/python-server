@@ -33,6 +33,8 @@ test_second_user = {
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h555"
 }
 
+headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
+
 
 class FriendshipRequestResourceTestCase(unittest.TestCase):
 
@@ -59,40 +61,44 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
             db.friendship_requests.delete_many({})
             db.users.delete_many({})
 
-    def test_create_friendship_request(self):
+    @patch('requests.post')
+    def test_create_friendship_request(self, mock_post):
+        mock_post.return_value.status_code = 200
         friendship_request = test_friendship_request.copy()
 
         response = self.app.post("/api/v1/friendship/request",
                                  data=json.dumps(friendship_request),
-                                 content_type='application/json')
+                                 headers=headers)
         friendship_response = json.loads(response.data)
         self.assertEqual(friendship_request["from_username"],
                          friendship_response["friendship_request"]["from_username"])
         self.assertEqual(friendship_request["to_username"], friendship_response["friendship_request"]["to_username"])
 
-    def test_sent_friendship_requests(self):
+    @patch('requests.post')
+    def test_sent_friendship_requests(self, mock_post):
+        mock_post.return_value.status_code = 200
         friendship_request = test_friendship_request.copy()
 
         self.app.post("/api/v1/friendship/request",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
         uri = "/api/v1/friendship/request/sent/" + friendship_request["from_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         friendship_response = json.loads(response.data)
         self.assertEqual(len(friendship_response["friendship_requests"]), 1)
         self.assertEqual(friendship_response["friendship_requests"][0]["from_username"],
                          friendship_request["from_username"])
 
-    def test_received_friendship_requests(self):
+    @patch('requests.post')
+    def test_received_friendship_requests(self, mock_post):
+        mock_post.return_value.status_code = 200
         friendship_request = test_friendship_request.copy()
 
         self.app.post("/api/v1/friendship/request",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
         uri = "/api/v1/friendship/request/received/" + friendship_request["to_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         friendship_response = json.loads(response.data)
         self.assertEqual(len(friendship_response["friendship_requests"]), 1)
         self.assertEqual(friendship_response["friendship_requests"][0]["to_username"],

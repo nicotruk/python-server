@@ -21,6 +21,8 @@ test_user = {
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234",
 }
 
+headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
+
 
 class UsersResourceTestCase(unittest.TestCase):
 
@@ -35,8 +37,10 @@ class UsersResourceTestCase(unittest.TestCase):
             db.friendship_requests.delete_many({})
 
     # /users GET
-    def test_get_all_users(self):
-        response = self.app.get("/api/v1/users")
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_get_all_users(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/users", headers=headers)
         self.assertEqual(response.status_code, 200)
 
     # /users POST
@@ -55,7 +59,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         response = self.app.post("/api/v1/users",
                                  data=json.dumps(user),
-                                 content_type='application/json')
+                                 headers=headers)
 
         self.assertEqual(response.status_code, 200)
         user_response = json.loads(response.data)
@@ -99,8 +103,8 @@ class UsersResourceTestCase(unittest.TestCase):
         }
 
         update_response = self.app.put("/api/v1/users/{}".format(user_id),
-                                       data=json.dumps(changes),
-                                       content_type='application/json')
+                                       headers=headers,
+                                       data=json.dumps(changes))
 
         json_response = json.loads(update_response.data)
 
@@ -142,8 +146,10 @@ class UsersResourceTestCase(unittest.TestCase):
         self.assertEqual(json_response["user"]["firebase_token"], changes["firebase_token"])
 
     # /users/<user_id> GET
-    def test_get_single_user_error_user_not_found(self):
-        response = self.app.get("/api/v1/users/1234")
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_get_single_user_error_user_not_found(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/users/1234", headers=headers)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
 
@@ -199,7 +205,7 @@ class UsersResourceTestCase(unittest.TestCase):
         user.pop('password')
         user["user_id"] = user_response["user"]["user_id"]
 
-        get_response = self.app.get("/api/v1/users")
+        get_response = self.app.get("/api/v1/users", headers=headers)
         self.assertIn(user, json.loads(get_response.data)["users"])
 
     # /users POST + /users/<user_id> GET
@@ -226,13 +232,14 @@ class UsersResourceTestCase(unittest.TestCase):
         user.pop('password')
         user["user_id"] = user_response["user"]["user_id"]
 
-        get_response = self.app.get('/api/v1/users/{}'.format(user["user_id"]))
+        get_response = self.app.get('/api/v1/users/{}'.format(user["user_id"]), headers=headers)
         self.assertEqual(user, json.loads(get_response.data)["user"])
 
     # /users/search/<user_id>/<query> GET
-    @patch('resources.user_resource.requests.post')
+    @patch('resources.token_validation_decorator.requests.post')
     def test_user_search_user_not_found(self, mock_post):
-        response = self.app.get("/api/v1/users/search/{}/{}".format("nonExistentUserId", "aaa"))
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/users/search/{}/{}".format("nonExistentUserId", "aaa"), headers=headers)
         self.assertEqual(response.status_code, 403)
 
     # /users POST + /users/search/<user_id>/<query> GET
@@ -261,7 +268,7 @@ class UsersResourceTestCase(unittest.TestCase):
 
         query_username = user2["username"] + "1"
         self.assertGreater(len(query_username), len(user2["username"]))
-        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], query_username))
+        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], query_username), headers=headers)
         self.assertEqual(response.status_code, 200)
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 0)
@@ -297,12 +304,12 @@ class UsersResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/friendship/request",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
         self.app.post("/api/v1/friendship",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
 
-        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], friend_username))
+        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], friend_username), headers=headers)
         self.assertEqual(response.status_code, 200)
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 0)
@@ -338,15 +345,17 @@ class UsersResourceTestCase(unittest.TestCase):
 
         query_username = user2["username"][0:-2]
         self.assertGreater(len(user2["username"]), len(query_username))
-        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], query_username))
+        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], query_username), headers=headers)
         self.assertEqual(response.status_code, 200)
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 1)
         self.assertEqual(found_users[0]["username"], user2["username"])
 
     # /users POST + /users/friends/<user_id> GET
-    def test_users_friends_user_not_found(self):
-        response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"))
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_users_friends_user_not_found(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"), headers=headers)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
 
@@ -372,7 +381,7 @@ class UsersResourceTestCase(unittest.TestCase):
                       data=json.dumps(user2),
                       content_type='application/json')
 
-        response = self.app.get("/api/v1/users/friends/{}".format(user_id))
+        response = self.app.get("/api/v1/users/friends/{}".format(user_id), headers=headers)
         self.assertEqual(response.status_code, 200)
         friends = json.loads(response.data)["friends"]
         self.assertEqual(len(friends), 0)
@@ -405,12 +414,12 @@ class UsersResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/friendship/request",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
         self.app.post("/api/v1/friendship",
                       data=json.dumps(friendship_request),
-                      content_type='application/json')
+                      headers=headers)
 
-        response = self.app.get("/api/v1/users/friends/{}".format(user_id))
+        response = self.app.get("/api/v1/users/friends/{}".format(user_id), headers=headers)
         self.assertEqual(response.status_code, 200)
         friends = json.loads(response.data)["friends"]
         self.assertEqual(len(friends), 1)

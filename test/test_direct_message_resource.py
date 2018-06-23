@@ -43,6 +43,8 @@ test_otro_user = {
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h888"
 }
 
+headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
+
 
 class DirectMessageResourceTestCase(unittest.TestCase):
 
@@ -73,36 +75,41 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         with app.app_context():
             db.direct_messages.delete_many({})
 
-    def test_create_direct_message(self):
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_create_direct_message(self, mock_post):
+        mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
 
         response = self.app.post("/api/v1/direct_message",
                                  data=json.dumps(direct_message),
-                                 content_type='application/json')
+                                 headers=headers)
         direct_message_response = json.loads(response.data)
         direct_message_response["direct_message"].pop("_id")
         direct_message_response["direct_message"].pop("timestamp")
         self.assertEqual(direct_message, direct_message_response["direct_message"])
 
-    def test_received_messages(self):
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_received_messages(self, mock_post):
+        mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
 
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(direct_message),
-                      content_type='application/json')
+                      headers=headers)
         uri = "/api/v1/direct_message/received/" + direct_message["to_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 1)
         self.assertEqual(direct_message_response["direct_messages"][0]["to_username"],
                          direct_message["to_username"])
 
-    def test_user_messages_count(self):
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_user_messages_count(self, mock_post):
+        mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         other_test_direct_message = {
             "from_username": direct_message["to_username"],
@@ -111,11 +118,10 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(other_test_direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         uri = "/api/v1/direct_message/" + direct_message["to_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 1)
 
@@ -149,17 +155,19 @@ class DirectMessageResourceTestCase(unittest.TestCase):
 
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         mock_messaging.call_args_list[0][0][0].notification = direct_message["message"]
         mock_messaging.call_args_list[0][0][0].title = direct_message["from_username"]
         mock_messaging.assert_called()
 
-    def test_user_messages(self):
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_user_messages(self, mock_post):
+        mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         other_test_direct_message = {
             "from_username": direct_message["to_username"],
@@ -168,21 +176,21 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(other_test_direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         uri = "/api/v1/direct_message/" + direct_message["to_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 2)
         self.assertLessEqual(direct_message_response["direct_messages"][0]["timestamp"],
                              direct_message_response["direct_messages"][1]["timestamp"])
 
-    def test_conversation_messages(self):
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_conversation_messages(self, mock_post):
+        mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
         self.app.post("/api/v1/direct_message",
-                      data=json.dumps(direct_message),
-                      content_type='application/json')
+                      data=json.dumps(direct_message), headers=headers)
 
         other_test_direct_message = {
             "from_username": direct_message["to_username"],
@@ -191,7 +199,7 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(other_test_direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         other_test_direct_message = {
             "from_username": direct_message["to_username"],
@@ -200,12 +208,11 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         }
         self.app.post("/api/v1/direct_message",
                       data=json.dumps(other_test_direct_message),
-                      content_type='application/json')
+                      headers=headers)
 
         uri = "/api/v1/direct_message/conversation/" + direct_message["from_username"] + "/" + direct_message[
             "to_username"]
-        response = self.app.get(uri,
-                                content_type='application/json')
+        response = self.app.get(uri, headers=headers)
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 2)
         users = [direct_message["from_username"], direct_message["to_username"]]
