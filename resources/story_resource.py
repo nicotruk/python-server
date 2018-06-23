@@ -8,7 +8,7 @@ from config.firebase_config import NOTIFICATION_TYPE_STORY
 from config.firebase_config import NOTIFICATION_TYPE_STORY_MESSAGE
 from model.firebase_manager import FirebaseManager
 from model.story import Story
-from model.user import UserNotFoundException
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 

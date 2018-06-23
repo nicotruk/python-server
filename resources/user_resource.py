@@ -6,7 +6,7 @@ from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
 from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, \
-    SHARED_SERVER_APPLICATION_OWNER, SHARED_SERVER_TOKEN
+    SHARED_SERVER_APPLICATION_OWNER, APP_SERVER_TOKEN
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
@@ -36,7 +36,7 @@ class UsersResource(Resource):
                 "password": user_data["password"],
                 "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
-            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(SHARED_SERVER_TOKEN)}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code,
                                      signup_response.text)
@@ -90,7 +90,7 @@ class FacebookLoginResource(Resource):
                 "password": user_data["username"],
                 "applicationOwner": SHARED_SERVER_APPLICATION_OWNER
             }
-            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(SHARED_SERVER_TOKEN)}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
 
             user = User.get_facebook_user(user_data["username"])
 
@@ -182,7 +182,7 @@ class UserLoginResource(Resource):
                 "username": credentials["username"],
                 "password": credentials["password"]
             }
-            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(SHARED_SERVER_TOKEN)}
+            headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
             current_app.logger.debug("Shared Server Response: %s - %s", response.status_code, response.text)
             json_response = json.loads(response.text)
@@ -286,7 +286,6 @@ class UserFriendsResource(Resource):
 
 
 class UserFirebaseTokenResource(Resource):
-    @token_validation_required
     def put(self, user_id):
         try:
             current_app.logger.info("Received UserFirebaseTokenResource PUT Request")

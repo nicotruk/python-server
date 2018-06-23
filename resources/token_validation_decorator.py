@@ -4,14 +4,14 @@ import json
 import requests
 from flask import request, make_response, current_app
 
-from config.shared_server_config import SHARED_SERVER_TOKEN_VALIDATION_PATH, SHARED_SERVER_TOKEN
+from config.shared_server_config import SHARED_SERVER_TOKEN_VALIDATION_PATH, APP_SERVER_TOKEN
 
 
 def token_validation_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         current_app.logger.info("Validating the user token with the shared server")
-        token_headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(SHARED_SERVER_TOKEN)}
+        token_headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
         user_token = request.headers.get('Authorization').split()[1]
         token_validation_payload = {
             "token": user_token
