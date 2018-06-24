@@ -74,22 +74,21 @@ class SingleStoryResource(Resource):
     @token_validation_required
     def patch(self, story_id):
         try:
-            # Example: {'op': 'add', 'path': '/likes', 'value': '1c71c8be-2c0d-4a36-a28e-379154f977c8'}
-            # See http://jsonpatch.com/ for more info
             current_app.logger.info("Received SingleStoryResource PATCH Request for story: " + str(request.data))
             patch_document = json.loads(request.data)
 
+            # See http://jsonpatch.com/ for more info
             story_updated = None
-            if patch_document["path"] == "/likes" and patch_document["op"] == "add":
-                current_app.logger.info("Add like to user: " + str(patch_document["value"]))
-                story_updated = Story.addLike(story_id, patch_document["value"])
+            if patch_document["path"] == "/reactions" and patch_document["op"] == "add":
+                current_app.logger.debug("Add reaction: " + str(patch_document["value"]))
+                story_updated = Story.addReaction(story_id, patch_document["value"])
 
-            if patch_document["path"] == "/likes" and patch_document["op"] == "remove":
-                current_app.logger.info("Remove like to user: " + str(patch_document["value"]))
-                story_updated = Story.removeLike(story_id, patch_document["value"])
+            if patch_document["path"] == "/reactions" and patch_document["op"] == "remove":
+                current_app.logger.debug("Remove reaction: " + str(patch_document["value"]))
+                story_updated = Story.removeReaction(story_id, patch_document["value"])
 
             if patch_document["path"] == "/comments" and patch_document["op"] == "add":
-                current_app.logger.info("Adding comment to story: " + str(patch_document["value"]))
+                current_app.logger.debug("Adding comment to story: " + str(patch_document["value"]))
                 story_updated = Story.addComment(story_id, patch_document["value"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", story_updated)

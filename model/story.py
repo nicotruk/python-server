@@ -75,16 +75,16 @@ class Story:
         return response
 
     @staticmethod
-    def addLike(story_id, user_id):
-        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"likes": user_id }}, return_document=ReturnDocument.AFTER)
+    def addReaction(story_id, reaction):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": { "reactions": reaction }}, return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
         return response
 
     @staticmethod
-    def removeLike(story_id, user_id):
-        result = db.stories.find_one_and_update({"id": story_id}, {"$pull": {"likes": user_id }}, return_document=ReturnDocument.AFTER)
+    def removeReaction(story_id, reaction):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$pull": { "reactions": reaction }}, return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
@@ -131,7 +131,7 @@ class Story:
             "title": item.title,
             "description": item.description,
             "file_url": item.file_url,
-            "likes": item.likes,
+            "reactions": item.reactions,
             "is_quick_story": item.is_quick_story,
             "timestamp": item.timestamp
         }
@@ -148,7 +148,7 @@ class Story:
             "title": document["title"],
             "description": document["description"],
             "file_url": document["file_url"],
-            "likes": dict.get(document, "likes", []),
+            "reactions": dict.get(document, "reactions", []),
             "comments": dict.get(document, "comments", []),
             "is_quick_story": document["is_quick_story"],
             "timestamp": document["timestamp"]
