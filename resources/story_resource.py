@@ -12,7 +12,6 @@ from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
-
 class StoriesResource(Resource):
     @token_validation_required
     def get(self):

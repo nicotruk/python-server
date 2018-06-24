@@ -3,6 +3,7 @@ from pymongo import ReturnDocument
 from model.db.storyVO import StoryVO
 from model.user import UserNotFoundException
 import uuid
+from .storySorter import StorySorter
 
 class StoryNotFoundException(Exception):
     pass
@@ -56,11 +57,14 @@ class Story:
             # Merge all stories
             result = publicStories + visiblePrivateStories
 
+            # Sort by importance
+            sortedResult = StorySorter.sortByImportance(result)
+
             response = {
                 "stories": []
             }
 
-            for story in result:
+            for story in sortedResult:
                 response["stories"].append(Story._decode(story))
 
             return response

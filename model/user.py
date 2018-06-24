@@ -1,14 +1,10 @@
 import uuid
-
 from pymongo import ReturnDocument
-
 from config.mongodb import db
 from model.db.userVO import UserVO
 
-
 class UserNotFoundException(Exception):
     pass
-
 
 class User:
 
