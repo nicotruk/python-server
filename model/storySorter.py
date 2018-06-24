@@ -40,7 +40,7 @@ class StorySorter:
       # Get difference between latest story and current time (it substracts)
       storyTime = parser.parse(story["timestamp"])
       diff = storyTime - StorySorter.getPresentTime()
-      storyTimeDifference = diff.total_seconds()
+      storyTimeDifference = diff.total_seconds() / 60
 
       # Get story reactions and comments
       reactionsAndCommentsCount = len(dict.get(story, "reactions", [])) + len(dict.get(story, "comments", []))
