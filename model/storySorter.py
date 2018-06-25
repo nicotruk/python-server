@@ -72,7 +72,6 @@ class StorySorter:
         user = next((x for x in StorySorter.users if x["user_id"] == user_id), None)
 
         if user is None:
-            current_app.logger.info("Noo user")
             user = db.users.find_one({"user_id": user_id})
             user["stories_publications"] = db.stories.count({"user_id": user_id})
             StorySorter.users.append(user)
