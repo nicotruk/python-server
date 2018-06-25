@@ -38,7 +38,7 @@ class StorySorter:
         user_contacts = StorySorter.get_user_contacts(story["user_id"])
 
         # Get difference between latest story and current time (it substracts)
-        story_time = datetime.utcfromtimestamp((story["timestamp"]))
+        story_time = parser.parse(story["timestamp"])
         diff = story_time - StorySorter.get_present_time()
         story_time_difference = diff.total_seconds() / 60
 

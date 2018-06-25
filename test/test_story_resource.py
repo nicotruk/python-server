@@ -27,7 +27,7 @@ test_story = {
     "title": "un titulo",
     "description": "una descripcion",
     "is_quick_story": "true",
-    "timestamp": "1529448160"
+    "timestamp": "2018-06-25 15:44:05"
 }
 
 headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
