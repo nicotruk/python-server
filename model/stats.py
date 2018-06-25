@@ -19,6 +19,20 @@ class StatManager:
         return stats_response
 
     @staticmethod
+    def get_stats_from_last_min(last_min):
+        actual_time = int(round(time.time() * 1000))
+        x_min_before_time = actual_time - (int(last_min) * 60 * 1000)
+        stats_db_response = list(db.requests_stats.find({"timestamp": {"$gte": x_min_before_time}}))
+        stats_response = {
+            "stats": []
+        }
+
+        for statDBResponse in stats_db_response:
+            stats_response["stats"].append(StatManager._decode_stat(statDBResponse))
+
+        return stats_response
+
+    @staticmethod
     def create(request):
         new_stat = StatVO(request, int(round(time.time() * 1000)))
         encoded_stat = StatManager._encode_stat(new_stat)

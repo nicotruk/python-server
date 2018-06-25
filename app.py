@@ -31,6 +31,7 @@ from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
 from resources.stats_resource import StatsResource
+from resources.stats_resource import LastXMinStatsResource
 
 app = Flask(APP_NAME)
 api_bp = Blueprint('api', APP_NAME)
@@ -92,6 +93,8 @@ api.add_resource(PingSharedServerResource, '/ping/sharedServer')
 
 # noinspection PyTypeChecker
 api.add_resource(StatsResource, '/stats')
+# noinspection PyTypeChecker
+api.add_resource(LastXMinStatsResource, '/stats/last/<minutes>')
 
 app.register_blueprint(api_bp)
 
