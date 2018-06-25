@@ -1,14 +1,16 @@
-from config.mongodb import db
+import uuid
+
 from pymongo import ReturnDocument
+
+from config.mongodb import db
 from model.db.storyVO import StoryVO
 from model.user import UserNotFoundException
-import uuid
 from .storySorter import StorySorter
+
 
 class StoryNotFoundException(Exception):
     pass
 
-from .user import User
 
 class Story:
 
@@ -25,46 +27,46 @@ class Story:
         return response
 
     @staticmethod
-    def get_by_user(userId):
+    def get_by_user(user_id):
 
         # Get all public stories
-        publicStories = list(db.stories.find({ "visibility": "public" }))
+        public_stories = list(db.stories.find({"visibility": "public"}))
 
         # Get all private stories
-        privateStories = list(db.stories.find({ "visibility": "private" }))
+        private_stories = list(db.stories.find({"visibility": "private"}))
 
         # Filter out private stories, keeping only
         # 1) Private stories of the user
         # 2) Private stories of the user's friends
-        user = db.users.find_one({ "user_id": userId })
+        user = db.users.find_one({"user_id": user_id})
 
         if user is None:
             raise UserNotFoundException("User not found")
         else:
-            userFriendsIds = list()
+            user_friends_ids = list()
 
             for friends_username in user["friends_usernames"]:
-                friend = db.users.find_one({ "username": friends_username })
-                userFriendsIds.append(friend["user_id"])
+                friend = db.users.find_one({"username": friends_username})
+                user_friends_ids.append(friend["user_id"])
 
-            validUserIds = userFriendsIds + [userId]
-            visiblePrivateStories = list()
+            valid_user_ids = user_friends_ids + [user_id]
+            visible_private_stories = list()
 
-            for privateStory in privateStories:
-                if privateStory["user_id"] in validUserIds:
-                    visiblePrivateStories.append(privateStory)
+            for privateStory in private_stories:
+                if privateStory["user_id"] in valid_user_ids:
+                    visible_private_stories.append(privateStory)
 
             # Merge all stories
-            result = publicStories + visiblePrivateStories
+            result = public_stories + visible_private_stories
 
             # Sort by importance
-            sortedResult = StorySorter.sortByImportance(result)
+            sorted_result = StorySorter.sort_by_importance(result)
 
             response = {
                 "stories": []
             }
 
-            for story in sortedResult:
+            for story in sorted_result:
                 response["stories"].append(Story._decode(story))
 
             return response
@@ -72,40 +74,45 @@ class Story:
     @staticmethod
     def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
         story_id = str(uuid.uuid4())
-        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '', [], [])
+        new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '',
+                            [], [])
         encoded_story = Story._encode(new_story)
         db.stories.insert_one(encoded_story)
         response = Story._decode(encoded_story)
         return response
 
     @staticmethod
-    def addReaction(story_id, reaction):
-        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": { "reactions": reaction }}, return_document=ReturnDocument.AFTER)
+    def add_reaction(story_id, reaction):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"reactions": reaction}},
+                                                return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
         return response
 
     @staticmethod
-    def removeReaction(story_id, reaction):
-        result = db.stories.find_one_and_update({"id": story_id}, {"$pull": { "reactions": reaction }}, return_document=ReturnDocument.AFTER)
+    def remove_reaction(story_id, reaction):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$pull": {"reactions": reaction}},
+                                                return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
         return response
 
     @staticmethod
-    def addComment(story_id, newComment):
-        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"comments": newComment }}, return_document=ReturnDocument.AFTER)
+    def add_comment(story_id, new_comment):
+        result = db.stories.find_one_and_update({"id": story_id}, {"$addToSet": {"comments": new_comment}},
+                                                return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
         return response
 
     @staticmethod
-    def updateFile(story_id, file_url):
-        updated_fields = { "file_url": file_url }
-        result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields}, return_document=ReturnDocument.AFTER)
+    def update_file(story_id, file_url):
+        updated_fields = {"file_url": file_url}
+        result = db.stories.find_one_and_update({"id": story_id}, {'$set': updated_fields},
+                                                return_document=ReturnDocument.AFTER)
         if result is None:
             raise StoryNotFoundException("There is no story with that ID!")
         response = Story._decode(result)
@@ -159,7 +166,7 @@ class Story:
         }
 
         # Add user info in each story
-        user = db.users.find_one({ "user_id": str(story["user_id"]) })
+        user = db.users.find_one({"user_id": str(story["user_id"])})
         story["username"] = user["username"]
         story["name"] = user["name"]
         story["profile_pic"] = user["profile_pic"]

@@ -12,13 +12,14 @@ from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
+
 class StoriesResource(Resource):
     @token_validation_required
     def get(self):
         try:
-            userId = request.args.get('user_id')
-            current_app.logger.info("Received StoriesResource GET Request for User ID: " + userId)
-            response = Story.get_by_user(userId)
+            user_id = request.args.get('user_id')
+            current_app.logger.info("Received StoriesResource GET Request for User ID: " + user_id)
+            response = Story.get_by_user(user_id)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
             return make_response(jsonify(response), 200)
         except ValueError:
@@ -80,15 +81,15 @@ class SingleStoryResource(Resource):
             story_updated = None
             if patch_document["path"] == "/reactions" and patch_document["op"] == "add":
                 current_app.logger.debug("Add reaction: " + str(patch_document["value"]))
-                story_updated = Story.addReaction(story_id, patch_document["value"])
+                story_updated = Story.add_reaction(story_id, patch_document["value"])
 
             if patch_document["path"] == "/reactions" and patch_document["op"] == "remove":
                 current_app.logger.debug("Remove reaction: " + str(patch_document["value"]))
-                story_updated = Story.removeReaction(story_id, patch_document["value"])
+                story_updated = Story.remove_reaction(story_id, patch_document["value"])
 
             if patch_document["path"] == "/comments" and patch_document["op"] == "add":
                 current_app.logger.debug("Adding comment to story: " + str(patch_document["value"]))
-                story_updated = Story.addComment(story_id, patch_document["value"])
+                story_updated = Story.add_comment(story_id, patch_document["value"])
 
             current_app.logger.debug("Python Server Response: 200 - %s", story_updated)
             return make_response(jsonify(story_updated), 200)

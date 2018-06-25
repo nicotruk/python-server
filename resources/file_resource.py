@@ -25,7 +25,7 @@ class FileResource(Resource):
                                      shared_server_upload.text)
             file_data = json.loads(shared_server_upload.text)
             if shared_server_upload.ok:
-                story_updated = Story.updateFile(story_id, file_data['file']['resource'])
+                story_updated = Story.update_file(story_id, file_data['file']['resource'])
                 current_app.logger.debug("Python Server Response: %s - %s", shared_server_upload.status_code, story_updated)
                 current_app.logger.info("Sending file ownership request to Shared Server")
                 file_ownership_headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}

@@ -27,7 +27,7 @@ test_story = {
     "title": "un titulo",
     "description": "una descripcion",
     "is_quick_story": "true",
-    "timestamp": "1529448160000"
+    "timestamp": "1529448160"
 }
 
 headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format("asd")}
@@ -76,7 +76,9 @@ class StoriesResourceTestCase(unittest.TestCase):
         self.assertEqual(len(stories), 0)
 
     @patch('resources.user_resource.requests.post')
-    def test_post_story(self, mock_post):
+    @patch('resources.user_resource.requests.get')
+    def test_post_story(self, mock_get, mock_post):
+        mock_get.return_value.status_code = 200
         mock_post.return_value.status_code = 200
         response = {
             "token": {
