@@ -136,6 +136,19 @@ class FacebookLoginResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+class UserInfoResource(Resource):
+    @token_validation_required
+    def get(self, username):
+        try:
+            current_app.logger.info("Received UserInfoResource GET Request")
+            user = User.get_user_by_username(username)
+            current_app.logger.debug("Python Server Response: 200 - %s", user)
+            return make_response(jsonify(user), 200)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
 
 class SingleUserResource(Resource):
     @token_validation_required
@@ -224,7 +237,6 @@ class UserSearchResource(Resource):
             if users:
                 for user in users:
                     if user_id != user["user_id"]:
-                        if current_username.lower() not in [x.lower() for x in user["friends_usernames"]]:
                             if query.lower() in user["username"].lower() or query.lower() in user["name"].lower():
                                 final_user = {
                                     "username": user["username"],
@@ -250,10 +262,10 @@ class UserSearchResource(Resource):
 
 class UserFriendsResource(Resource):
     @token_validation_required
-    def get(self, user_id):
+    def get(self, username):
         try:
             current_app.logger.info("Received UserFriendsResource GET Request")
-            user = User.get_user_by_id(user_id)
+            user = User.get_user_by_username(username)
 
             friends_usernames = user["user"]["friends_usernames"]
 

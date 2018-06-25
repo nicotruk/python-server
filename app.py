@@ -22,6 +22,7 @@ from resources.story_resource import SingleStoryResource
 from resources.file_resource import FileResource
 from resources.user_resource import FacebookLoginResource
 from resources.user_resource import SingleUserResource
+from resources.user_resource import UserInfoResource
 from resources.user_resource import UserFirebaseTokenResource
 from resources.user_resource import UserFriendsResource
 from resources.user_resource import UserLoginResource
@@ -41,7 +42,8 @@ api.add_resource(UsersResource, '/users')
 api.add_resource(UserLoginResource, '/users/login')
 api.add_resource(FacebookLoginResource, '/users/fb_login')
 api.add_resource(SingleUserResource, '/users/<user_id>')
-api.add_resource(UserFriendsResource, '/users/friends/<user_id>')
+api.add_resource(UserInfoResource, '/users/info/<username>')
+api.add_resource(UserFriendsResource, '/users/friends/<username>')
 api.add_resource(UserSearchResource, '/users/search/<user_id>/<query>')
 
 api.add_resource(FriendshipRequestResource, '/friendship/request')

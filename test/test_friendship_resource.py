@@ -115,4 +115,4 @@ class FriendshipResourceTestCase(unittest.TestCase):
             '/api/v1/users/search/{}/{}'.format(other_user_data["user"]["user_id"], friendship_request["to_username"]),
             headers=headers)
         query_friends_response_data = json.loads(query_friends_response.data)
-        self.assertEqual(len(query_friends_response_data["found_users"]), 0)
+        self.assertEqual(len(query_friends_response_data["found_users"]), 1)

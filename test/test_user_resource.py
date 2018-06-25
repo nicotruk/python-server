@@ -232,7 +232,7 @@ class UsersResourceTestCase(unittest.TestCase):
         user.pop('password')
         user["user_id"] = user_response["user"]["user_id"]
 
-        get_response = self.app.get('/api/v1/users/{}'.format(user["user_id"]), headers=headers)
+        get_response = self.app.get('/api/v1/users/info/{}'.format(user["username"]), headers=headers)
         self.assertEqual(user, json.loads(get_response.data)["user"])
 
     # /users/search/<user_id>/<query> GET
@@ -269,47 +269,6 @@ class UsersResourceTestCase(unittest.TestCase):
         query_username = user2["username"] + "1"
         self.assertGreater(len(query_username), len(user2["username"]))
         response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], query_username), headers=headers)
-        self.assertEqual(response.status_code, 200)
-        found_users = json.loads(response.data)["found_users"]
-        self.assertEqual(len(found_users), 0)
-
-    # /users POST + /users/search/<user_id>/<query> GET
-    @patch('resources.user_resource.requests.post')
-    def test_user_search_no_match_if_friend(self, mock_post):
-        mock_post.return_value.status_code = 200
-        response = {
-            "token": {
-                "expiresAt": "123",
-                "token": "asd"
-            }
-        }
-        mock_post.return_value.text = json.dumps(response)
-
-        user = test_user.copy()
-        response = self.app.post("/api/v1/users",
-                                 data=json.dumps(user),
-                                 content_type='application/json')
-        user = json.loads(response.data)["user"]
-
-        friend_username = "anotherName"
-        user2 = test_user.copy()
-        user2["username"] = friend_username
-        self.app.post("/api/v1/users",
-                      data=json.dumps(user2),
-                      content_type='application/json')
-
-        friendship_request = {
-            "from_username": user["username"],
-            "to_username": user2["username"]
-        }
-        self.app.post("/api/v1/friendship/request",
-                      data=json.dumps(friendship_request),
-                      headers=headers)
-        self.app.post("/api/v1/friendship",
-                      data=json.dumps(friendship_request),
-                      headers=headers)
-
-        response = self.app.get("/api/v1/users/search/{}/{}".format(user["user_id"], friend_username), headers=headers)
         self.assertEqual(response.status_code, 200)
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 0)
@@ -357,7 +316,7 @@ class UsersResourceTestCase(unittest.TestCase):
         mock_post.return_value.status_code = 200
         response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"), headers=headers)
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(json.loads(response.data)["message"], "There is no user with that ID!")
+        self.assertEqual(json.loads(response.data)["message"], "There is no user with that username!")
 
     # /users/friends/<user_id> GET
     @patch('resources.user_resource.requests.post')
@@ -374,14 +333,14 @@ class UsersResourceTestCase(unittest.TestCase):
         response = self.app.post("/api/v1/users",
                                  data=json.dumps(user),
                                  content_type='application/json')
-        user_id = json.loads(response.data)["user"]["user_id"]
+        username = json.loads(response.data)["user"]["username"]
         user2 = test_user.copy()
         user2["username"] = user["username"] + "1"
         self.app.post("/api/v1/users",
                       data=json.dumps(user2),
                       content_type='application/json')
 
-        response = self.app.get("/api/v1/users/friends/{}".format(user_id), headers=headers)
+        response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
         self.assertEqual(response.status_code, 200)
         friends = json.loads(response.data)["friends"]
         self.assertEqual(len(friends), 0)
@@ -401,7 +360,7 @@ class UsersResourceTestCase(unittest.TestCase):
         response = self.app.post("/api/v1/users",
                                  data=json.dumps(user),
                                  content_type='application/json')
-        user_id = json.loads(response.data)["user"]["user_id"]
+        username = json.loads(response.data)["user"]["username"]
         user2 = test_user.copy()
         user2["username"] = user["username"] + "1"
         self.app.post("/api/v1/users",
@@ -419,7 +378,7 @@ class UsersResourceTestCase(unittest.TestCase):
                       data=json.dumps(friendship_request),
                       headers=headers)
 
-        response = self.app.get("/api/v1/users/friends/{}".format(user_id), headers=headers)
+        response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
         self.assertEqual(response.status_code, 200)
         friends = json.loads(response.data)["friends"]
         self.assertEqual(len(friends), 1)
