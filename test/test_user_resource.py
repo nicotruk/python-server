@@ -258,35 +258,11 @@ class UsersResourceTestCase(unittest.TestCase):
         user.pop('password')
         user["user_id"] = user_response["user"]["user_id"]
 
-        get_response = self.app.get('/api/v1/users/{}'.format(user["user_id"]), headers=headers)
-        self.assertEqual(user, json.loads(get_response.data)["user"])
-
-    # /users POST + /users/<user_id> GET
-    @patch('resources.user_resource.requests.post')
-    def test_integration_get_single_user(self, mock_post):
-        mock_post.return_value.status_code = 200
-        response = {
-            "token": {
-                "expiresAt": "123",
-                "token": "asd"
-            }
-        }
-        mock_post.return_value.text = json.dumps(response)
-
-        user = test_user.copy()
-        user["profile_pic"] = ''
-        user["friends_usernames"] = []
-
-        response = self.app.post("/api/v1/users",
-                                 data=json.dumps(user),
-                                 content_type='application/json')
-
-        user_response = json.loads(response.data)
-        user.pop('password')
-        user["user_id"] = user_response["user"]["user_id"]
-
-        get_response = self.app.get('/api/v1/users/info/{}'.format(user["username"]), headers=headers)
-        self.assertEqual(user, json.loads(get_response.data)["user"])
+        get_response1 = self.app.get('/api/v1/users/{}'.format(user["user_id"]), headers=headers)
+        self.assertEqual(user, json.loads(get_response1.data)["user"])
+        get_response2 = self.app.get('/api/v1/users/info/{}'.format(user["username"]), headers=headers)
+        self.assertEqual(user, json.loads(get_response2.data)["user"])
+        self.assertEqual(json.loads(get_response1.data)["user"], json.loads(get_response2.data)["user"])
 
     # /users/search/<user_id>/<query> GET
     @patch('resources.token_validation_decorator.requests.post')
