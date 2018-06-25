@@ -21,10 +21,12 @@ from resources.message_resource import UserDirectMessagesResource
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.story_resource import StoriesResource
+from resources.story_resource import StoriesFromUserResource
 from resources.story_resource import SingleStoryResource
 from resources.file_resource import FileResource
 from resources.user_resource import FacebookLoginResource
 from resources.user_resource import SingleUserResource
+from resources.user_resource import UserInfoResource
 from resources.user_resource import UserFirebaseTokenResource
 from resources.user_resource import UserFriendsResource
 from resources.user_resource import UserLoginResource
@@ -55,7 +57,9 @@ api.add_resource(FacebookLoginResource, '/users/fb_login')
 # noinspection PyTypeChecker
 api.add_resource(SingleUserResource, '/users/<user_id>')
 # noinspection PyTypeChecker
-api.add_resource(UserFriendsResource, '/users/friends/<user_id>')
+api.add_resource(UserInfoResource, '/users/info/<username>')
+# noinspection PyTypeChecker
+api.add_resource(UserFriendsResource, '/users/friends/<username>')
 # noinspection PyTypeChecker
 api.add_resource(UserSearchResource, '/users/search/<user_id>/<query>')
 
@@ -85,6 +89,8 @@ api.add_resource(UserFirebaseTokenResource, '/users/firebase/<user_id>')
 
 # noinspection PyTypeChecker
 api.add_resource(StoriesResource, '/stories')
+# noinspection PyTypeChecker
+api.add_resource(StoriesFromUserResource, '/stories/from/<username>/<user_id>')
 # noinspection PyTypeChecker
 api.add_resource(SingleStoryResource, '/stories/<story_id>')
 # noinspection PyTypeChecker

@@ -72,6 +72,30 @@ class Story:
             return response
 
     @staticmethod
+    def get_from_user(username, user_id):
+
+        storiesUser = db.users.find_one({ "username": username })
+        currentUser = db.users.find_one({ "user_id": user_id })
+
+        if storiesUser is None or currentUser is None:
+            raise UserNotFoundException("User not found")
+
+
+        if currentUser["username"] in storiesUser["friends_usernames"] or storiesUser["username"] == currentUser["username"]:
+            stories = list(db.stories.find({ "user_id": storiesUser["user_id"] }))
+        else:
+            stories = list(db.stories.find({ "user_id": storiesUser["user_id"], "visibility": "public" }))
+
+        response = {
+            "stories": []
+        }
+
+        for story in stories:
+            response["stories"].append(Story._decode(story))
+
+        return response
+
+    @staticmethod
     def create(user_id, location, visibility, title, description, is_quick_story, timestamp):
         story_id = str(uuid.uuid4())
         new_story = StoryVO(story_id, user_id, location, visibility, title, description, is_quick_story, timestamp, '',

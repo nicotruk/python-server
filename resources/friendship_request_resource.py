@@ -27,9 +27,15 @@ class FriendshipRequestResource(Resource):
             friendship_request_created = FriendshipRequest.create(request_data["from_username"],
                                                                   request_data["to_username"],
                                                                   int(round(time.time() * 1000)))
+
+            from_username = User.get_user_by_username(request_data["from_username"])
+            if request_data["to_username"] in from_username["user"]["friends_usernames"]:
+                current_app.logger.debug("Python Server Response: 409 - %s", "Users are already friends.")
+                return make_response("Users are already friends.", 409)
+
             if friendship_request_created is None:
                 current_app.logger.debug("Python Server Response: 409 - %s", "Friendship request already exists")
-                return make_response("Friendship request already exists", 201)
+                return make_response("Friendship request already exists", 409)
             else:
                 current_app.logger.debug("Python Server Response: 201 - %s", friendship_request_created)
                 if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
@@ -51,6 +57,11 @@ class FriendshipRequestResource(Resource):
             error = "Unable to send Firebase Notification - ApiCallError"
             current_app.logger.error("Python Server Response: 409 - %s", error)
             return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
 
 
 class FriendshipRequestsSentResource(Resource):
