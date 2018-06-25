@@ -1,17 +1,18 @@
 import json
 import time
 
+from firebase_admin import messaging
 from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 
-from model.friendship_request import FriendshipRequest
-from model.user import User, UserNotFoundException
-from resources.error_handler import ErrorHandler
 import config.firebase_config
 from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST
 from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_MESSAGE
-from firebase_admin import messaging
 from model.firebase_manager import FirebaseManager
+from model.friendship_request import FriendshipRequest
+from model.stats import StatManager
+from model.user import User, UserNotFoundException
+from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
 
@@ -21,6 +22,7 @@ class FriendshipRequestResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received FriendshipRequestResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             request_data = json.loads(request.data)
             friendship_request_created = FriendshipRequest.create(request_data["from_username"],
                                                                   request_data["to_username"],
@@ -57,6 +59,7 @@ class FriendshipRequestsSentResource(Resource):
     def get(self, from_username):
         try:
             current_app.logger.info("Received FriendshipRequestResource - sent requests - GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             friendship_requests = FriendshipRequest.get_sent_friendship_requests(from_username)
 
             if friendship_requests["friendship_requests"]:
@@ -84,6 +87,7 @@ class FriendshipRequestsReceivedResource(Resource):
     def get(self, to_username):
         try:
             current_app.logger.info("Received FriendshipRequestResource - received requests - GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             friendship_requests = FriendshipRequest.get_received_friendship_requests(to_username)
 
             if friendship_requests["friendship_requests"]:
@@ -111,6 +115,7 @@ class SingleFriendshipRequestResource(Resource):
     def delete(self, from_username, to_username):
         try:
             current_app.logger.info("Received SingleFriendshipRequestResource - DELETE Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             deleted_friendship_request = FriendshipRequest.delete(from_username, to_username)
             if deleted_friendship_request is None:
                 current_app.logger.debug("Python Server Response: 409 - %s",

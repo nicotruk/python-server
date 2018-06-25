@@ -35,6 +35,7 @@ class UsersResourceTestCase(unittest.TestCase):
         with app.app_context():
             db.users.delete_many({})
             db.friendship_requests.delete_many({})
+            db.requests_stats.delete_many({})
 
     # /users GET
     @patch('resources.token_validation_decorator.requests.post')

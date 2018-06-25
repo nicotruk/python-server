@@ -8,6 +8,7 @@ from flask_restful import Resource
 from config.shared_server_config import SHARED_SERVER_USER_PATH, SHARED_SERVER_TOKEN_PATH, \
     SHARED_SERVER_APPLICATION_OWNER, APP_SERVER_TOKEN
 from model.user import User, UserNotFoundException
+from model.stats import StatManager
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
@@ -18,6 +19,7 @@ class UsersResource(Resource):
     def get(self):
         try:
             current_app.logger.info("Received UsersResource GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             users_response = User.get_all()
             current_app.logger.debug("Python Server Response: 200 - %s", users_response)
             return make_response(jsonify(users_response), 200)
@@ -29,6 +31,7 @@ class UsersResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received UsersResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             user_data = json.loads(request.data)
 
             payload = {
@@ -38,13 +41,16 @@ class UsersResource(Resource):
             }
             headers = {'content-type': 'application/json', 'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             signup_response = requests.post(SHARED_SERVER_USER_PATH, data=json.dumps(payload), headers=headers)
-            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code, signup_response.text)
+            current_app.logger.debug("Shared Server Signup Response: %s - %s", signup_response.status_code,
+                                     signup_response.text)
             if signup_response.ok:
-                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '', user_data["firebase_token"])
+                user_created = User.create(user_data["username"], user_data["email"], user_data["name"], '',
+                                           user_data["firebase_token"])
                 current_app.logger.debug("User created with firebase_token = %s", user_data["firebase_token"])
                 payload.pop("applicationOwner")
                 login_response = requests.post(SHARED_SERVER_TOKEN_PATH, data=json.dumps(payload), headers=headers)
-                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code, login_response.text)
+                current_app.logger.debug("Shared Server Response: %s - %s", login_response.status_code,
+                                         login_response.text)
                 json_response = json.loads(login_response.text)
 
                 if login_response.ok:
@@ -80,6 +86,7 @@ class FacebookLoginResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received FacebookLoginResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             user_data = json.loads(request.data)
 
             payload = {
@@ -105,7 +112,8 @@ class FacebookLoginResource(Resource):
                     profile_pic_bytes = base64.b64encode(requests.get(profile_pic_url).content)
                     profile_pic_string = profile_pic_bytes.decode('utf-8')
 
-                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string, user_data["firebase_token"])
+                    user = User.create(user_data["username"], user_data["email"], user_data["name"], profile_pic_string,
+                                       user_data["firebase_token"])
                     current_app.logger.debug("User created with firebase_token = %s", user_data["firebase_token"])
 
             payload.pop("applicationOwner")
@@ -142,6 +150,7 @@ class SingleUserResource(Resource):
     def get(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             user = User.get_user_by_id(user_id)
             current_app.logger.debug("Python Server Response: 200 - %s", user)
             return make_response(jsonify(user), 200)
@@ -155,6 +164,7 @@ class SingleUserResource(Resource):
     def put(self, user_id):
         try:
             current_app.logger.info("Received SingleUserResource PUT Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             request_data = json.loads(request.data)
 
             updated_user = User.update_user(user_id, request_data["name"],
@@ -173,6 +183,7 @@ class UserLoginResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received UserLoginResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             credentials = json.loads(request.data)
             payload = {
                 "username": credentials["username"],
@@ -213,6 +224,7 @@ class UserSearchResource(Resource):
     def get(self, user_id, query):
         try:
             current_app.logger.info("Received UserSearchResource GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             users_response = User.get_all()
             users = users_response["users"]
 
@@ -254,6 +266,7 @@ class UserFriendsResource(Resource):
     def get(self, user_id):
         try:
             current_app.logger.info("Received UserFriendsResource GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             user = User.get_user_by_id(user_id)
 
             friends_usernames = user["user"]["friends_usernames"]
@@ -285,6 +298,7 @@ class UserFirebaseTokenResource(Resource):
     def put(self, user_id):
         try:
             current_app.logger.info("Received UserFirebaseTokenResource PUT Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             request_data = json.loads(request.data)
 
             updated_user = User.update_user_firebase_token(user_id, request_data["firebase_token"])

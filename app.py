@@ -30,6 +30,7 @@ from resources.user_resource import UserFriendsResource
 from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
+from resources.stats_resource import StatsResource
 
 app = Flask(APP_NAME)
 api_bp = Blueprint('api', APP_NAME)
@@ -88,6 +89,9 @@ api.add_resource(FileResource, '/stories/<story_id>/files')
 api.add_resource(PingResource, '/ping')
 # noinspection PyTypeChecker
 api.add_resource(PingSharedServerResource, '/ping/sharedServer')
+
+# noinspection PyTypeChecker
+api.add_resource(StatsResource, '/stats')
 
 app.register_blueprint(api_bp)
 

@@ -8,8 +8,8 @@ from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_ACCEPTED
 from config.firebase_config import NOTIFICATION_TYPE_FRIENDSHIP_REQUEST_ACCEPTED_MESSAGE
 from model.firebase_manager import FirebaseManager
 from model.friendship_request import FriendshipRequest
-from model.user import User
-from model.user import UserNotFoundException
+from model.stats import StatManager
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
@@ -20,6 +20,7 @@ class FriendshipResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received SetFriendshipResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             friendship_data = json.loads(request.data)
 
             User.add_friend(friendship_data["from_username"], friendship_data["to_username"])

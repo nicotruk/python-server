@@ -1,14 +1,18 @@
 import requests
-from flask import Response, current_app
+from flask import Response
+from flask import request, current_app
 from flask_restful import Resource
 
 from config.shared_server_config import SHARED_SERVER_PING_PATH
+from model.stats import StatManager
 
 SUCCESS_MESSAGE = 'Connected'
+
 
 class PingResource(Resource):
     def get(self):
         current_app.logger.info("Received PingResource GET Request")
+        StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
         current_app.logger.debug("Python Server Response: 200 - %s", SUCCESS_MESSAGE)
         return Response(SUCCESS_MESSAGE, 200)
 
@@ -16,6 +20,7 @@ class PingResource(Resource):
 class PingSharedServerResource(Resource):
     def get(self):
         current_app.logger.info("Received PingSharedServerResource GET Request")
+        StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
         current_app.logger.info("Sending Request to Shared Server at:" + SHARED_SERVER_PING_PATH)
         response = requests.get(SHARED_SERVER_PING_PATH)
         current_app.logger.debug("Shared Server Response: %s", response.status_code)

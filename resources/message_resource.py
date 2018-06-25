@@ -10,8 +10,10 @@ from config.firebase_config import NOTIFICATION_TYPE_MESSAGE
 from model.direct_message import DirectMessage
 from model.firebase_manager import FirebaseManager
 from model.user import User, UserNotFoundException
+from model.stats import StatManager
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
+
 
 class DirectMessageResource(Resource):
 
@@ -19,6 +21,7 @@ class DirectMessageResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received DirectMessageResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             request_data = json.loads(request.data)
             User.get_user_by_username(request_data["to_username"])
             direct_message_created = DirectMessage.create(request_data["from_username"],
@@ -30,7 +33,7 @@ class DirectMessageResource(Resource):
             else:
                 if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
                     FirebaseManager.send_firebase_message(request_data["from_username"], request_data["to_username"],
-                                                        request_data["message"], NOTIFICATION_TYPE_MESSAGE)
+                                                          request_data["message"], NOTIFICATION_TYPE_MESSAGE)
                 current_app.logger.debug("Python Server Response: 201 - %s", direct_message_created)
                 return make_response(jsonify(direct_message_created), 201)
         except ValueError:
@@ -53,6 +56,7 @@ class DirectMessagesReceivedResource(Resource):
     def get(self, to_username):
         try:
             current_app.logger.info("Received DirectMessagesReceivedResource - received requests - GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             direct_messages = DirectMessage.get_received_direct_messages(to_username)
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
@@ -68,6 +72,7 @@ class UserDirectMessagesResource(Resource):
     def get(self, username):
         try:
             current_app.logger.info("Received UserDirectMessagesResource - received requests - GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             direct_messages = DirectMessage.get_user_direct_messages_sorted_by_timestamp(username)
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
@@ -83,6 +88,7 @@ class ConversationMessagesResource(Resource):
     def get(self, username, friend_username):
         try:
             current_app.logger.info("Received ConversationMessagesResource - received requests - GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             direct_messages = DirectMessage.get_conversation_messages_sorted_by_timestamp(username, friend_username)
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)

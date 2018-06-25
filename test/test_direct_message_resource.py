@@ -74,6 +74,7 @@ class DirectMessageResourceTestCase(unittest.TestCase):
     def tearDown(self):
         with app.app_context():
             db.direct_messages.delete_many({})
+            db.requests_stats.delete_many({})
 
     @patch('resources.token_validation_decorator.requests.post')
     def test_create_direct_message(self, mock_post):

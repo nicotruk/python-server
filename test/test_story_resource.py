@@ -44,6 +44,7 @@ class StoriesResourceTestCase(unittest.TestCase):
         with app.app_context():
             db.stories.delete_many({})
             db.users.delete_many({})
+            db.requests_stats.delete_many({})
 
     @patch('requests.post')
     def test_get_all_stories_nonexistent_user(self, mock_post):

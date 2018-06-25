@@ -60,6 +60,7 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
         with app.app_context():
             db.friendship_requests.delete_many({})
             db.users.delete_many({})
+            db.requests_stats.delete_many({})
 
     @patch('requests.post')
     def test_create_friendship_request(self, mock_post):

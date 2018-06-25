@@ -7,6 +7,7 @@ import config.firebase_config
 from config.firebase_config import NOTIFICATION_TYPE_STORY
 from config.firebase_config import NOTIFICATION_TYPE_STORY_MESSAGE
 from model.firebase_manager import FirebaseManager
+from model.stats import StatManager
 from model.story import Story
 from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
@@ -19,6 +20,7 @@ class StoriesResource(Resource):
         try:
             user_id = request.args.get('user_id')
             current_app.logger.info("Received StoriesResource GET Request for User ID: " + user_id)
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             response = Story.get_by_user(user_id)
             current_app.logger.debug("Python Server Response: 200 - %s", response)
             return make_response(jsonify(response), 200)
@@ -36,6 +38,7 @@ class StoriesResource(Resource):
     def post(self):
         try:
             current_app.logger.info("Received StoriesResource POST Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             story_data = json.loads(request.data)
             story_created = Story.create(
                 story_data["user_id"],
@@ -75,6 +78,7 @@ class SingleStoryResource(Resource):
     def patch(self, story_id):
         try:
             current_app.logger.info("Received SingleStoryResource PATCH Request for story: " + str(request.data))
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             patch_document = json.loads(request.data)
 
             # See http://jsonpatch.com/ for more info
@@ -102,6 +106,7 @@ class SingleStoryResource(Resource):
     def delete(self, story_id):
         try:
             current_app.logger.info("Received SingleStoryResource DELETE Request for story: " + story_id)
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
             deleted_story = Story.delete(story_id)
             if deleted_story is None:
                 current_app.logger.debug("Python Server Response: 403 - %s", "No story found with that ID!.")
