@@ -158,6 +158,7 @@ class FacebookLoginResource(Resource):
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
 
+
 class UserInfoResource(Resource):
     @token_validation_required
     def get(self, username):
@@ -171,6 +172,7 @@ class UserInfoResource(Resource):
             message = e.args[0]
             current_app.logger.error("Python Server Response: %s - %s", status_code, message)
             return ErrorHandler.create_error_response(status_code, message)
+
 
 class SingleUserResource(Resource):
     @token_validation_required
@@ -259,19 +261,19 @@ class UserSearchResource(Resource):
                 "found_users": []
             }
 
-            current_username = User.get_user_by_id(user_id)["user"]["username"]
+            User.get_user_by_id(user_id)["user"]["username"]
 
             if users:
                 for user in users:
                     if user_id != user["user_id"]:
-                            if query.lower() in user["username"].lower() or query.lower() in user["name"].lower():
-                                final_user = {
-                                    "username": user["username"],
-                                    "profile_pic": user["profile_pic"],
-                                    "name": user["name"]
-                                }
+                        if query.lower() in user["username"].lower() or query.lower() in user["name"].lower():
+                            final_user = {
+                                "username": user["username"],
+                                "profile_pic": user["profile_pic"],
+                                "name": user["name"]
+                            }
 
-                                built_response["found_users"].append(final_user)
+                            built_response["found_users"].append(final_user)
 
             current_app.logger.debug("Python Server Response: 200 - %s", built_response)
 
