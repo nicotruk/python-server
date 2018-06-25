@@ -406,123 +406,118 @@ class UsersResourceTestCase(unittest.TestCase):
         found_users = json.loads(response.data)["found_users"]
         self.assertEqual(len(found_users), 1)
 
+    # /users POST + /users/friends/<user_id> GET
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_users_friends_user_not_found(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"), headers=headers)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(json.loads(response.data)["message"], "There is no user with that username!")
 
-# /users POST + /users/friends/<user_id> GET
-@patch('resources.token_validation_decorator.requests.post')
-def test_users_friends_user_not_found(self, mock_post):
-    mock_post.return_value.status_code = 200
-    response = self.app.get("/api/v1/users/friends/{}".format("sarasa_id"), headers=headers)
-    self.assertEqual(response.status_code, 403)
-    self.assertEqual(json.loads(response.data)["message"], "There is no user with that username!")
-
-
-# /users/friends/<user_id> GET
-@patch('resources.user_resource.requests.post')
-def test_users_friends(self, mock_post):
-    mock_post.return_value.status_code = 200
-    response = {
-        "token": {
-            "expiresAt": "123",
-            "token": "asd"
+    # /users/friends/<user_id> GET
+    @patch('resources.user_resource.requests.post')
+    def test_users_friends(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
         }
-    }
-    mock_post.return_value.text = json.dumps(response)
-    user = test_user.copy()
-    response = self.app.post("/api/v1/users",
-                             data=json.dumps(user),
-                             content_type='application/json')
-    username = json.loads(response.data)["user"]["username"]
-    user2 = test_user.copy()
-    user2["username"] = user["username"] + "1"
-    self.app.post("/api/v1/users",
-                  data=json.dumps(user2),
-                  content_type='application/json')
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        username = json.loads(response.data)["user"]["username"]
+        user2 = test_user.copy()
+        user2["username"] = user["username"] + "1"
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
 
-    response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
-    self.assertEqual(response.status_code, 200)
-    friends = json.loads(response.data)["friends"]
-    self.assertEqual(len(friends), 0)
+        response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
+        self.assertEqual(response.status_code, 200)
+        friends = json.loads(response.data)["friends"]
+        self.assertEqual(len(friends), 0)
 
-
-# /users POST + /friendship/request POST + /friendship POST + /users/friends/<user_id> GET
-@patch('resources.user_resource.requests.post')
-def test_users_friends(self, mock_post):
-    mock_post.return_value.status_code = 200
-    response = {
-        "token": {
-            "expiresAt": "123",
-            "token": "asd"
+    # /users POST + /friendship/request POST + /friendship POST + /users/friends/<user_id> GET
+    @patch('resources.user_resource.requests.post')
+    def test_users_friends(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
         }
-    }
-    mock_post.return_value.text = json.dumps(response)
-    user = test_user.copy()
-    response = self.app.post("/api/v1/users",
-                             data=json.dumps(user),
-                             content_type='application/json')
-    username = json.loads(response.data)["user"]["username"]
-    user2 = test_user.copy()
-    user2["username"] = user["username"] + "1"
-    self.app.post("/api/v1/users",
-                  data=json.dumps(user2),
-                  content_type='application/json')
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        username = json.loads(response.data)["user"]["username"]
+        user2 = test_user.copy()
+        user2["username"] = user["username"] + "1"
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user2),
+                      content_type='application/json')
 
-    friendship_request = {
-        "from_username": user["username"],
-        "to_username": user2["username"]
-    }
-    self.app.post("/api/v1/friendship/request",
-                  data=json.dumps(friendship_request),
-                  headers=headers)
-    self.app.post("/api/v1/friendship",
-                  data=json.dumps(friendship_request),
-                  headers=headers)
-
-    response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
-    self.assertEqual(response.status_code, 200)
-    friends = json.loads(response.data)["friends"]
-    self.assertEqual(len(friends), 1)
-    self.assertEqual(friends[0]["username"], user2["username"])
-
-
-# /users POST + /users/fb_login POST
-@patch('resources.user_resource.requests.post')
-def test_facebook_login_user_already_created(self, mock_post):
-    mock_post.return_value.status_code = 200
-    response = {
-        "token": {
-            "expiresAt": "123",
-            "token": "asd"
+        friendship_request = {
+            "from_username": user["username"],
+            "to_username": user2["username"]
         }
-    }
-    mock_post.return_value.text = json.dumps(response)
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        self.app.post("/api/v1/friendship",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
 
-    user = test_user.copy()
+        response = self.app.get("/api/v1/users/friends/{}".format(username), headers=headers)
+        self.assertEqual(response.status_code, 200)
+        friends = json.loads(response.data)["friends"]
+        self.assertEqual(len(friends), 1)
+        self.assertEqual(friends[0]["username"], user2["username"])
 
-    self.app.post("/api/v1/users",
-                  data=json.dumps(user),
-                  content_type='application/json')
+    # /users POST + /users/fb_login POST
+    @patch('resources.user_resource.requests.post')
+    def test_facebook_login_user_already_created(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
 
-    fb_login_response = self.app.post("/api/v1/users/fb_login",
-                                      data=json.dumps(user),
-                                      content_type='application/json')
-    self.assertEqual(fb_login_response.status_code, 200)
-    response_data = json.loads(fb_login_response.data)
-    self.assertEqual(response["token"], response_data["token"])
-    response_data["user"].pop("user_id")
-    user.pop("password")
-    self.assertEqual(user, response_data["user"])
+        user = test_user.copy()
 
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user),
+                      content_type='application/json')
 
-# /users POST + /users/fb_login POST
-@patch('resources.user_resource.requests.post')
-def test_facebook_login_500_on_shared_server_500_on_app_server(self, mock_post):
-    mock_post.return_value.status_code = 500
-    mock_post.return_value.ok = False
-    mock_post.return_value.text = "Internal error"
+        fb_login_response = self.app.post("/api/v1/users/fb_login",
+                                          data=json.dumps(user),
+                                          content_type='application/json')
+        self.assertEqual(fb_login_response.status_code, 200)
+        response_data = json.loads(fb_login_response.data)
+        self.assertEqual(response["token"], response_data["token"])
+        response_data["user"].pop("user_id")
+        user.pop("password")
+        self.assertEqual(user, response_data["user"])
 
-    user = test_user.copy()
+    # /users POST + /users/fb_login POST
+    @patch('resources.user_resource.requests.post')
+    def test_facebook_login_500_on_shared_server_500_on_app_server(self, mock_post):
+        mock_post.return_value.status_code = 500
+        mock_post.return_value.ok = False
+        mock_post.return_value.text = "Internal error"
 
-    fb_login_response = self.app.post("/api/v1/users/fb_login",
-                                      data=json.dumps(user),
-                                      content_type='application/json')
-    self.assertEqual(fb_login_response.status_code, 500)
+        user = test_user.copy()
+
+        fb_login_response = self.app.post("/api/v1/users/fb_login",
+                                          data=json.dumps(user),
+                                          content_type='application/json')
+        self.assertEqual(fb_login_response.status_code, 500)
