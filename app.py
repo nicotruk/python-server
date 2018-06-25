@@ -30,8 +30,10 @@ from resources.user_resource import UserFriendsResource
 from resources.user_resource import UserLoginResource
 from resources.user_resource import UserSearchResource
 from resources.user_resource import UsersResource
+from resources.user_resource import UsersCountResource
 from resources.stats_resource import StatsResource
 from resources.stats_resource import LastXMinStatsResource
+from resources.stats_resource import Last10DaysStoriesRequestsStatsResource
 
 app = Flask(APP_NAME)
 api_bp = Blueprint('api', APP_NAME)
@@ -44,6 +46,8 @@ configure_logger(app)
 
 # noinspection PyTypeChecker
 api.add_resource(UsersResource, '/users')
+# noinspection PyTypeChecker
+api.add_resource(UsersCountResource, '/users/count')
 # noinspection PyTypeChecker
 api.add_resource(UserLoginResource, '/users/login')
 # noinspection PyTypeChecker
@@ -95,6 +99,8 @@ api.add_resource(PingSharedServerResource, '/ping/sharedServer')
 api.add_resource(StatsResource, '/stats')
 # noinspection PyTypeChecker
 api.add_resource(LastXMinStatsResource, '/stats/last/<minutes>')
+# noinspection PyTypeChecker
+api.add_resource(Last10DaysStoriesRequestsStatsResource, '/stats/stories')
 
 app.register_blueprint(api_bp)
 

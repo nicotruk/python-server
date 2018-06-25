@@ -25,6 +25,14 @@ class User:
         return users_response
 
     @staticmethod
+    def count_all():
+        count_db_response = db.users.count()
+        count_response = {
+            "count": count_db_response
+        }
+        return count_response
+
+    @staticmethod
     def get_user_by_id(user_id):
         user_response = db.users.find_one({"user_id": user_id})
 

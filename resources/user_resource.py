@@ -82,6 +82,20 @@ class UsersResource(Resource):
             return ErrorHandler.create_error_response(500, error)
 
 
+class UsersCountResource(Resource):
+    def get(self):
+        try:
+            current_app.logger.info("Received UsersCountResource GET Request")
+            StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
+            users_response = User.count_all()
+            current_app.logger.debug("Python Server Response: 200 - %s", users_response)
+            return make_response(jsonify(users_response), 200)
+        except ValueError:
+            error = "Unable to handle UsersResource GET Request"
+            current_app.logger.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
+
+
 class FacebookLoginResource(Resource):
     def post(self):
         try:

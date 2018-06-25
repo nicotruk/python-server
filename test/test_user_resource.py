@@ -44,6 +44,31 @@ class UsersResourceTestCase(unittest.TestCase):
         response = self.app.get("/api/v1/users", headers=headers)
         self.assertEqual(response.status_code, 200)
 
+    def test_count_zero_users(self):
+        response = self.app.get("/api/v1/users/count", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        count = json.loads(response.data)["count"]
+        self.assertEqual(count, 0)
+
+    @patch('resources.user_resource.requests.post')
+    def test_count_all_users(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        self.app.post("/api/v1/users",
+                      data=json.dumps(user),
+                      headers=headers)
+        response = self.app.get("/api/v1/users/count", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        count = json.loads(response.data)["count"]
+        self.assertEqual(count, 1)
+
     # /users POST
     @patch('resources.user_resource.requests.post')
     def test_post_user(self, mock_post):
