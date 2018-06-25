@@ -21,6 +21,27 @@ test_user = {
     "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4234"
 }
 
+test_second_user = {
+    "username": "456",
+    "password": "456",
+    "email": "asd@asd.com",
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h555"
+}
+
+test_third_user = {
+    "username": "789",
+    "password": "789",
+    "email": "asd@asd.com",
+    "name": "Nombre Apellido",
+    "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h777"
+}
+
+test_friendship_request = {
+    "from_username": "asd",
+    "to_username": "456"
+}
+
 test_story = {
     "location": "",
     "visibility": "public",
@@ -45,6 +66,7 @@ class StoriesResourceTestCase(unittest.TestCase):
             db.stories.delete_many({})
             db.users.delete_many({})
             db.requests_stats.delete_many({})
+            db.friendship_requests.delete_many({})
 
     @patch('requests.post')
     def test_get_all_stories_nonexistent_user(self, mock_post):
@@ -174,6 +196,11 @@ class StoriesResourceTestCase(unittest.TestCase):
         self.app.post("/api/v1/stories",
                       data=json.dumps(story),
                       headers=headers)
+        story = test_story.copy()
+        story["user_id"] = user_id + "1"
+        self.app.post("/api/v1/stories",
+                      data=json.dumps(story),
+                      headers=headers)
 
         username = user["username"]
         response = self.app.get("/api/v1/stories/from/{}/{}".format(username, user_id), headers=headers)
@@ -182,3 +209,73 @@ class StoriesResourceTestCase(unittest.TestCase):
         self.assertEqual(len(stories_response_data), 1)
         self.assertEqual(stories_response_data[0]["username"], username)
         self.assertEqual(stories_response_data[0]["user_id"], user_id)
+
+    @patch('requests.post')
+    def test_stories_from_user2(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_response = json.loads(response.data)
+        first_user_id = user_response["user"]["user_id"]
+        first_user_username = user["username"]
+        story = test_story.copy()
+        story["user_id"] = first_user_id
+        story["visibility"] = "private"
+        self.app.post("/api/v1/stories",
+                      data=json.dumps(story),
+                      headers=headers)
+        user = test_second_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_response = json.loads(response.data)
+        second_user_id = user_response["user"]["user_id"]
+        friendship_request = test_friendship_request.copy()
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        self.app.post("/api/v1/friendship",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        user = test_third_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_response = json.loads(response.data)
+        third_user_id = user_response["user"]["user_id"]
+        third_user_username = user["username"]
+        story = test_story.copy()
+        story["user_id"] = third_user_id
+        story["visibility"] = "private"
+        self.app.post("/api/v1/stories",
+                      data=json.dumps(story),
+                      headers=headers)
+        story = test_story.copy()
+        story["user_id"] = third_user_id
+        self.app.post("/api/v1/stories",
+                      data=json.dumps(story),
+                      headers=headers)
+
+        response = self.app.get("/api/v1/stories/from/{}/{}".format(first_user_username, second_user_id), headers=headers)
+        self.assertEqual(response.status_code, 200)
+        stories_response_data = json.loads(response.data)["stories"]
+        self.assertEqual(len(stories_response_data), 1)
+        self.assertEqual(stories_response_data[0]["username"], first_user_username)
+        self.assertEqual(stories_response_data[0]["user_id"], first_user_id)
+
+        response = self.app.get("/api/v1/stories/from/{}/{}".format(third_user_username, second_user_id), headers=headers)
+        self.assertEqual(response.status_code, 200)
+        stories_response_data = json.loads(response.data)["stories"]
+        self.assertEqual(len(stories_response_data), 1)
+        self.assertEqual(stories_response_data[0]["username"], third_user_username)
+        self.assertEqual(stories_response_data[0]["visibility"], "public")
+        self.assertEqual(stories_response_data[0]["user_id"], third_user_id)
