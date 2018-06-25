@@ -18,6 +18,7 @@ from resources.message_resource import UserDirectMessagesResource
 from resources.ping_resource import PingResource
 from resources.ping_resource import PingSharedServerResource
 from resources.story_resource import StoriesResource
+from resources.story_resource import StoriesFromUserResource
 from resources.story_resource import SingleStoryResource
 from resources.file_resource import FileResource
 from resources.user_resource import FacebookLoginResource
@@ -61,6 +62,7 @@ api.add_resource(ConversationMessagesResource, '/direct_message/conversation/<us
 api.add_resource(UserFirebaseTokenResource, '/users/firebase/<user_id>')
 
 api.add_resource(StoriesResource, '/stories')
+api.add_resource(StoriesFromUserResource, '/stories/from/<username>/<user_id>')
 api.add_resource(SingleStoryResource, '/stories/<story_id>')
 api.add_resource(FileResource, '/stories/<story_id>/files')
 

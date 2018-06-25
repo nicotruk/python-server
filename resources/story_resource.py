@@ -114,3 +114,23 @@ class SingleStoryResource(Resource):
             error = "Unable to handle SingleFriendshipRequestResource - DELETE Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
             return ErrorHandler.create_error_response(500, error)
+
+
+class StoriesFromUserResource(Resource):
+    @token_validation_required
+    def get(self, username, user_id):
+        try:
+            current_app.logger.info("Received StoriesFromUserResource GET Request for username: " + username)
+            response = Story.get_from_user(username, user_id)
+            current_app.logger.debug("Python Server Response: 200 - %s", response)
+            return make_response(jsonify(response), 200)
+        except ValueError:
+            error = "Unable to handle StoriesResource GET Request"
+            current_app.logger.error("Python Server Response: 500 - %s", error)
+            return ErrorHandler.create_error_response(500, error)
+        except UserNotFoundException as e:
+            status_code = 403
+            message = e.args[0]
+            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
+            return ErrorHandler.create_error_response(status_code, message)
+
