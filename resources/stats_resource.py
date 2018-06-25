@@ -9,7 +9,7 @@ class StatsResource(Resource):
     def get(self):
         try:
             current_app.logger.info("Received StatsResource GET Request")
-            stats = StatManager.get_all()
+            stats = StatManager.get_stats()
             current_app.logger.debug("Python Server Response: 200 - %s", stats)
             return make_response(jsonify(stats), 200)
         except ValueError:

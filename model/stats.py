@@ -14,7 +14,7 @@ class StatManager:
         }
 
         for statDBResponse in stats_db_response:
-            stats_response["users"].append(StatManager._decode_stat(statDBResponse))
+            stats_response["stats"].append(StatManager._decode_stat(statDBResponse))
 
         return stats_response
 
