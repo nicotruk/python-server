@@ -153,3 +153,32 @@ class StoriesResourceTestCase(unittest.TestCase):
         response = self.app.get("/api/v1/stories/from/{}/{}".format(username, user_id), headers=headers)
         self.assertEqual(response.status_code, 403)
 
+    @patch('requests.post')
+    def test_stories_from_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        user = test_user.copy()
+        response = self.app.post("/api/v1/users",
+                                 data=json.dumps(user),
+                                 content_type='application/json')
+        user_response = json.loads(response.data)
+        user_id = user_response["user"]["user_id"]
+        story = test_story.copy()
+        story["user_id"] = user_id
+        self.app.post("/api/v1/stories",
+                      data=json.dumps(story),
+                      headers=headers)
+
+        username = user["username"]
+        response = self.app.get("/api/v1/stories/from/{}/{}".format(username, user_id), headers=headers)
+        self.assertEqual(response.status_code, 200)
+        stories_response_data = json.loads(response.data)["stories"]
+        self.assertEqual(len(stories_response_data), 1)
+        self.assertEqual(stories_response_data[0]["username"], username)
+        self.assertEqual(stories_response_data[0]["user_id"], user_id)
