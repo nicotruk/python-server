@@ -74,17 +74,17 @@ class Story:
     @staticmethod
     def get_from_user(username, user_id):
 
-        storiesUser = db.users.find_one({ "username": username })
-        currentUser = db.users.find_one({ "user_id": user_id })
+        stories_user = db.users.find_one({"username": username})
+        current_user = db.users.find_one({"user_id": user_id})
 
-        if storiesUser is None or currentUser is None:
+        if stories_user is None or current_user is None:
             raise UserNotFoundException("User not found")
 
-
-        if currentUser["username"] in storiesUser["friends_usernames"] or storiesUser["username"] == currentUser["username"]:
-            stories = list(db.stories.find({ "user_id": storiesUser["user_id"] }))
+        if current_user["username"] in stories_user["friends_usernames"] or stories_user["username"] == current_user[
+            "username"]:
+            stories = list(db.stories.find({"user_id": stories_user["user_id"]}))
         else:
-            stories = list(db.stories.find({ "user_id": storiesUser["user_id"], "visibility": "public" }))
+            stories = list(db.stories.find({"user_id": stories_user["user_id"], "visibility": "public"}))
 
         response = {
             "stories": []

@@ -144,3 +144,12 @@ class StoriesResourceTestCase(unittest.TestCase):
         mock_post.return_value.status_code = 200
         response = self.app.delete("/api/v1/stories/{}".format("sarasa"), headers=headers)
         self.assertEqual(response.status_code, 403)
+
+    @patch('requests.post')
+    def test_stories_from_non_existent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        username = "one_username"
+        user_id = "one_user_id"
+        response = self.app.get("/api/v1/stories/from/{}/{}".format(username, user_id), headers=headers)
+        self.assertEqual(response.status_code, 403)
+
