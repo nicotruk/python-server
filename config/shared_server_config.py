@@ -1,6 +1,6 @@
 import os
 
-developmentAppServerToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxLCJuYW1lIjoibmV3TW9kaWZpZWROYW1lIiwiaXNfYWRtaW4iOmZhbHNlfSwiaWF0IjoxNTI5ODk1MTAwfQ.Ndwy-nWLQs43BImyuqZITFdR3xA2dgYshNP4qAl8iFs'
+developmentAppServerToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxLCJuYW1lIjoibmV3TW9kaWZpZWROYW1lIiwiaXNfYWRtaW4iOmZhbHNlfSwiaWF0IjoxNTMwMDc5NTkzfQ.wmvp-wtsP0_KGN7h2BNhF5eeE8qrSwAJZAqQX5AjW5Q'
 
 SHARED_SERVER_URI = 'https://shared-server-stories.herokuapp.com'
 SHARED_SERVER_APPLICATION_OWNER = os.getenv('APP_SERVER_NAME', 'newModifiedName')
