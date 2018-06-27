@@ -20,6 +20,9 @@
     "name" : "direct messages",
     "description" : "Llamados relacionados con el servicio de mensajeria entre usuarios\n"
   }, {
+    "name" : "firebase",
+    "description" : "Llamados relacionados con los servicios de firebase\n"
+  }, {
     "name" : "stories",
     "description" : "Llamadas relacionados con las historias de usuarios\n"
   } ],
@@ -470,6 +473,12 @@
               }
             }
           },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
           "409" : {
             "description" : "Ya existe una solicitud entre dichos usuarios",
             "schema" : {
@@ -614,6 +623,52 @@
         }
       }
     },
+    "/friendship" : {
+      "post" : {
+        "tags" : [ "friendship" ],
+        "summary" : "Aceptacion de solicitud de amistad",
+        "description" : "Se registran a los usuarios como amigos mutuos",
+        "parameters" : [ {
+          "description" : "Informacion de la solicitud de amistad",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FriendshipRequest"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Solicitud registrada exitosamente",
+            "schema" : {
+              "properties" : {
+                "friendship_request" : {
+                  "$ref" : "#/definitions/FriendshipRequest"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "409" : {
+            "description" : "Solicitud de amistad inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/direct_message" : {
       "post" : {
         "tags" : [ "direct messages" ],
@@ -655,6 +710,74 @@
           },
           "500" : {
             "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/direct_message/conversation/<username>/<friend_username>" : {
+      "get" : {
+        "tags" : [ "direct messages" ],
+        "summary" : "Consulta de mensajes enviados y/o recibidos por el usuario",
+        "description" : "Consulta de los mensajes recibidos para un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente"
+          },
+          "500" : {
+            "description" : "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/users/firebase/{user_id}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "user_id",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "put" : {
+        "tags" : [ "firebase" ],
+        "summary" : "Modificacion del token de firebase",
+        "description" : "Modificacion del token de firebase de un usuario en particular",
+        "parameters" : [ {
+          "description" : "Nueno token de firebase",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "properties" : {
+              "firebase_token" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Modificacion realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
