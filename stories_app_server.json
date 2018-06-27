@@ -324,32 +324,123 @@
         }
       }
     },
-    "/users/friends/<user_id>" : {
+    "/users/info/{username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta de usuario",
+        "description" : "Consulta de un usuario en particular",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/users/friends/{username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "users" ],
         "summary" : "Consulta de amistades de usuario",
         "description" : "Consulta de amistades de un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "users" : {
+                  "items" : {
+                    "$ref" : "#/definitions/UserBasicData"
+                  }
+                }
+              }
+            }
           },
           "403" : {
-            "description" : "Usuario inexistente"
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/users/search/<user_id>/<query>" : {
+    "/users/search/{user_id}/{query}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "user_id",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "description" : "Fraccion del nombre o username de usuario a consultar",
+        "in" : "path",
+        "name" : "query",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "users" ],
         "summary" : "Consulta de usuarios",
         "description" : "Consulta de usuarios que nos sean amigos y cuyos \"username\" coincidan con la busqueda",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "found_users" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/UserBasicData"
+                  }
+                }
+              }
+            }
           },
           "403" : {
-            "description" : "Usuario inexistente"
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -359,45 +450,166 @@
         "tags" : [ "friendship" ],
         "summary" : "Resgistracion de solicitud de amistad",
         "description" : "Se registra la solicitud de amistad entre dos usuarios",
+        "parameters" : [ {
+          "description" : "Informacion de la solicitud de amistad",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FriendshipRequest"
+          }
+        } ],
         "responses" : {
           "201" : {
-            "description" : "Solicitud registrada exitosamente"
+            "description" : "Solicitud registrada exitosamente",
+            "schema" : {
+              "properties" : {
+                "friendship_request" : {
+                  "$ref" : "#/definitions/FriendshipRequest"
+                }
+              }
+            }
           },
           "409" : {
-            "description" : "Ya existe una solicitud entre dichos usuarios"
+            "description" : "Ya existe una solicitud entre dichos usuarios",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/friendship/request/sent/<from_username>" : {
+    "/friendship/request/sent/{username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario remitente",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "friendship" ],
         "summary" : "Consulta de solicitudes enviadas",
         "description" : "Consulta de las solicitudes enviadas por un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "friendship_requests" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/FriendshipRequest"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/friendship/request/received/<to_username>" : {
+    "/friendship/request/received/{username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario destinatario",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "friendship" ],
         "summary" : "Consulta de solicitudes recibidas",
         "description" : "Consulta de las solicitudes recibidas para un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "friendship_requests" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/FriendshipRequest"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/friendship/request/{from_username}/{to_username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario remitente",
+        "in" : "path",
+        "name" : "from_username",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "description" : "Identificador del usuario destinatario",
+        "in" : "path",
+        "name" : "to_username",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "delete" : {
+        "tags" : [ "friendship" ],
+        "summary" : "Eliminar solicitud entre usuarios",
+        "description" : "Remocion de solicitud de amistad entre usuarios dados",
+        "responses" : {
+          "201" : {
+            "description" : "Remocion realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "friendship_requests" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/FriendshipRequest"
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Solicitud de amistad inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -518,6 +730,29 @@
           "type" : "string"
         },
         "profile_pic" : {
+          "type" : "string"
+        }
+      }
+    },
+    "UserBasicData" : {
+      "properties" : {
+        "username" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FriendshipRequest" : {
+      "properties" : {
+        "from_username" : {
+          "type" : "string"
+        },
+        "to_username" : {
           "type" : "string"
         }
       }
