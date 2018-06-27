@@ -56,12 +56,42 @@
         "tags" : [ "users" ],
         "summary" : "Creacion de nuevo usuario",
         "description" : "Se crea un usuario con la data recibida",
+        "parameters" : [ {
+          "description" : "Informacion del usuario",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ApplicationUserWithPassword"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "Usuario creado exitosamente"
+            "description" : "Usuario creado exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    },
+                    "token" : {
+                      "$ref" : "#/definitions/Token"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500" : {
-            "description" : "Error en creacion de usuario"
+            "description" : "Error en creacion de usuario",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       },
@@ -71,10 +101,55 @@
         "description" : "Consulta de todos los usuarios guardados en la DB",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "users" : {
+                  "items" : {
+                    "$ref" : "#/definitions/User"
+                  }
+                }
+              }
+            }
           },
           "500" : {
-            "description" : "Error en la consulta"
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/users/count" : {
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Cantidad de usuarios",
+        "description" : "Consulta la cantidad de usuarios registrados en el servidor",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "count" : {
+                      "type" : "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -84,12 +159,42 @@
         "tags" : [ "users" ],
         "summary" : "Inicio de sesion de usuario",
         "description" : "Se envia un usuario y contraseña para su validacion",
+        "parameters" : [ {
+          "description" : "Informacion de autenticacion",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/AuthenticationData"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "Usuario y contraseña validos"
+            "description" : "Usuario autenticado exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    },
+                    "token" : {
+                      "$ref" : "#/definitions/Token"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en autenticacion de usuario",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -99,27 +204,82 @@
         "tags" : [ "users" ],
         "summary" : "Inicio de sesion de usuario - Facebook Login",
         "description" : "Inicio de sesion a traves de Facebook",
+        "parameters" : [ {
+          "description" : "Informacion de autenticacion",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/AuthenticationData"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "Sesion iniciada correctamente"
+            "description" : "Usuario autenticado exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    },
+                    "token" : {
+                      "$ref" : "#/definitions/Token"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en autenticacion de usuario",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/users/<user_id>" : {
+    "/users/{user_id}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "user_id",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "users" ],
         "summary" : "Consulta de usuario",
         "description" : "Consulta de un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403" : {
-            "description" : "Usuario inexistente"
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       },
@@ -127,12 +287,39 @@
         "tags" : [ "users" ],
         "summary" : "Modificacion de usuario",
         "description" : "Modificacion de los datos de un usuario en particular",
+        "parameters" : [ {
+          "description" : "Nueva informacion del usuario",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UserChanges"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Modificacion realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "status_code" : {
+                  "type" : "integer"
+                },
+                "data" : {
+                  "type" : "object",
+                  "properties" : {
+                    "user" : {
+                      "$ref" : "#/definitions/User"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403" : {
-            "description" : "Usuario inexistente"
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -257,6 +444,101 @@
           "500" : {
             "description" : "Error en el servidor"
           }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "ApplicationUserWithPassword" : {
+      "properties" : {
+        "username" : {
+          "type" : "string"
+        },
+        "password" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        },
+        "firebase_token" : {
+          "type" : "string"
+        }
+      }
+    },
+    "AuthenticationData" : {
+      "properties" : {
+        "username" : {
+          "type" : "string"
+        },
+        "password" : {
+          "type" : "string"
+        }
+      }
+    },
+    "User" : {
+      "properties" : {
+        "user_id" : {
+          "type" : "string"
+        },
+        "username" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        },
+        "friends_usernames" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "firebase_token" : {
+          "type" : "string"
+        }
+      }
+    },
+    "UserChanges" : {
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Token" : {
+      "properties" : {
+        "expiresAt" : {
+          "type" : "integer"
+        },
+        "token" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Error" : {
+      "properties" : {
+        "status_code" : {
+          "type" : "integer"
+        },
+        "message" : {
+          "type" : "string"
         }
       }
     }
