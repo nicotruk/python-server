@@ -49,7 +49,7 @@ class StoriesResource(Resource):
                 story_data["is_quick_story"],
                 story_data["timestamp"]
             )
-            current_app.logger.debug("Python Server Response: 201 - %s", story_created)
+            current_app.logger.debug("Python Server Response: 200 - %s", story_created)
             if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
                 try:
                     user = User.get_user_by_id(story_data["user_id"])
