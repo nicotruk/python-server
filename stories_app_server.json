@@ -830,6 +830,75 @@
           }
         }
       }
+    },
+    "/stories" : {
+      "post" : {
+        "tags" : [ "stories" ],
+        "summary" : "Creacion de nueva historia",
+        "description" : "Se crea una historia con la data recibida",
+        "parameters" : [ {
+          "description" : "Informacion de la historia",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/StoryRequestData"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Usuario creado exitosamente",
+            "schema" : {
+              "$ref" : "#/definitions/StoryResponseData"
+            }
+          },
+          "500" : {
+            "description" : "Error en la creacion de historia",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get" : {
+        "tags" : [ "stories" ],
+        "summary" : "Consulta de historias",
+        "description" : "Consulta de las historias visibles por el usuario dado",
+        "parameters" : [ {
+          "description" : "Identificador del usuario",
+          "in" : "query",
+          "name" : "user_id",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "stories" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/StoryResponseData"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
@@ -983,6 +1052,106 @@
         },
         "timestamp" : {
           "type" : "number"
+        }
+      }
+    },
+    "StoryRequestData" : {
+      "properties" : {
+        "user_id" : {
+          "type" : "string"
+        },
+        "location" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "is_quick_story" : {
+          "type" : "boolean"
+        },
+        "timestamp" : {
+          "type" : "number"
+        }
+      }
+    },
+    "StoryResponseData" : {
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "user_id" : {
+          "type" : "string"
+        },
+        "location" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "file_url" : {
+          "type" : "string"
+        },
+        "reactions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ReactionsResponseData"
+          }
+        },
+        "comments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CommentsResponseData"
+          }
+        },
+        "is_quick_story" : {
+          "type" : "boolean"
+        },
+        "timestamp" : {
+          "type" : "number"
+        },
+        "username" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        }
+      }
+    },
+    "CommentsResponseData" : {
+      "properties" : {
+        "user_id" : {
+          "type" : "string"
+        },
+        "username" : {
+          "type" : "string"
+        },
+        "text" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ReactionsResponseData" : {
+      "properties" : {
+        "user_id" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string"
         }
       }
     },
