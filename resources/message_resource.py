@@ -42,8 +42,8 @@ class DirectMessageResource(Resource):
             return ErrorHandler.create_error_response(500, error)
         except UserNotFoundException:
             error = "Unable to send message - User not found"
-            current_app.logger.error("Python Server Response: 409 - %s", error)
-            return ErrorHandler.create_error_response(409, error)
+            current_app.logger.error("Python Server Response: 403 - %s", error)
+            return ErrorHandler.create_error_response(403, error)
         except messaging.ApiCallError:
             error = "Unable to send Firebase Notification - ApiCallError"
             current_app.logger.error("Python Server Response: 409 - %s", error)
