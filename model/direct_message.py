@@ -1,9 +1,6 @@
-from flask import current_app
-
 from config.mongodb import db
 from model.db.direct_messageVO import DirectMessageVO
 from model.user import User, UserNotFoundException
-from resources.error_handler import ErrorHandler
 
 
 class DirectMessage:
@@ -64,11 +61,8 @@ class DirectMessage:
                 message["profile_pic"] = user["profile_pic"]
 
             return direct_messages_response
-        except UserNotFoundException as e:
-            status_code = 403
-            message = e.args[0]
-            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
-            return ErrorHandler.create_error_response(status_code, message)
+        except UserNotFoundException:
+            raise UserNotFoundException
 
     @staticmethod
     def get_conversation_messages_sorted_by_timestamp(username, friend_username):
@@ -96,11 +90,8 @@ class DirectMessage:
             direct_messages_response["user"] = friend_user["user"]
 
             return direct_messages_response
-        except UserNotFoundException as e:
-            status_code = 403
-            message = e.args[0]
-            current_app.logger.error("Python Server Response: %s - %s", status_code, message)
-            return ErrorHandler.create_error_response(status_code, message)
+        except UserNotFoundException:
+            raise UserNotFoundException
 
     @staticmethod
     def _encode_direct_message(direct_message):

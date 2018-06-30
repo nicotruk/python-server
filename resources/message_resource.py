@@ -9,8 +9,8 @@ import config.firebase_config
 from config.firebase_config import NOTIFICATION_TYPE_MESSAGE
 from model.direct_message import DirectMessage
 from model.firebase_manager import FirebaseManager
-from model.user import User, UserNotFoundException
 from model.stats import StatManager
+from model.user import User, UserNotFoundException
 from resources.error_handler import ErrorHandler
 from resources.token_validation_decorator import token_validation_required
 
@@ -76,6 +76,10 @@ class UserDirectMessagesResource(Resource):
             direct_messages = DirectMessage.get_user_direct_messages_sorted_by_timestamp(username)
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
+        except UserNotFoundException:
+            error = "Unable to find a User with the parameters given. ConversationMessagesResource POST Request"
+            current_app.logger.error("Python Server Response: 403 - %s", error)
+            return ErrorHandler.create_error_response(403, error)
         except ValueError:
             error = "Unable to handle UserDirectMessagesResource - received requests - GET Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
@@ -92,6 +96,10 @@ class ConversationMessagesResource(Resource):
             direct_messages = DirectMessage.get_conversation_messages_sorted_by_timestamp(username, friend_username)
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
+        except UserNotFoundException:
+            error = "Unable to find a User with the parameters given. ConversationMessagesResource POST Request"
+            current_app.logger.error("Python Server Response: 403 - %s", error)
+            return ErrorHandler.create_error_response(403, error)
         except ValueError:
             error = "Unable to handle ConversationMessagesResource - received requests - GET Request"
             current_app.logger.error("Python Server Response: %s - %s", 500, error)
