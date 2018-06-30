@@ -77,7 +77,7 @@ class UserDirectMessagesResource(Resource):
             current_app.logger.debug("Python Server Response: 200 - %s", direct_messages)
             return make_response(jsonify(direct_messages), 200)
         except UserNotFoundException:
-            error = "Unable to find a User with the parameters given. ConversationMessagesResource POST Request"
+            error = "Unable to find a User with the parameters given. UserDirectMessagesResource POST Request"
             current_app.logger.error("Python Server Response: 403 - %s", error)
             return ErrorHandler.create_error_response(403, error)
         except ValueError:
