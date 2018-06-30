@@ -73,25 +73,17 @@
             "description" : "Usuario creado exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    },
-                    "token" : {
-                      "$ref" : "#/definitions/Token"
-                    }
-                  }
+                "token" : {
+                  "$ref" : "#/definitions/Token"
                 }
               }
             }
           },
           "500" : {
-            "description" : "Error en creacion de usuario",
+            "description" : "Error en la creacion del usuario",
             "schema" : {
               "$ref" : "#/definitions/Error"
             }
@@ -108,6 +100,7 @@
             "schema" : {
               "properties" : {
                 "users" : {
+                  "type" : "array",
                   "items" : {
                     "$ref" : "#/definitions/User"
                   }
@@ -134,16 +127,8 @@
             "description" : "Consulta realizada exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
+                "count" : {
                   "type" : "integer"
-                },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "count" : {
-                      "type" : "integer"
-                    }
-                  }
                 }
               }
             }
@@ -176,25 +161,17 @@
             "description" : "Usuario autenticado exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    },
-                    "token" : {
-                      "$ref" : "#/definitions/Token"
-                    }
-                  }
+                "token" : {
+                  "$ref" : "#/definitions/Token"
                 }
               }
             }
           },
           "500" : {
-            "description" : "Error en autenticacion de usuario",
+            "description" : "Error en la autenticacion del usuario",
             "schema" : {
               "$ref" : "#/definitions/Error"
             }
@@ -221,25 +198,17 @@
             "description" : "Usuario autenticado exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    },
-                    "token" : {
-                      "$ref" : "#/definitions/Token"
-                    }
-                  }
+                "token" : {
+                  "$ref" : "#/definitions/Token"
                 }
               }
             }
           },
           "500" : {
-            "description" : "Error en autenticacion de usuario",
+            "description" : "Error en la autenticacion del usuario",
             "schema" : {
               "$ref" : "#/definitions/Error"
             }
@@ -264,16 +233,8 @@
             "description" : "Consulta realizada exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
-                },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    }
-                  }
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 }
               }
             }
@@ -304,16 +265,8 @@
             "description" : "Modificacion realizada exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
-                },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    }
-                  }
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 }
               }
             }
@@ -344,16 +297,8 @@
             "description" : "Consulta realizada exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
-                },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    }
-                  }
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 }
               }
             }
@@ -674,57 +619,169 @@
         "tags" : [ "direct messages" ],
         "summary" : "Envio de mensaje entre usuarios",
         "description" : "Se registra el envio de un mensaje directo entre dos usuarios",
+        "parameters" : [ {
+          "description" : "Informacion del mensaje",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/DirectMessage"
+          }
+        } ],
         "responses" : {
           "201" : {
-            "description" : "Solicitud registrada exitosamente"
+            "description" : "Mensaje enviado exitosamente",
+            "schema" : {
+              "properties" : {
+                "direct_message" : {
+                  "$ref" : "#/definitions/DirectMessageCreated"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "409" : {
+            "description" : "Firebase no ha podido enviar la notificacion",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/direct_message/received/<to_username>" : {
+    "/direct_message/received/{to_username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario destinatario",
+        "in" : "path",
+        "name" : "to_username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "direct messages" ],
         "summary" : "Consulta de mensajes recibidos",
         "description" : "Consulta de los mensajes recibidos para un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada existosamente",
+            "schema" : {
+              "properties" : {
+                "direct_messages" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/DirectMessageCreated"
+                  }
+                }
+              }
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/direct_message/<username>" : {
+    "/direct_message/{username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario destinatario",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "direct messages" ],
         "summary" : "Consulta de mensajes enviados y/o recibidos por el usuario",
-        "description" : "Consulta de los mensajes recibidos para un usuario en particular",
+        "description" : "Consulta del ultimo mensaje de cada conversacion en que haya participado el usuario",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "direct_messages" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/DirectMessageWithUserData"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
     },
-    "/direct_message/conversation/<username>/<friend_username>" : {
+    "/direct_message/conversation/{username}/{friend_username}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "description" : "Identificador del amigo",
+        "in" : "path",
+        "name" : "friend_username",
+        "required" : true,
+        "type" : "string"
+      } ],
       "get" : {
         "tags" : [ "direct messages" ],
-        "summary" : "Consulta de mensajes enviados y/o recibidos por el usuario",
+        "summary" : "Consulta de mensajes de una conversacion",
         "description" : "Consulta de los mensajes recibidos para un usuario en particular",
         "responses" : {
           "200" : {
-            "description" : "Consulta realizada exitosamente"
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "direct_messages" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/DirectMessageCreated"
+                  }
+                },
+                "user" : {
+                  "$ref" : "#/definitions/User"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "description" : "Error en el servidor"
+            "description" : "Error en el servidor",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
         }
       }
@@ -759,16 +816,8 @@
             "description" : "Modificacion realizada exitosamente",
             "schema" : {
               "properties" : {
-                "status_code" : {
-                  "type" : "integer"
-                },
-                "data" : {
-                  "type" : "object",
-                  "properties" : {
-                    "user" : {
-                      "$ref" : "#/definitions/User"
-                    }
-                  }
+                "user" : {
+                  "$ref" : "#/definitions/User"
                 }
               }
             }
@@ -877,6 +926,63 @@
         },
         "to_username" : {
           "type" : "string"
+        }
+      }
+    },
+    "DirectMessage" : {
+      "properties" : {
+        "from_username" : {
+          "type" : "string"
+        },
+        "to_username" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
+    "DirectMessageCreated" : {
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "from_username" : {
+          "type" : "string"
+        },
+        "to_username" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "timestamp" : {
+          "type" : "number"
+        }
+      }
+    },
+    "DirectMessageWithUserData" : {
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "from_username" : {
+          "type" : "string"
+        },
+        "to_username" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "profile_pic" : {
+          "type" : "string"
+        },
+        "timestamp" : {
+          "type" : "number"
         }
       }
     },
