@@ -49,21 +49,6 @@
         }
       }
     },
-    "/ping/sharedServer" : {
-      "get" : {
-        "tags" : [ "ping" ],
-        "summary" : "Conexion a Shared Server",
-        "description" : "Chequea conexion a Shared Server",
-        "responses" : {
-          "200" : {
-            "description" : "Conectado"
-          },
-          "404" : {
-            "description" : "Conexion a Shared Server fallida"
-          }
-        }
-      }
-    },
     "/users" : {
       "post" : {
         "tags" : [ "users" ],
