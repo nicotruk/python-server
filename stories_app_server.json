@@ -899,6 +899,158 @@
           }
         }
       }
+    },
+    "/stories/from/{username}/{user_id}" : {
+      "parameters" : [ {
+        "description" : "Identificador del usuario autor de las historias",
+        "in" : "path",
+        "name" : "username",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "description" : "Identificador del usuario que realiza el pedido",
+        "in" : "path",
+        "name" : "user_id",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "get" : {
+        "tags" : [ "stories" ],
+        "summary" : "Consulta de historias de un usuario",
+        "description" : "Consulta de las historias subidas por un usuario en particular visibles por el usuario que realiza el pedido",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "stories" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/StoryResponseData"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Usuario inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/stories/{story_id}" : {
+      "parameters" : [ {
+        "description" : "Identificador de la historia",
+        "in" : "path",
+        "name" : "story_id",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "patch" : {
+        "tags" : [ "stories" ],
+        "summary" : "Modificacion de informacion en historia",
+        "description" : "Agregacion/Remocion de comentario/reaccion a los datos de una historia en particular",
+        "parameters" : [ {
+          "description" : "Informacion de la modificacion",
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PatchStoryData"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "$ref" : "#/definitions/StoryResponseData"
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "stories" ],
+        "summary" : "Eliminar historia",
+        "description" : "Remocion de una historia en particular",
+        "responses" : {
+          "201" : {
+            "description" : "Remocion realizada exitosamente",
+            "schema" : {
+              "$ref" : "#/definitions/StoryResponseData"
+            }
+          },
+          "409" : {
+            "description" : "Historia inexistente",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/stories/{story_id}/files" : {
+      "parameters" : [ {
+        "description" : "Identificador de la historia",
+        "in" : "path",
+        "name" : "story_id",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "post" : {
+        "tags" : [ "stories" ],
+        "consumes" : [ "multipart/form-data" ],
+        "summary" : "Alta de un archivo",
+        "description" : "Dar de alta un archivo asociado a una historia en particular",
+        "parameters" : [ {
+          "in" : "formData",
+          "name" : "file",
+          "required" : true,
+          "type" : "file",
+          "format" : "binary",
+          "description" : "Archivo que se desea subir al servidor"
+        }, {
+          "in" : "formData",
+          "name" : "filename",
+          "required" : true,
+          "type" : "string",
+          "description" : "Nombre del archivo"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Alta de archivo realizada exitosamente",
+            "schema" : {
+              "$ref" : "#/definitions/StoryResponseData"
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
@@ -1151,6 +1303,19 @@
           "type" : "string"
         },
         "type" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PatchStoryData" : {
+      "properties" : {
+        "path" : {
+          "type" : "string"
+        },
+        "op" : {
+          "type" : "string"
+        },
+        "value" : {
           "type" : "string"
         }
       }
