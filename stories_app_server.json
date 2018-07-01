@@ -24,7 +24,10 @@
     "description" : "Llamados relacionados con los servicios de firebase\n"
   }, {
     "name" : "stories",
-    "description" : "Llamadas relacionados con las historias de usuarios\n"
+    "description" : "Llamados relacionados con las historias de usuarios\n"
+  }, {
+    "name" : "stats",
+    "description" : "LLamados relacionados con las estadisticas del servidor"
   } ],
   "paths" : {
     "/ping" : {
@@ -1051,6 +1054,97 @@
           }
         }
       }
+    },
+    "/stats" : {
+      "get" : {
+        "tags" : [ "stats" ],
+        "summary" : "Consulta de llamadas a endpoints",
+        "description" : "Consulta de las llamadas realizadas a los endpoints del servidor con su respectivo timestamp de ejecucion",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "stats" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/StatsData"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/stats/last/{minutes}" : {
+      "parameters" : [ {
+        "description" : "Cantidad de minutos",
+        "in" : "path",
+        "name" : "minutes",
+        "required" : true,
+        "type" : "string"
+      } ],
+      "get" : {
+        "tags" : [ "stats" ],
+        "summary" : "Consulta de llamadas a endpoints",
+        "description" : "Consulta de las llamadas realizadas a los endpoints del servidor de los ultimos X minutos",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "stats" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/StatsData"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/stats/stories" : {
+      "get" : {
+        "tags" : [ "stats" ],
+        "summary" : "Consulta de llamadas a endpoints de historias",
+        "description" : "Consulta de las llamadas realizadas a los endpoints del servidor relacionados con las historias de usuario de los ultimos 10 dias",
+        "responses" : {
+          "200" : {
+            "description" : "Consulta realizada exitosamente",
+            "schema" : {
+              "properties" : {
+                "stats" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/StatsData"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Error en la consulta",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
@@ -1317,6 +1411,16 @@
         },
         "value" : {
           "type" : "string"
+        }
+      }
+    },
+    "StatsData" : {
+      "properties" : {
+        "request" : {
+          "type" : "string"
+        },
+        "timestamp" : {
+          "type" : "number"
         }
       }
     },
