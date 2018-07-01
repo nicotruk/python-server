@@ -165,7 +165,7 @@ class StoriesResourceTestCase(unittest.TestCase):
     def test_delete_nonexistent_story(self, mock_post):
         mock_post.return_value.status_code = 200
         response = self.app.delete("/api/v1/stories/{}".format("sarasa"), headers=headers)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 409)
 
     @patch('requests.post')
     def test_stories_from_non_existent_user(self, mock_post):
