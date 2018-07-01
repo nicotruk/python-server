@@ -7,6 +7,13 @@
   },
   "consumes" : [ "application/json" ],
   "produces" : [ "application/json" ],
+  "securityDefinitions" : {
+    "UserToken" : {
+      "type" : "apiKey",
+      "in" : "header",
+      "name" : "Authorization"
+    }
+  },
   "tags" : [ {
     "name" : "ping",
     "description" : "Llamados de verificacion de conexiones a los servidores\n"
@@ -95,6 +102,9 @@
       },
       "get" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de usuarios",
         "description" : "Consulta de todos los usuarios guardados en la DB",
         "responses" : {
@@ -229,6 +239,9 @@
       } ],
       "get" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de usuario",
         "description" : "Consulta de un usuario en particular",
         "responses" : {
@@ -252,6 +265,9 @@
       },
       "put" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Modificacion de usuario",
         "description" : "Modificacion de los datos de un usuario en particular",
         "parameters" : [ {
@@ -293,6 +309,9 @@
       } ],
       "get" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de usuario",
         "description" : "Consulta de un usuario en particular",
         "responses" : {
@@ -325,6 +344,9 @@
       } ],
       "get" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de amistades de usuario",
         "description" : "Consulta de amistades de un usuario en particular",
         "responses" : {
@@ -365,6 +387,9 @@
       } ],
       "get" : {
         "tags" : [ "users" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de usuarios",
         "description" : "Consulta de usuarios que nos sean amigos y cuyos \"username\" coincidan con la busqueda",
         "responses" : {
@@ -399,6 +424,9 @@
     "/friendship/request" : {
       "post" : {
         "tags" : [ "friendship" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Resgistracion de solicitud de amistad",
         "description" : "Se registra la solicitud de amistad entre dos usuarios",
         "parameters" : [ {
@@ -452,6 +480,9 @@
       } ],
       "get" : {
         "tags" : [ "friendship" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de solicitudes enviadas",
         "description" : "Consulta de las solicitudes enviadas por un usuario en particular",
         "responses" : {
@@ -493,6 +524,9 @@
       } ],
       "get" : {
         "tags" : [ "friendship" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de solicitudes recibidas",
         "description" : "Consulta de las solicitudes recibidas para un usuario en particular",
         "responses" : {
@@ -540,6 +574,9 @@
       } ],
       "delete" : {
         "tags" : [ "friendship" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Eliminar solicitud entre usuarios",
         "description" : "Remocion de solicitud de amistad entre usuarios dados",
         "responses" : {
@@ -574,6 +611,9 @@
     "/friendship" : {
       "post" : {
         "tags" : [ "friendship" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Aceptacion de solicitud de amistad",
         "description" : "Se registran a los usuarios como amigos mutuos",
         "parameters" : [ {
@@ -620,6 +660,9 @@
     "/direct_message" : {
       "post" : {
         "tags" : [ "direct messages" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Envio de mensaje entre usuarios",
         "description" : "Se registra el envio de un mensaje directo entre dos usuarios",
         "parameters" : [ {
@@ -673,6 +716,9 @@
       } ],
       "get" : {
         "tags" : [ "direct messages" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de mensajes recibidos",
         "description" : "Consulta de los mensajes recibidos para un usuario en particular",
         "responses" : {
@@ -708,6 +754,9 @@
       } ],
       "get" : {
         "tags" : [ "direct messages" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de mensajes enviados y/o recibidos por el usuario",
         "description" : "Consulta del ultimo mensaje de cada conversacion en que haya participado el usuario",
         "responses" : {
@@ -755,6 +804,9 @@
       } ],
       "get" : {
         "tags" : [ "direct messages" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de mensajes de una conversacion",
         "description" : "Consulta de los mensajes recibidos para un usuario en particular",
         "responses" : {
@@ -837,6 +889,9 @@
     "/stories" : {
       "post" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Creacion de nueva historia",
         "description" : "Se crea una historia con la data recibida",
         "parameters" : [ {
@@ -865,6 +920,9 @@
       },
       "get" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de historias",
         "description" : "Consulta de las historias visibles por el usuario dado",
         "parameters" : [ {
@@ -919,6 +977,9 @@
       } ],
       "get" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Consulta de historias de un usuario",
         "description" : "Consulta de las historias subidas por un usuario en particular visibles por el usuario que realiza el pedido",
         "responses" : {
@@ -960,6 +1021,9 @@
       } ],
       "patch" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Modificacion de informacion en historia",
         "description" : "Agregacion/Remocion de comentario/reaccion a los datos de una historia en particular",
         "parameters" : [ {
@@ -988,6 +1052,9 @@
       },
       "delete" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "summary" : "Eliminar historia",
         "description" : "Remocion de una historia en particular",
         "responses" : {
@@ -1022,6 +1089,9 @@
       } ],
       "post" : {
         "tags" : [ "stories" ],
+        "security" : [ {
+          "UserToken" : [ ]
+        } ],
         "consumes" : [ "multipart/form-data" ],
         "summary" : "Alta de un archivo",
         "description" : "Dar de alta un archivo asociado a una historia en particular",
