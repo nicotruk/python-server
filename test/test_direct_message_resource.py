@@ -142,6 +142,9 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         }
         mock_post.return_value.text = json.dumps(response)
 
+        user1 = test_first_user.copy()
+        self.app.post("/api/v1/users", data=json.dumps(user1), content_type='application/json')
+
         direct_message = test_direct_message.copy()
         user = {
             "username": direct_message["to_username"],
@@ -159,7 +162,7 @@ class DirectMessageResourceTestCase(unittest.TestCase):
                       headers=headers)
 
         mock_messaging.call_args_list[0][0][0].notification = direct_message["message"]
-        mock_messaging.call_args_list[0][0][0].title = direct_message["from_username"]
+        mock_messaging.call_args_list[0][0][0].title = user1["name"]
         mock_messaging.assert_called()
 
     @patch('resources.token_validation_decorator.requests.post')
