@@ -19,8 +19,7 @@ class FileResource(Resource):
         try:
             current_app.logger.info("Received FileResource POST Request")
             StatManager.create(request.environ["PATH_INFO"] + " " + request.environ["REQUEST_METHOD"])
-            user_token = request.headers.get('Authorization').split()[1]
-            upload_headers = {'Authorization': 'Bearer {}'.format(user_token)}
+            upload_headers = {'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
             uploaded_file = request.files['file'].read()
             filename = request.form.get('filename')
             shared_server_upload = requests.post(SHARED_SERVER_FILE_UPLOAD_PATH,
@@ -32,15 +31,6 @@ class FileResource(Resource):
                 story_updated = Story.update_file(story_id, file_data['file']['resource'])
                 current_app.logger.debug("Python Server Response: %s - %s", shared_server_upload.status_code,
                                          story_updated)
-                current_app.logger.info("Sending file ownership request to Shared Server")
-                file_ownership_headers = {'content-type': 'application/json',
-                                          'Authorization': 'Bearer {}'.format(APP_SERVER_TOKEN)}
-                shared_server_file_ownership = requests.post(SHARED_SERVER_FILE_OWNERSHIP_PATH,
-                                                             data=json.dumps(file_data['file']),
-                                                             headers=file_ownership_headers)
-                current_app.logger.debug("Shared Server Response: %s - %s", shared_server_file_ownership.status_code,
-                                         shared_server_file_ownership.text)
-
                 return make_response(jsonify(story_updated), 200)
 
             return make_response(shared_server_upload.text, shared_server_upload.status_code)
