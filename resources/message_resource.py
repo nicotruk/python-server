@@ -32,8 +32,15 @@ class DirectMessageResource(Resource):
                 raise ValueError('DB error')
             else:
                 if config.firebase_config.FIREBASE_NOTIFICATIONS_ENABLED is True:
-                    FirebaseManager.send_firebase_message(request_data["from_username"], request_data["to_username"],
-                                                          request_data["message"], NOTIFICATION_TYPE_MESSAGE)
+                    try:
+                        user = User.get_user_by_username(request_data["from_username"])["user"]
+                        if user is not None:
+                            FirebaseManager.send_firebase_message(user["name"],
+                                                                  request_data["to_username"],
+                                                                  request_data["message"],
+                                                                  NOTIFICATION_TYPE_MESSAGE)
+                    except UserNotFoundException:
+                        pass
                 current_app.logger.debug("Python Server Response: 201 - %s", direct_message_created)
                 return make_response(jsonify(direct_message_created), 201)
         except ValueError:

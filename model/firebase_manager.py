@@ -1,5 +1,7 @@
 from firebase_admin import messaging
+
 from model.user import User, UserNotFoundException
+
 
 class FirebaseManager:
 

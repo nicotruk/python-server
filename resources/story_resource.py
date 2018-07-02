@@ -57,7 +57,7 @@ class StoriesResource(Resource):
                         user = user["user"]
                         for friend_username in user["friends_usernames"]:
                             try:
-                                FirebaseManager.send_firebase_message(user["username"],
+                                FirebaseManager.send_firebase_message(user["name"],
                                                                       friend_username,
                                                                       NOTIFICATION_TYPE_STORY_MESSAGE,
                                                                       NOTIFICATION_TYPE_STORY)
@@ -138,4 +138,3 @@ class StoriesFromUserResource(Resource):
             error = "Unable to handle StoriesResource GET Request"
             current_app.logger.error("Python Server Response: 500 - %s", error)
             return ErrorHandler.create_error_response(500, error)
-
