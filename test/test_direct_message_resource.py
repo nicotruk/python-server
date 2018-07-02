@@ -90,19 +90,29 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         self.assertEqual(direct_message, direct_message_response["direct_message"])
 
     @patch('resources.token_validation_decorator.requests.post')
-    def test_received_messages(self, mock_post):
+    def test_message_to_non_existent_user(self, mock_post):
         mock_post.return_value.status_code = 200
         direct_message = test_direct_message.copy()
 
-        self.app.post("/api/v1/direct_message",
-                      data=json.dumps(direct_message),
-                      headers=headers)
-        uri = "/api/v1/direct_message/received/" + direct_message["to_username"]
-        response = self.app.get(uri, headers=headers)
+        response = self.app.post("/api/v1/direct_message",
+                                 data=json.dumps(direct_message),
+                                 headers=headers)
+        self.assertEqual(response.status_code, 201)
         direct_message_response = json.loads(response.data)
-        self.assertEqual(len(direct_message_response["direct_messages"]), 1)
-        self.assertEqual(direct_message_response["direct_messages"][0]["to_username"],
-                         direct_message["to_username"])
+        direct_message_response["direct_message"].pop("_id")
+        direct_message_response["direct_message"].pop("timestamp")
+        self.assertEqual(direct_message, direct_message_response["direct_message"])
+
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_received_messages(self, mock_post):
+        mock_post.return_value.status_code = 200
+        direct_message = test_direct_message.copy()
+        direct_message["to_username"] = direct_message["to_username"] + "1"
+
+        response = self.app.post("/api/v1/direct_message",
+                                 data=json.dumps(direct_message),
+                                 headers=headers)
+        self.assertEqual(response.status_code, 403)
 
     @patch('resources.token_validation_decorator.requests.post')
     def test_user_messages_count(self, mock_post):
