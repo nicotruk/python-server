@@ -117,3 +117,80 @@ class FriendshipResourceTestCase(unittest.TestCase):
             headers=headers)
         query_friends_response_data = json.loads(query_friends_response.data)
         self.assertEqual(len(query_friends_response_data["found_users"]), 1)
+
+    @patch('resources.user_resource.requests.post')
+    def test_friendship_no_data(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+        response = self.app.post("/api/v1/friendship",
+                                 headers=headers)
+
+        self.assertEqual(response._status_code, 500)
+
+    @patch('resources.user_resource.requests.post')
+    def test_friendship_non_existent_user_from(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        test_other_user = {
+            "username": "000",
+            "password": "000",
+            "email": "asd@asd.com",
+            "name": "Nombre Apellido",
+            "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4777"
+        }
+        self.app.post("/api/v1/users",
+                      data=json.dumps(test_other_user),
+                      content_type='application/json')
+
+        friendship_request = test_friendship_request.copy()
+        friendship_request["from_username"] = friendship_request["from_username"] + "1"
+
+        response = self.app.post("/api/v1/friendship",
+                                 data=json.dumps(friendship_request),
+                                 headers=headers)
+
+        self.assertEqual(response._status_code, 403)
+
+    @patch('resources.user_resource.requests.post')
+    def test_friendship_non_existent_user_to(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        test_other_user = {
+            "username": "000",
+            "password": "000",
+            "email": "asd@asd.com",
+            "name": "Nombre Apellido",
+            "firebase_token": "fdsfsdfjsdkfhsdjklhjk23h4777"
+        }
+        self.app.post("/api/v1/users",
+                      data=json.dumps(test_other_user),
+                      content_type='application/json')
+
+        friendship_request = test_friendship_request.copy()
+        friendship_request["to_username"] = friendship_request["to_username"] + "1"
+
+        response = self.app.post("/api/v1/friendship",
+                                 data=json.dumps(friendship_request),
+                                 headers=headers)
+
+        self.assertEqual(response._status_code, 403)
