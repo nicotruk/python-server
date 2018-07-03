@@ -79,6 +79,13 @@ class StatsResourceTestCase(unittest.TestCase):
         stats = json.loads(response.data)["stats"]
         self.assertEqual(len(stats), 0)
 
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_get_stats_last_aa_min(self, mock_post):
+        mock_post.return_value.status_code = 200
+        self.app.get("/api/v1/users", headers=headers)
+        response = self.app.get("/api/v1/stats/last/aa")
+        self.assertEqual(response.status_code, 500)
+
     @patch('time.time')
     @patch('requests.post')
     @patch('requests.get')

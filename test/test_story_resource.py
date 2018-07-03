@@ -133,6 +133,23 @@ class StoriesResourceTestCase(unittest.TestCase):
         self.assertEqual(stories[0]["description"], test_story["description"])
 
     @patch('resources.user_resource.requests.post')
+    @patch('resources.user_resource.requests.get')
+    def test_post_story_no_data(self, mock_get, mock_post):
+        mock_get.return_value.status_code = 200
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        response = self.app.post("/api/v1/stories",
+                                 headers=headers)
+        self.assertEqual(response.status_code, 500)
+
+    @patch('resources.user_resource.requests.post')
     def test_post_and_delete_story(self, mock_post):
         mock_post.return_value.status_code = 200
         response = {
