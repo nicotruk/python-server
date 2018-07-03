@@ -199,10 +199,41 @@ class UsersResourceTestCase(unittest.TestCase):
         update_response = self.app.put("/api/v1/users/firebase/{}".format(user_id),
                                        data=json.dumps(changes),
                                        content_type='application/json')
+        self.assertEqual(update_response.status_code, 200)
 
         json_response = json.loads(update_response.data)
 
         self.assertEqual(json_response["user"]["firebase_token"], changes["firebase_token"])
+
+    # /users POST + /users/firebase/<user_id> PUT
+    @patch('resources.user_resource.requests.post')
+    def test_update_firebase_token_non_existent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        user = test_user.copy()
+
+        post_response = self.app.post("/api/v1/users",
+                                      data=json.dumps(user),
+                                      content_type='application/json')
+
+        user_response = json.loads(post_response.data)
+        user_id = user_response["user"]["user_id"] + "1"
+
+        changes = {
+            "firebase_token": "newFirebaseToken"
+        }
+
+        update_response = self.app.put("/api/v1/users/firebase/{}".format(user_id),
+                                       data=json.dumps(changes),
+                                       content_type='application/json')
+        self.assertEqual(update_response.status_code, 403)
 
     # /users/<user_id> GET
     @patch('resources.token_validation_decorator.requests.post')
