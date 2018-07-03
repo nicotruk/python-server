@@ -84,10 +84,19 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         response = self.app.post("/api/v1/direct_message",
                                  data=json.dumps(direct_message),
                                  headers=headers)
+        self.assertEqual(response.status_code, 201)
         direct_message_response = json.loads(response.data)
         direct_message_response["direct_message"].pop("_id")
         direct_message_response["direct_message"].pop("timestamp")
         self.assertEqual(direct_message, direct_message_response["direct_message"])
+
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_no_data(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        response = self.app.post("/api/v1/direct_message",
+                                 headers=headers)
+        self.assertEqual(response.status_code, 500)
 
     @patch('resources.token_validation_decorator.requests.post')
     def test_message_to_non_existent_user(self, mock_post):
