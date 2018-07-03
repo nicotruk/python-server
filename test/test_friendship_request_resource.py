@@ -70,10 +70,44 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
         response = self.app.post("/api/v1/friendship/request",
                                  data=json.dumps(friendship_request),
                                  headers=headers)
+        self.assertEqual(response.status_code, 201)
         friendship_response = json.loads(response.data)
         self.assertEqual(friendship_request["from_username"],
                          friendship_response["friendship_request"]["from_username"])
         self.assertEqual(friendship_request["to_username"], friendship_response["friendship_request"]["to_username"])
+
+    @patch('requests.post')
+    def test_create_friendship_request_no_data(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        response = self.app.post("/api/v1/friendship/request",
+                                 headers=headers)
+        self.assertEqual(response.status_code, 500)
+
+    @patch('requests.post')
+    def test_create_friendship_request_twice(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+
+        response = self.app.post("/api/v1/friendship/request",
+                                 data=json.dumps(friendship_request),
+                                 headers=headers)
+        self.assertEqual(response.status_code, 201)
+        response = self.app.post("/api/v1/friendship/request",
+                                 data=json.dumps(friendship_request),
+                                 headers=headers)
+        self.assertEqual(response.status_code, 409)
+
+    @patch('requests.post')
+    def test_create_friendship_request_from_non_existent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+        friendship_request["from_username"] = friendship_request["from_username"] + "1"
+
+        response = self.app.post("/api/v1/friendship/request",
+                                 data=json.dumps(friendship_request),
+                                 headers=headers)
+        self.assertEqual(response.status_code, 403)
 
     @patch('requests.post')
     def test_sent_friendship_requests(self, mock_post):
