@@ -238,6 +238,7 @@ class DirectMessageResourceTestCase(unittest.TestCase):
         uri = "/api/v1/direct_message/conversation/" + direct_message["from_username"] + "/" + direct_message[
             "to_username"]
         response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 200)
         direct_message_response = json.loads(response.data)
         self.assertEqual(len(direct_message_response["direct_messages"]), 2)
         users = [direct_message["from_username"], direct_message["to_username"]]
@@ -249,3 +250,33 @@ class DirectMessageResourceTestCase(unittest.TestCase):
                              direct_message_response["direct_messages"][1]["timestamp"])
     #        messaging.send.assert_called_once_with(direct_message["from_username"], direct_message["to_username"],
     #                                               direct_message["message"])
+
+    @patch('resources.token_validation_decorator.requests.post')
+    def test_conversation_messages_non_existent_friend(self, mock_post):
+        mock_post.return_value.status_code = 200
+        direct_message = test_direct_message.copy()
+        self.app.post("/api/v1/direct_message",
+                      data=json.dumps(direct_message), headers=headers)
+
+        other_test_direct_message = {
+            "from_username": direct_message["to_username"],
+            "to_username": direct_message["from_username"],
+            "message": "Hi! How are you?"
+        }
+        self.app.post("/api/v1/direct_message",
+                      data=json.dumps(other_test_direct_message),
+                      headers=headers)
+
+        other_test_direct_message = {
+            "from_username": direct_message["to_username"],
+            "to_username": "otro",
+            "message": "Hi! How are you?"
+        }
+        self.app.post("/api/v1/direct_message",
+                      data=json.dumps(other_test_direct_message),
+                      headers=headers)
+
+        uri = "/api/v1/direct_message/conversation/" + direct_message["from_username"] + "/" + direct_message[
+            "to_username"] + "1"
+        response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 403)
