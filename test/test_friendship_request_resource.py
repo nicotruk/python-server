@@ -169,3 +169,29 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
         uri = "/api/v1/friendship/request/received/" + friendship_request["to_username"]
         response = self.app.get(uri, headers=headers)
         self.assertEqual(response.status_code, 403)
+
+    @patch('requests.post')
+    def test_delete_single_friendship_requests(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        response = self.app.delete(
+            "/api/v1/friendship/request/{}/{}".format(friendship_request["from_username"],
+                                                      friendship_request["to_username"]),
+            headers=headers)
+        self.assertEqual(response.status_code, 201)
+
+    @patch('requests.post')
+    def test_delete_non_existent_friendship_requests(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+
+        response = self.app.delete(
+            "/api/v1/friendship/request/{}/{}".format(friendship_request["from_username"],
+                                                      friendship_request["to_username"]),
+            data=json.dumps(friendship_request),
+            headers=headers)
+        self.assertEqual(response.status_code, 409)
