@@ -131,12 +131,45 @@ class UsersResourceTestCase(unittest.TestCase):
         update_response = self.app.put("/api/v1/users/{}".format(user_id),
                                        headers=headers,
                                        data=json.dumps(changes))
+        self.assertEqual(update_response.status_code, 200)
 
         json_response = json.loads(update_response.data)
 
         self.assertEqual(json_response["user"]["name"], changes["name"])
         self.assertEqual(json_response["user"]["email"], changes["email"])
         self.assertEqual(json_response["user"]["profile_pic"], changes["profile_pic"])
+
+    # /users POST + /users/<user_id> PUT
+    @patch('resources.user_resource.requests.post')
+    def test_update_user_not_found(self, mock_post):
+        mock_post.return_value.status_code = 200
+        response = {
+            "token": {
+                "expiresAt": "123",
+                "token": "asd"
+            }
+        }
+        mock_post.return_value.text = json.dumps(response)
+
+        user = test_user.copy()
+
+        post_response = self.app.post("/api/v1/users",
+                                      data=json.dumps(user),
+                                      content_type='application/json')
+
+        user_response = json.loads(post_response.data)
+        user_id = user_response["user"]["user_id"] + "1"
+
+        changes = {
+            "name": "new_name",
+            "email": "new_email",
+            "profile_pic": "new_profile_pic"
+        }
+
+        update_response = self.app.put("/api/v1/users/{}".format(user_id),
+                                       headers=headers,
+                                       data=json.dumps(changes))
+        self.assertEqual(update_response.status_code, 403)
 
     # /users POST + /users/firebase/<user_id> PUT
     @patch('resources.user_resource.requests.post')
