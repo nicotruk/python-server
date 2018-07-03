@@ -119,10 +119,24 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
                       headers=headers)
         uri = "/api/v1/friendship/request/sent/" + friendship_request["from_username"]
         response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 200)
         friendship_response = json.loads(response.data)
         self.assertEqual(len(friendship_response["friendship_requests"]), 1)
         self.assertEqual(friendship_response["friendship_requests"][0]["from_username"],
                          friendship_request["from_username"])
+
+    @patch('requests.post')
+    def test_sent_friendship_requests_contains_non_existent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+        friendship_request["to_username"] = friendship_request["to_username"] + "1"
+
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        uri = "/api/v1/friendship/request/sent/" + friendship_request["from_username"]
+        response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 403)
 
     @patch('requests.post')
     def test_received_friendship_requests(self, mock_post):
@@ -134,7 +148,24 @@ class FriendshipRequestResourceTestCase(unittest.TestCase):
                       headers=headers)
         uri = "/api/v1/friendship/request/received/" + friendship_request["to_username"]
         response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 200)
         friendship_response = json.loads(response.data)
         self.assertEqual(len(friendship_response["friendship_requests"]), 1)
         self.assertEqual(friendship_response["friendship_requests"][0]["to_username"],
                          friendship_request["to_username"])
+
+    @patch('requests.post')
+    def test_received_friendship_requests_contains_from_non_existent_user(self, mock_post):
+        mock_post.return_value.status_code = 200
+        friendship_request = test_friendship_request.copy()
+
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        friendship_request["from_username"] = friendship_request["from_username"] + "1"
+        self.app.post("/api/v1/friendship/request",
+                      data=json.dumps(friendship_request),
+                      headers=headers)
+        uri = "/api/v1/friendship/request/received/" + friendship_request["to_username"]
+        response = self.app.get(uri, headers=headers)
+        self.assertEqual(response.status_code, 403)
