@@ -41,4 +41,16 @@ Se desarrollaron endpoints específicos para cada uno de los dominios de la apli
 
 La base de datos se diseñó en MongoDB. Se utilizó la librería 'pymongo' para el manejo de la misma en Python.
 
-### Manejo de tokens
+### Estrategia de testing
+
+El testing del App Server se realizó utilizando el framework 'unittest'.
+
+Los tests corren localmente, apuntando a la base de datos local. Se procura limpiar la base de datos en cada test para garantizar la independencia de las pruebas.
+
+#### Pruebas Unitarias
+
+Se desarrollaron pruebas unitarias en base a los servicios publicados mediante la interfaz REST. Se utilizó la librería Mock para lograr independencia de los módulos externos con los que se comunica nuestra aplicación como por ejemplo el Shared Server, la plataforma de Firebase Cloud Messaging o simular el paso del tiempo en los tests de estadísticas.
+
+#### Pruebas de integración
+
+Para evaluar el funcionamiento general se realizaron también pruebas de integración del App Server como un todo, es decir, sin utilizar mocks de ninguna dependencia.
