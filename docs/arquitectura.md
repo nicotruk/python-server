@@ -36,6 +36,16 @@ Se desarrollaron endpoints específicos para cada uno de los dominios de la apli
   * story_resource
 * Stats
   * stats_resource
+  
+#### Servicios generales
+
+* Consulta de estado de conexión del servidor
+* Alta, baja, modificación y consulta de usuarios
+* Alta, baja, modificación y consulta de amistades
+* Alta, baja y consulta de solicitudes de amistad
+* Alta y consulta de mensajes
+* Alta, baja modificación y consulta de historias
+* Consulta de estadísticas
 
 ### Base de datos
 
