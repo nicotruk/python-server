@@ -41,6 +41,8 @@ Se desarrollaron endpoints específicos para cada uno de los dominios de la apli
 
 La base de datos se diseñó en MongoDB. Se utilizó la librería 'pymongo' para el manejo de la misma en Python.
 
+![Diagrama de base de datos](./images/app-server-database.png)
+
 ### Estrategia de testing
 
 El testing del App Server se realizó utilizando el framework 'unittest'.
