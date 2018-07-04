@@ -1,6 +1,26 @@
 # Manual de Administrador - Stories App Server
 ---
 
+## Indice
+
+1. Generalidades
+  1.1. ¿Qué es Stories App Server?
+  1.2. Características y ventajas de Stories App Server
+  1.3. Requisitos
+    1.3.1. Para instalación local
+      1.3.1.1. Instalación local (sin Docker)
+      1.3.1.2. Instalación local (con Docker)
+    1.3.2. Para instalación remota (Deploy en Heroku)
+2. Instalación y Configuración
+  2.1. Instalación local
+    2.1.0. Instalación de MongoDB
+    2.1.1. Instalación local (sin Docker)
+    2.1.2. Instalación local (con Docker)
+  2.2. Deploy en PaaS (Heroku) - Utilizando Docker
+  2.3. Configuración de variables de entorno
+3. Uso de la Aplicación
+
+
 ## 1. Generalidades
 ---
 ### 1.1. ¿Qué es Stories App Server?
