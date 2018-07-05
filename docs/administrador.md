@@ -156,9 +156,11 @@ $ heroku open
 
 ### 2.3. Configuración de variables de entorno
 ---
-En cuanto a las variables de entorno necesarias para correr el App Server con éxito, las mismas se encuentran ya definidas y seteadas en los respectivos Dockerfile y docker-compose.yml utilizados tanto para la instalación local como para la remota. 
+En cuanto a las variables de entorno necesarias para correr el App Server con éxito, las mismas se encuentran ya definidas y seteadas en los respectivos Dockerfile y docker-compose.yml utilizados tanto para la instalación local como para la remota.
 
 Por último, para el caso de la *Instalación local (sin Docker)*, la aplicación utilizará los valores por defecto seteados en la misma para esas variables de entorno y de esta forma la aplicación funcionara correctamente.
+
+Cabe destacar que si se utiliza la Stories Admin UI para modificar características del servidor, por ejemplo, el nombre, dichos cambios tambien deberan aplicarse en forma manual sobre las variables de entorno correspondientes.
 
 ## 3. Uso de la Aplicación
 ---
